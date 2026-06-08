@@ -36,6 +36,9 @@ export default function Home() {
             <Link href="/" className="font-medium text-zinc-950">
               Home
             </Link>
+            <Link href="/learn" className="transition hover:text-zinc-950">
+              Learn
+            </Link>
             <Link href="/community" className="transition hover:text-zinc-950">
               Community
             </Link>

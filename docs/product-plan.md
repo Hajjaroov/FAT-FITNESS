@@ -41,8 +41,8 @@ Current structure:
 
 - The homepage currently acts as the landing page, story page, and journal surface.
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
-- Navigation should stay simple for now: `Home` and `Community`.
-- `Learn` is planned, but it does not need to be in the main navigation until there is real content.
+- Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
+- `Learn` has a static overview page. Detailed Learn pages can be added one at a time.
 
 ### Homepage Story / Journal
 
@@ -177,8 +177,8 @@ These tools involve sensitive health-related data, so they should be planned car
 Build in this order:
 
 1. Homepage with integrated story and journal
-2. Community
-3. Learn
+2. Learn
+3. Community
 4. User accounts
 5. Forum categories, posts, and comments
 6. Likes/bookmarks
@@ -257,25 +257,22 @@ Treat weight logs, progress photos, GLP-1 notes, and health-related community po
 
 The personal story is the strongest asset. The technology should support that, not dominate it.
 
-## Next Product Milestone
+## Current Product Milestone
 
-Keep the homepage as the single public intro and journal page for now.
+Build Learn as static frontend content before the forum/community implementation.
 
 Goals:
 
-- Explain the project honestly
-- Include the personal starting point: 203 kg
-- Include the latest logged point: 158 kg on 2026-06-07
-- State clearly that this is personal experience, not coaching or medical advice
-- Keep the page simple, readable, and trustworthy
-- Use fewer, wider content blocks for long text
-- Keep navigation simple: `Home` and `Community`
-- Do not create separate About / Journey or Blog pages right now
+- Keep Learn beginner-friendly and rooted in personal experience
+- Split Learn into `Food & Diet`, `Training`, and `Medical Journey`
+- Start with static frontend content
+- Do not add backend persistence, MDX, or CMS yet
+- Do not add photos yet
+- Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
 
 Content direction:
 
-- Tone should be a balanced mix of personal story and practical reflections.
-- Practical reflections should not read like a course or coaching program.
-- It is okay to use basic placeholder copy that the owner can edit later.
-- Mention GLP-1 only as a tool used personally, not as a recommendation or medical instruction.
-- Photos may be included later, but do not add photos in the first homepage implementation.
+- First Learn page: overview of the three sections.
+- Next likely Learn detail page: `Food & Diet`, using `docs/content-notes.md`.
+- `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
+- `Training` needs more owner-provided details before deep implementation.
