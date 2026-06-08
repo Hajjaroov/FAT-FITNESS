@@ -37,7 +37,7 @@ const nextSteps = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff7ed,_#fafaf9_45%,_#f4f4f5_100%)] text-zinc-950">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff7ed,#fafaf9_45%,#f4f4f5_100%)] text-zinc-950">
       <header className="border-b border-zinc-200/80 bg-white/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
           <span className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-700">
@@ -49,7 +49,7 @@ export default function AboutPage() {
 
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 py-12 sm:py-16">
         <section className="grid gap-6 lg:grid-cols-[1.45fr_0.85fr]">
-          <div className="rounded-[2rem] border border-zinc-200/80 bg-white/90 p-8 shadow-sm sm:p-10">
+          <div className="rounded-4xl border border-zinc-200/80 bg-white/90 p-8 shadow-sm sm:p-10">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-orange-700">
               Public journey
             </p>
@@ -78,7 +78,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <aside className="rounded-[2rem] border border-zinc-200/80 bg-zinc-950 p-8 text-zinc-50 shadow-sm">
+          <aside className="rounded-4xl border border-zinc-200/80 bg-zinc-950 p-8 text-zinc-50 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-orange-300">
               Quick context
             </p>
@@ -122,7 +122,7 @@ export default function AboutPage() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
-          <article className="rounded-[2rem] border border-zinc-200/80 bg-white/90 p-8 shadow-sm sm:p-10">
+          <article className="rounded-4xl border border-zinc-200/80 bg-white/90 p-8 shadow-sm sm:p-10">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-zinc-500">
               Why this exists
             </p>
@@ -154,7 +154,7 @@ export default function AboutPage() {
           </article>
 
           <div className="grid gap-6">
-            <article className="rounded-[2rem] border border-amber-200 bg-amber-50/90 p-8 shadow-sm">
+            <article className="rounded-4xl border border-amber-200 bg-amber-50/90 p-8 shadow-sm">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-amber-800">
                 What this is not
               </p>
@@ -170,7 +170,7 @@ export default function AboutPage() {
               </ul>
             </article>
 
-            <article className="rounded-[2rem] border border-zinc-200/80 bg-white/90 p-8 shadow-sm">
+            <article className="rounded-4xl border border-zinc-200/80 bg-white/90 p-8 shadow-sm">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-zinc-500">
                 What comes later
               </p>
