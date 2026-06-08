@@ -60,9 +60,9 @@ export default function Home() {
                 realistic, beginner-friendly support.
               </p>
               <p>
-                After almost 6 months, I reached 161 kg. The numbers matter, but
-                the bigger point is that progress does not need to look polished
-                to be real.
+                My latest logged point is 158 kg on 7 June 2026. The numbers
+                matter, but the bigger point is that progress does not need to
+                look polished to be real.
               </p>
               <p>
                 This page is where the project starts. It brings the core
@@ -83,11 +83,11 @@ export default function Home() {
               </div>
               <div>
                 <dt className="text-sm text-zinc-400">Current known point</dt>
-                <dd className="mt-1 text-3xl font-semibold">161 kg</dd>
+                <dd className="mt-1 text-3xl font-semibold">158 kg</dd>
               </div>
               <div>
-                <dt className="text-sm text-zinc-400">Timeframe</dt>
-                <dd className="mt-1 text-3xl font-semibold">Almost 6 months</dd>
+                <dt className="text-sm text-zinc-400">Latest log</dt>
+                <dd className="mt-1 text-3xl font-semibold">7 Jun 2026</dd>
               </div>
             </dl>
             <ul className="mt-8 space-y-3 text-sm leading-7 text-zinc-200">

@@ -42,7 +42,7 @@ Future relational data likely includes:
 - Users
 - Profiles
 - Blog posts if not MDX-only
-- Knowledge base articles if not MDX-only
+- Learn articles if not static/MDX-only
 - Forum categories
 - Forum posts
 - Comments

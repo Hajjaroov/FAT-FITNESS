@@ -33,7 +33,7 @@ Initial pages:
 
 - Homepage
 - Community
-- Knowledge base
+- Learn
 - Disclaimer
 - Contact later
 
@@ -42,6 +42,7 @@ Current structure:
 - The homepage currently acts as the landing page, story page, and journal surface.
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
 - Navigation should stay simple for now: `Home` and `Community`.
+- `Learn` is planned, but it does not need to be in the main navigation until there is real content.
 
 ### Homepage Story / Journal
 
@@ -63,22 +64,60 @@ Current content approach:
 - Journal content: updates, reflections, experiments, product reviews, lessons, and progress notes over time.
 - Separate story/blog pages should only be introduced later if there is enough distinct content to justify them.
 
-### Knowledge Base
+### Learn
 
-This is more structured than the blog and should be beginner-friendly.
+This is the structured learning/content area. Public-facing language should use `Learn` instead of `Knowledge Base`, because the project is personal and beginner-friendly rather than an expert help center.
 
-Examples:
+Use three main sections:
 
-- Beginner exercise library
-- Dumbbell workouts for overweight beginners
+#### Food & Diet
+
+Purpose: explain personal diet experience, food structure, supplements, and practical nutrition reflections without presenting a universal diet plan.
+
+Possible content:
+
+- Personal diet overview
+- Current personal diet example captured in `docs/content-notes.md`
+- What worked and what failed
 - Simple meal ideas
 - High-protein food list
-- GLP-1 FAQ based on personal experience
-- Things to ask your doctor
-- Weight tracking basics
-- Gym anxiety / starting at high weight
+- Supplements used as part of nutrition habits
+- Product reviews for protein products, food tracking apps, and similar tools
+- Later: a nutrition-target tool that helps generate similar meal structures for selected goals
 
-Knowledge base content must be careful with health claims. It can organize personal learning and general educational information, but it should avoid giving medical instructions.
+Supplements rule:
+
+- Put supplements under `Food & Diet` when they are general nutrition or habit topics, such as protein powder, electrolytes, fiber, creatine, vitamins, or meal replacements.
+- Move or cross-reference supplements under `Medical Journey` when they are tied to blood tests, deficiencies, prescriptions, OP/surgery preparation or recovery, medication interactions, GLP-1 side effects, or doctor guidance.
+
+#### Training
+
+Purpose: explain personal training experience from a high starting weight and provide beginner-friendly exercise references.
+
+Possible content:
+
+- Current training situation
+- Training 3-4 times per week
+- Beginner exercise library
+- Dumbbell workouts for overweight beginners
+- Exercise photos later
+- Gym anxiety / starting at high weight
+- Equipment and tool reviews
+
+#### Medical Journey
+
+Purpose: document personal medical context without giving medical advice.
+
+Possible content:
+
+- GLP-1 experience from a personal perspective
+- OP/surgery situation and reflections, if relevant
+- Shot timeline and weight reached at different points
+- Side effects and questions to discuss with a qualified professional
+- Things learned from doctor conversations
+- Weight tracking basics where it connects to medical context
+
+Learn content must be careful with health claims. It can organize personal learning and general educational information, but it should avoid giving medical instructions, dosing instructions, or claims that one method is correct for everyone.
 
 ### Community
 
@@ -139,7 +178,7 @@ Build in this order:
 
 1. Homepage with integrated story and journal
 2. Community
-3. Knowledge base
+3. Learn
 4. User accounts
 5. Forum categories, posts, and comments
 6. Likes/bookmarks
@@ -226,7 +265,7 @@ Goals:
 
 - Explain the project honestly
 - Include the personal starting point: 203 kg
-- Include the current known point: 161 kg after almost 6 months
+- Include the latest logged point: 158 kg on 2026-06-07
 - State clearly that this is personal experience, not coaching or medical advice
 - Keep the page simple, readable, and trustworthy
 - Use fewer, wider content blocks for long text

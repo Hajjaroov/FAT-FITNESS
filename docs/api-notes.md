@@ -43,12 +43,22 @@ Likely later endpoints:
 - `GET /api/content/journey`
 - `GET /api/blog/posts`
 - `GET /api/blog/posts/{slug}`
-- `GET /api/knowledge-base/articles`
-- `GET /api/knowledge-base/articles/{slug}`
+- `GET /api/learn/sections`
+- `GET /api/learn/sections/{slug}`
+- `GET /api/learn/articles`
+- `GET /api/learn/articles/{slug}`
 
 These are future options only if separate content sections are intentionally introduced later.
 
 For the current homepage content, prefer static frontend content unless there is a clear need for backend persistence.
+
+Planned Learn sections:
+
+- `food-and-diet`
+- `training`
+- `medical-journey`
+
+Supplements usually belong under `food-and-diet`. Cross-reference or move them under `medical-journey` when they are tied to blood tests, deficiencies, prescriptions, OP/surgery preparation or recovery, medication interactions, GLP-1 side effects, or doctor guidance.
 
 ### Community
 

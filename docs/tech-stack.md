@@ -78,7 +78,7 @@ Database rules:
 Start with:
 
 - Static pages
-- MDX later for blog/knowledge base content
+- MDX later for Learn content if static pages become hard to maintain
 
 Do not add a CMS yet.
 
