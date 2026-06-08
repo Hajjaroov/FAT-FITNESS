@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - fitness_postgres_data:/var/lib/postgresql/data
+      - fitness_postgres_data_pg18:/var/lib/postgresql
 
 volumes:
-  fitness_postgres_data:
+  fitness_postgres_data_pg18:

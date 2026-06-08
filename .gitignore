@@ -28,3 +28,16 @@ build/
 
 # Docker / local data
 postgres-data/
+
+# Local AI / coding-agent state
+# Keep shared project instructions such as AGENTS.md tracked when useful.
+.codex/
+.continue/
+.agent/
+.ai/
+.aider*
+.claude/settings.local.json
+.claude/.credentials.json
+
+# Local agent handoff notes
+docs/dev-agent-plan.md

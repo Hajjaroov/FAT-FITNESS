@@ -1,0 +1,165 @@
+# Tech Stack
+
+## Chosen Architecture
+
+Use a separated full-stack architecture:
+
+```text
+Next.js Web App
+        |
+        | REST API
+        v
+Spring Boot Backend
+        |
+        v
+PostgreSQL
+```
+
+Later, a React Native / Expo app can use the same Spring Boot API.
+
+## Frontend
+
+Use:
+
+- Next.js
+- TypeScript
+- React
+- App Router
+- Tailwind CSS
+
+Frontend rules:
+
+- Consume the backend through `NEXT_PUBLIC_API_BASE_URL`.
+- Keep API calls centralized in `src/lib/api.ts`.
+- Keep API base configuration in `src/lib/config.ts`.
+- Keep placeholder pages minimal until a route gets an approved milestone.
+- Start content as static frontend content unless backend persistence is needed.
+
+## Backend
+
+Use:
+
+- Spring Boot
+- Java 21
+- Spring Web MVC
+- Spring Data JPA
+- Spring Security
+- Validation
+- Flyway
+- PostgreSQL driver
+- Lombok where useful
+
+Backend rules:
+
+- Expose REST APIs.
+- Use feature-based package structure.
+- Keep `/api/status` public and minimal.
+- Do not add authentication until it is intentionally planned.
+- Do not add entities until a feature needs persistence.
+- Add tests for endpoint behavior and security/CORS expectations.
+
+## Database
+
+Use:
+
+- PostgreSQL 18
+- Flyway migrations
+
+Database rules:
+
+- Use PostgreSQL for relational product data.
+- Use Flyway for schema changes.
+- Do not use MongoDB for this app by default.
+- Do not store images in PostgreSQL.
+- Store image metadata in PostgreSQL and files in object storage later.
+
+## Content
+
+Start with:
+
+- Static pages
+- MDX later for blog/knowledge base content
+
+Do not add a CMS yet.
+
+Possible later CMS options:
+
+- Sanity
+- Strapi
+- Directus
+- Payload CMS
+
+## Images And Storage
+
+Later, use object storage for:
+
+- Avatars
+- Blog images
+- Food photos
+- Progress photos
+- Community uploads
+
+Possible providers:
+
+- Cloudflare R2
+- AWS S3
+- Supabase Storage
+- DigitalOcean Spaces
+
+Progress photos are sensitive. Add privacy controls before allowing uploads.
+
+## Search
+
+MVP:
+
+- Basic PostgreSQL search is enough.
+
+Later:
+
+- Meilisearch
+- Typesense
+- Algolia
+
+Do not add a search engine yet.
+
+## Notifications
+
+MVP:
+
+- No complex notification system.
+
+Later:
+
+- In-app notifications
+- Email notifications
+- Push notifications
+- Weekly digest
+
+## Mobile
+
+Do not build mobile now.
+
+Recommended path:
+
+1. PWA support in the Next.js app
+2. React Native / Expo later
+3. Native Kotlin/Swift only if there is a strong future reason
+
+## Deployment Direction
+
+Simple product-first path:
+
+- Frontend: Vercel
+- Backend: Render, Railway, Fly.io, Hetzner, or DigitalOcean
+- Database: managed PostgreSQL
+- Images: Cloudflare R2 or Supabase Storage
+
+Learning/portfolio path later:
+
+- Dockerized frontend and backend
+- VPS such as Hetzner
+- Caddy or Nginx
+- PostgreSQL backups
+- GitHub Actions CI/CD
+
+Do not make DevOps the main project before the product has useful content.
