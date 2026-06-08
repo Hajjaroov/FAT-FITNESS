@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Fat Fitness Community",
@@ -10,44 +9,44 @@ export const metadata: Metadata = {
 const principles = [
   {
     title: "Personal experience first",
-    body: "This project starts from one real journey, not from pretending to be an expert. What you read here is shaped by lived experience, trial and error, and ongoing learning.",
+    body: "This project starts from one real journey, not from pretending to be an expert. Everything here is shaped by lived experience, trial and error, and ongoing learning.",
   },
   {
     title: "Beginner-friendly by design",
-    body: "The goal is to make fitness and weight-loss feel less intimidating for people starting from zero, starting again, or starting from a very high bodyweight.",
+    body: "The focus is people starting from zero, starting again, or starting from a very high bodyweight and needing something more realistic than polished fitness content.",
   },
   {
     title: "Support without fake certainty",
-    body: "This is not a promise, a course, or a guaranteed method. It is a space being built around honesty, peer support, and realistic progress.",
+    body: "This is not a course, a promise, or a guaranteed method. It is a space being built around honesty, peer support, and progress that feels repeatable in real life.",
   },
 ];
 
-const routeCards = [
+const journalTopics = [
   {
-    href: "/about",
-    eyebrow: "Read now",
-    title: "Journey",
-    body: "The public story so far, including the 203 kg starting point, the current 161 kg point, and what this project is trying to become.",
+    title: "Progress updates",
+    body: "Short, honest notes about what changed, what felt better, and what still felt hard in normal day-to-day life.",
   },
   {
-    href: "/blog",
-    eyebrow: "Coming next",
-    title: "Blog",
-    body: "Future updates, reflections, wins, setbacks, and notes from the journey as it continues over time.",
+    title: "What helped",
+    body: "Reflections on routine, food, movement, mindset, and the practical adjustments that actually made life easier to manage.",
   },
   {
-    href: "/community",
-    eyebrow: "Coming later",
-    title: "Community",
-    body: "A future peer-support space for realistic conversations, beginner struggles, and progress without judgment.",
+    title: "What did not work",
+    body: "Setbacks, frustrating weeks, bad decisions, and the messy middle that usually gets edited out of fitness content.",
   },
 ];
 
 const guardrails = [
-  "Not medical advice",
-  "Not professional coaching",
-  "Not a guaranteed method",
-  "Not built around fake perfection",
+  "I am not a coach or athlete.",
+  "This is personal experience, not medical advice.",
+  "Nothing here is a guaranteed method.",
+  "GLP-1 is mentioned only as part of my own story.",
+];
+
+const communityPoints = [
+  "A future peer-support space for realistic, beginner-friendly conversations.",
+  "Room for progress logs, setbacks, small wins, and honest questions.",
+  "Support without pretending everyone needs the same method.",
 ];
 
 export default function Home() {
@@ -59,21 +58,15 @@ export default function Home() {
             Fat Fitness
           </span>
           <nav className="flex items-center gap-4 text-sm text-zinc-600">
-            <Link
-              href="/about"
-              className="transition hover:text-zinc-950"
-            >
-              Journey
-            </Link>
-            <Link href="/blog" className="transition hover:text-zinc-950">
-              Blog
-            </Link>
-            <Link
-              href="/community"
-              className="transition hover:text-zinc-950"
-            >
+            <a href="#story" className="transition hover:text-zinc-950">
+              Story
+            </a>
+            <a href="#journal" className="transition hover:text-zinc-950">
+              Notes
+            </a>
+            <a href="#community" className="transition hover:text-zinc-950">
               Community
-            </Link>
+            </a>
           </nav>
         </div>
       </header>
@@ -95,29 +88,15 @@ export default function Home() {
                 realistic, beginner-friendly support.
               </p>
               <p>
-                This starts with one honest story. After almost 6 months, I
-                reached 161 kg. The numbers matter, but the bigger point is that
-                progress does not need to look polished to be real.
+                After almost 6 months, I reached 161 kg. The numbers matter, but
+                the bigger point is that progress does not need to look polished
+                to be real.
               </p>
               <p>
-                Fat Fitness Community is being built for people who want a more
-                grounded kind of motivation: less hype, less pretending, and more
-                room for what the process actually feels like.
+                This landing page is both the introduction and the journal front
+                door. There is no need to split the same idea across separate
+                About and Blog pages right now.
               </p>
-            </div>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/about"
-                className="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
-              >
-                Read the Journey page
-              </Link>
-              <Link
-                href="/blog"
-                className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition hover:border-zinc-950"
-              >
-                See what comes next
-              </Link>
             </div>
           </div>
 
@@ -165,15 +144,39 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <article className="rounded-4xl border border-amber-200 bg-amber-50/90 p-8 shadow-sm sm:p-10">
+        <section id="story" className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
+          <article className="rounded-4xl border border-zinc-200/80 bg-white/90 p-8 shadow-sm sm:p-10">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-zinc-500">
+              The story
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950">
+              I wanted a place that feels realistic from day one.
+            </h2>
+            <div className="mt-6 space-y-4 text-base leading-8 text-zinc-700">
+              <p>
+                A lot of fitness content is built around confidence, experience,
+                and polished advice. That can be useful, but it can also feel far
+                away from the reality of starting at a very high bodyweight and
+                trying to change your life without pretending it is easy.
+              </p>
+              <p>
+                This project is my way of documenting the messy middle. The good
+                days matter. The hard days matter too. I want this space to feel
+                grounded, beginner-friendly, and honest about what is hard.
+              </p>
+              <p>
+                The future community is meant to grow from that same tone:
+                realistic support, no fake perfection, and no pressure to act
+                like everyone starts from the same place.
+              </p>
+            </div>
+          </article>
+
+          <article className="rounded-4xl border border-amber-200 bg-amber-50/90 p-8 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-amber-800">
               Ground rules
             </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-amber-950">
-              Honest, careful, and beginner-friendly.
-            </h2>
-            <ul className="mt-6 space-y-3 text-sm leading-7 text-amber-950">
+            <ul className="mt-5 space-y-3 text-sm leading-7 text-amber-950">
               {guardrails.map((item) => (
                 <li
                   key={item}
@@ -184,27 +187,69 @@ export default function Home() {
               ))}
             </ul>
           </article>
+        </section>
+
+        <section id="journal" className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <article className="rounded-4xl border border-zinc-200/80 bg-white/90 p-8 shadow-sm sm:p-10">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-zinc-500">
+              Journal on home
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950">
+              Updates and reflections belong here for now.
+            </h2>
+            <div className="mt-6 space-y-4 text-base leading-8 text-zinc-700">
+              <p>
+                The landing page can carry the journal side of the project
+                without needing a second page that says almost the same thing.
+              </p>
+              <p>
+                For now, this is where progress updates, lessons, setbacks, and
+                personal reflections belong. If there is enough real content
+                later, the structure can grow later too.
+              </p>
+            </div>
+          </article>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {routeCards.map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="group rounded-4xl border border-zinc-200/80 bg-white/90 p-7 shadow-sm transition hover:-translate-y-1 hover:border-zinc-950"
+            {journalTopics.map((topic) => (
+              <article
+                key={topic.title}
+                className="rounded-4xl border border-zinc-200/80 bg-white/90 p-7 shadow-sm"
               >
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-zinc-500">
-                  {card.eyebrow}
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-950">
-                  {card.title}
+                <h2 className="text-2xl font-semibold tracking-tight text-zinc-950">
+                  {topic.title}
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-zinc-700">
-                  {card.body}
+                  {topic.body}
                 </p>
-                <span className="mt-6 inline-flex text-sm font-semibold text-orange-700 transition group-hover:text-zinc-950">
-                  Open page
-                </span>
-              </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="community" className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <article className="rounded-4xl border border-zinc-200/80 bg-zinc-950 p-8 text-zinc-50 shadow-sm sm:p-10">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-orange-300">
+              Future community
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight">
+              Built for peer support, not expert performance.
+            </h2>
+            <p className="mt-6 text-base leading-8 text-zinc-300">
+              The long-term goal is a space where people can share progress,
+              beginner struggles, setbacks, small wins, and honest questions
+              without being talked down to or sold a perfect method.
+            </p>
+          </article>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {communityPoints.map((item) => (
+              <article
+                key={item}
+                className="rounded-4xl border border-zinc-200/80 bg-white/90 p-7 shadow-sm"
+              >
+                <p className="text-sm leading-7 text-zinc-700">{item}</p>
+              </article>
             ))}
           </div>
         </section>
