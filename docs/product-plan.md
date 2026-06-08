@@ -32,13 +32,18 @@ Purpose: explain the project, build trust, and make the personal journey easy to
 Initial pages:
 
 - Homepage
-- About / Journey
-- Blog
+- Community
 - Knowledge base
 - Disclaimer
 - Contact later
 
-### Blog / Journey
+Current structure:
+
+- The homepage currently acts as the landing page, story page, and journal surface.
+- Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
+- Navigation should stay simple for now: `Home` and `Community`.
+
+### Homepage Story / Journal
 
 This is public content rooted in personal experience.
 
@@ -52,10 +57,11 @@ Examples:
 - GLP-1 experience: side effects, appetite, habits, mental side
 - Product reviews for benches, dumbbells, food tracking apps, protein products
 
-Journey page vs blog:
+Current content approach:
 
-- Journey page: stable overview of the story, timeline, principles, disclaimers, and current direction.
-- Blog: dated updates, reflections, experiments, product reviews, lessons, and progress notes over time.
+- Homepage: project introduction, core story, key disclaimers, and journal direction.
+- Journal content: updates, reflections, experiments, product reviews, lessons, and progress notes over time.
+- Separate story/blog pages should only be introduced later if there is enough distinct content to justify them.
 
 ### Knowledge Base
 
@@ -131,8 +137,8 @@ These tools involve sensitive health-related data, so they should be planned car
 
 Build in this order:
 
-1. Landing page and About / Journey
-2. Blog
+1. Homepage with integrated story and journal
+2. Community
 3. Knowledge base
 4. User accounts
 5. Forum categories, posts, and comments
@@ -144,7 +150,7 @@ Build in this order:
 
 The first useful version is:
 
-> A personal weight-loss journey blog with a focused support forum for overweight beginners, GLP-1 users, and people starting from zero.
+> A personal weight-loss journey homepage with a focused support forum for overweight beginners, GLP-1 users, and people starting from zero.
 
 ## Community Safety
 
@@ -214,7 +220,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Next Product Milestone
 
-Build the public Journey page first as static frontend content.
+Keep the homepage as the single public intro and journal page for now.
 
 Goals:
 
@@ -222,8 +228,10 @@ Goals:
 - Include the personal starting point: 203 kg
 - Include the current known point: 161 kg after almost 6 months
 - State clearly that this is personal experience, not coaching or medical advice
-- Explain that the future community is for peer support
-- Keep the page simple and trustworthy
+- Keep the page simple, readable, and trustworthy
+- Use fewer, wider content blocks for long text
+- Keep navigation simple: `Home` and `Community`
+- Do not create separate About / Journey or Blog pages right now
 
 Content direction:
 
@@ -231,4 +239,4 @@ Content direction:
 - Practical reflections should not read like a course or coaching program.
 - It is okay to use basic placeholder copy that the owner can edit later.
 - Mention GLP-1 only as a tool used personally, not as a recommendation or medical instruction.
-- Photos may be included later, but do not add photos in the first Journey page implementation.
+- Photos may be included later, but do not add photos in the first homepage implementation.

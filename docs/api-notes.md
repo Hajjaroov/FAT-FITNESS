@@ -46,7 +46,9 @@ Likely later endpoints:
 - `GET /api/knowledge-base/articles`
 - `GET /api/knowledge-base/articles/{slug}`
 
-For the first Journey page, prefer static frontend content unless there is a clear need for backend persistence.
+These are future options only if separate content sections are intentionally introduced later.
+
+For the current homepage content, prefer static frontend content unless there is a clear need for backend persistence.
 
 ### Community
 
