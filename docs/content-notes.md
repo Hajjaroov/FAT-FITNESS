@@ -104,7 +104,7 @@ Important framing:
 - This is a personal GLP-1 log, not a recommendation, dosing guide, or instruction.
 - Public content should avoid telling anyone what dose to use or when to change dose.
 - Use doctor/professional guidance language for medical decisions.
-- The logged data currently runs through 2026-06-07. Entries after that date are planned placeholders as of 2026-06-08 and should not be presented as completed progress.
+- The logged data currently runs through 2026-06-07. Add future entries only after they are real completed logs.
 
 Current summary from the provided log:
 
@@ -148,17 +148,109 @@ Current summary from the provided log:
 
 Note: the source message listed `-0.5g` for 2026-02-15. This has been normalized to `-0.5 kg` in the table and should be verified before publishing.
 
-### Planned Entries
+## Current Workout Example
 
-These rows are planned placeholders, not completed weigh-ins.
+Use this under `Learn > Training` when that section is built.
 
-| MJ | Date | Weight | Change |
-| --- | --- | ---: | ---: |
-| 10 | 2026-06-14 | TBD | TBD |
-| 10 | 2026-06-21 | TBD | TBD |
-| 10 | 2026-06-28 | TBD | TBD |
-| 10 | 2026-07-05 | TBD | TBD |
-| 10 | 2026-07-12 | TBD | TBD |
+Source:
+
+- Exported OneNote PDF: `C:\Users\moham\Desktop\workout.pdf`
+- Extracted locally on 2026-06-08.
+
+Important note:
+
+- The PDF text was extractable, but some current weight/load cells were difficult to map perfectly because the exported table split rows and columns across pages.
+- Do not publish exact current loads until the owner verifies them.
+- The clear parts below are safe to use: walking progression, warm-up, weekly schedule, exercises, sets/reps, and personal notes.
+- The Training page has a photo placeholder for each exercise. Each placeholder uses a stable `photoKey`; add a `photoSrc` for that exercise in `frontend/fitness-web/src/app/learn/training/page.tsx` when real photos are ready.
+
+### Walking Progression
+
+Walking is planned on off days.
+
+- Weeks 01-08: 30 minutes
+- Weeks 09-16: 40 minutes
+- Weeks 17-24: 50 minutes
+
+### Warm-Up Protocol
+
+- March in place: 2 minutes
+- Shoulder rolls: 10 reps
+- Arm circles: 10 forward and 10 backward
+- Hip circles: 10 each direction
+- Bodyweight chair squats: 10 slow reps
+- Cat-cow mobility: 8 reps
+
+Personal notes:
+
+- Go slow.
+- Shoulder rolls are not easy.
+- For chair squats, do not sit fully; just touch the chair.
+
+### Weekly Schedule, Weeks 1-12
+
+#### Monday: Upper A
+
+- Incline dumbbell press, 30-45 degrees: 3 x 8-10
+- Chest-supported dumbbell row: 3 x 10
+- Dumbbell lateral raise: 3 x 12-15
+- Seated dumbbell shoulder press: 3 x 10
+- Dumbbell curl: 3 x 12
+- Overhead dumbbell tricep extension: 3 x 12
+
+Notes extracted from the PDF:
+
+- Chest-supported row uses a bench at incline.
+- Standing up and using feet can help with better grip.
+- Chest size/body position may make the setup awkward.
+- Some upper-body movements use 2 sets for the first 2 weeks instead of 3.
+- Overhead tricep extension may work better with a chair because the bench can scratch if the back is not short.
+
+#### Wednesday: Lower + Core
+
+- Chair squat: 3 x 8
+- Romanian deadlift: 3 x 10
+- Hip thrust: 3 x 10-12
+- Supported split squat: 2 x 6 each leg
+- Standing calf raise: 3 x 15
+- Seated core brace: 5 x 15 seconds
+
+Notes extracted from the PDF:
+
+- Use chair depth as the squat target.
+- Hip thrust can be bench-supported if comfortable.
+- Hold a chair for balance on supported split squats.
+- Calf raises can progress from bodyweight to dumbbells and step/stair variations.
+- Core brace progression notes mention no weight, legs lifting, 10 second pause, and holding a dumbbell.
+
+#### Friday: Upper B
+
+- Flat dumbbell press: 3 x 8-10
+- One-arm dumbbell row: 3 x 10
+- Arnold press: 3 x 10
+- Rear delt fly: 3 x 12-15
+- Hammer curl: 3 x 12
+- Skull crusher: 3 x 12
+
+Notes extracted from the PDF:
+
+- The PDF includes a note that seated dumbbell shoulder press may be a harder option.
+- Several current load notes are present in the source, but exact mapping should be verified before publishing.
+
+#### Saturday: Recovery W5+
+
+- Chest-supported row: 2 x 12
+- Incline dumbbell press: 2 x 12
+- Lateral raise: 2 x 15
+- Rear delt fly: 2 x 15
+- Hammer curl: 2 x 15
+- Overhead tricep extension: 2 x 15
+- Farmer carry: 3 x 20-30 seconds
+- Hip mobility and stretching: 5-10 minutes
+
+Notes extracted from the PDF:
+
+- Use lighter weights.
 
 ## Future Food & Diet Tool Idea
 

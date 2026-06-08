@@ -42,7 +42,7 @@ Current structure:
 - The homepage currently acts as the landing page, story page, and journal surface.
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
 - Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
-- `Learn` has a static overview page. Detailed Learn pages can be added one at a time.
+- `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
 
 ### Homepage Story / Journal
 
@@ -272,7 +272,8 @@ Goals:
 
 Content direction:
 
-- First Learn page: overview of the three sections.
-- Next likely Learn detail page: `Food & Diet`, using `docs/content-notes.md`.
+- Current Learn pages: overview, `Food & Diet`, `Training`, and `Medical Journey`.
+- `Food & Diet` uses the diet and supplement source material in `docs/content-notes.md`.
+- `Training` uses the extracted workout PDF source material in `docs/content-notes.md`, but exact current loads should be verified before publishing.
 - `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
-- `Training` needs more owner-provided details before deep implementation.
+- Photos and deeper tools can be added later after the static content is reviewed.

@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 
 const sections = [
   {
+    href: "/learn/food-and-diet",
     title: "Food & Diet",
     summary:
       "Personal diet structure, meal ideas, supplements, and what is being learned from the current routine.",
@@ -19,6 +20,7 @@ const sections = [
     ],
   },
   {
+    href: "/learn/training",
     title: "Training",
     summary:
       "Training from a very high starting weight, with beginner-friendly notes that do not assume fitness experience.",
@@ -29,6 +31,7 @@ const sections = [
     ],
   },
   {
+    href: "/learn/medical-journey",
     title: "Medical Journey",
     summary:
       "Personal medical context, including GLP-1 history and other medical decisions, documented carefully.",
@@ -109,6 +112,14 @@ export default function LearnPage() {
                     <span>{item}</span>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    href={section.href}
+                    className="inline-flex border-b border-zinc-950 pb-1 text-sm font-semibold text-zinc-950 transition hover:text-orange-700"
+                  >
+                    Open {section.title}
+                  </Link>
+                </li>
               </ul>
             </article>
           ))}
