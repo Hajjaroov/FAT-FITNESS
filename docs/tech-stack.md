@@ -37,6 +37,7 @@ Frontend rules:
 - Use shared frontend styling primitives and CSS variables for light/dark theme support.
 - Keep public copy/data in `src/content` modules instead of embedding long text directly in route components.
 - Use the lightweight local language foundation for now; do not add an i18n package until routing, SEO, or translation workflow needs justify it.
+- Keep available languages in `src/content/site.ts` as dropdown options; adding a language also requires matching content dictionaries.
 
 ## Backend
 

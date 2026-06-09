@@ -1,6 +1,11 @@
-export const locales = ["en", "de"] as const;
+export const localeOptions = [
+  { value: "en", label: "English" },
+  { value: "de", label: "Deutsch" },
+] as const;
 
-export type Locale = (typeof locales)[number];
+export type Locale = (typeof localeOptions)[number]["value"];
+
+export const locales = localeOptions.map((option) => option.value);
 
 export const defaultLocale: Locale = "en";
 
@@ -25,10 +30,10 @@ export const siteCopy = {
     controls: {
       languageLabel: "Language",
       themeLabel: "Theme",
-      switchToEnglish: "Switch to English",
-      switchToGerman: "Switch to German",
       light: "Light",
       dark: "Dark",
+      switchToLightTheme: "Switch to light mode",
+      switchToDarkTheme: "Switch to dark mode",
     },
     links: {
       backToLearn: "Back to Learn",
@@ -49,10 +54,10 @@ export const siteCopy = {
     controls: {
       languageLabel: "Sprache",
       themeLabel: "Design",
-      switchToEnglish: "Zu Englisch wechseln",
-      switchToGerman: "Zu Deutsch wechseln",
       light: "Hell",
       dark: "Dunkel",
+      switchToLightTheme: "Zu hellem Modus wechseln",
+      switchToDarkTheme: "Zu dunklem Modus wechseln",
     },
     links: {
       backToLearn: "Zurueck zu Lernen",

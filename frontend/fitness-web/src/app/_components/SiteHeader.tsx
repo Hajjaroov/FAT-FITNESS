@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { locales, siteCopy, siteNavigation, type Locale } from "@/content/site";
+import { isLocale, localeOptions, siteCopy, siteNavigation } from "@/content/site";
 import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { useTheme } from "@/app/_components/ThemeProvider";
 
@@ -15,8 +15,8 @@ export function SiteHeader() {
   const { locale, setLocale } = useLocale();
   const { theme, toggleTheme } = useTheme();
   const copy = useLocalizedContent(siteCopy);
-  const nextLocale = locale === "en" ? "de" : "en";
   const nextTheme = theme === "dark" ? "light" : "dark";
+  const themeIcon = theme === "dark" ? "☾" : "☀";
 
   return (
     <header className="site-header">
@@ -45,37 +45,46 @@ export function SiteHeader() {
             })}
           </nav>
 
-          <button
-            type="button"
-            className="site-control"
-            aria-label={
-              nextLocale === "de"
-                ? copy.controls.switchToGerman
-                : copy.controls.switchToEnglish
-            }
-            onClick={() => setLocale(nextLocale as Locale)}
-          >
-            {locales.map((availableLocale) => (
-              <span
-                key={availableLocale}
-                className={
-                  availableLocale === locale
-                    ? "font-semibold text-foreground"
-                    : "text-(--color-muted)"
+          <div className="site-select-wrap">
+            <label htmlFor="site-language" className="sr-only">
+              {copy.controls.languageLabel}
+            </label>
+            <select
+              id="site-language"
+              className="site-select"
+              value={locale}
+              aria-label={copy.controls.languageLabel}
+              onChange={(event) => {
+                const selectedLocale = event.currentTarget.value;
+
+                if (isLocale(selectedLocale)) {
+                  setLocale(selectedLocale);
                 }
-              >
-                {availableLocale.toUpperCase()}
-              </span>
-            ))}
-          </button>
+              }}
+            >
+              {localeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span className="site-select-arrow" aria-hidden="true">
+              v
+            </span>
+          </div>
 
           <button
             type="button"
-            className="site-control"
-            aria-label={`${copy.controls.themeLabel}: ${copy.controls[nextTheme]}`}
+            className="site-icon-control"
+            aria-label={
+              nextTheme === "dark"
+                ? copy.controls.switchToDarkTheme
+                : copy.controls.switchToLightTheme
+            }
+            title={`${copy.controls.themeLabel}: ${copy.controls[theme]}`}
             onClick={toggleTheme}
           >
-            {copy.controls[theme]}
+            <span aria-hidden="true">{themeIcon}</span>
           </button>
         </div>
       </div>
