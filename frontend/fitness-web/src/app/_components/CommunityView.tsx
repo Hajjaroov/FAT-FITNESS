@@ -9,127 +9,112 @@ export function CommunityView() {
   const copy = useLocalizedContent(communityCopy);
 
   return (
-    <PageShell className="gap-12">
-      <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <article className="site-card p-8 sm:p-10">
-          <p className="site-kicker">{copy.hero.eyebrow}</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            {copy.hero.title}
-          </h1>
-          <p className="site-muted mt-6 max-w-3xl text-base leading-8">
-            {copy.hero.intro}
-          </p>
-        </article>
-
-        <aside className="site-panel p-8 sm:p-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] opacity-75">
-            {copy.hero.shapeLabel}
-          </p>
-          <div className="mt-6 space-y-4 text-lg leading-8">
-            {copy.hero.shapePoints.map((point) => (
-              <p key={point}>{point}</p>
-            ))}
-          </div>
-          <p className="mt-8 rounded-2xl border border-current/15 bg-current/5 p-4 text-sm leading-7">
-            {copy.hero.note}
-          </p>
-        </aside>
-      </section>
-
-      <section>
-        <h2 className="text-3xl font-semibold tracking-tight">
-          {copy.distinction.title}
-        </h2>
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          {copy.distinction.points.map((point, index) => (
-            <article key={point.title} className="site-card p-6">
-              <p className="site-subtle text-sm font-semibold">
-                0{index + 1}
-              </p>
-              <h3 className="mt-4 text-2xl font-semibold">{point.title}</h3>
-              <p className="site-muted mt-4 text-sm leading-7">{point.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="site-divider border-y py-10">
-        <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr]">
+    <PageShell className="gap-8">
+      <section className="site-card p-8 sm:p-10">
+        <div className="grid gap-6 lg:grid-cols-[1fr_18rem] lg:items-end">
           <div>
-            <p className="site-kicker">{copy.categories.eyebrow}</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-              {copy.categories.title}
-            </h2>
-            <p className="site-muted mt-4 text-sm leading-7">
-              {copy.categories.intro}
+            <p className="site-kicker">{copy.hero.eyebrow}</p>
+            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+              {copy.hero.title}
+            </h1>
+            <p className="site-muted mt-6 max-w-3xl text-base leading-8">
+              {copy.hero.intro}
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            {copy.categories.items.map((category, index) => (
-              <article
-                key={category.name}
-                className="site-divider border-b pb-4 sm:border sm:p-5"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-sm font-semibold">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold">{category.name}</h3>
-                    <p className="site-muted mt-2 text-sm leading-7">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
+          <aside className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <p className="site-subtle text-sm font-semibold">
+              {copy.forumIndex.statusLabel}
+            </p>
+            <p className="site-muted mt-2 text-sm leading-6">
+              {copy.forumIndex.statusText}
+            </p>
+            <Link href="/community/guidelines" className="site-text-link mt-4">
+              {copy.forumIndex.guidelinesLabel}
+            </Link>
+          </aside>
+        </div>
+      </section>
+
+      <section className="site-card overflow-hidden">
+        <div className="site-divider border-b p-5 sm:p-6">
+          <p className="site-kicker">{copy.categories.eyebrow}</p>
+          <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_20rem] lg:items-end">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight">
+                {copy.categories.title}
+              </h2>
+              <p className="site-muted mt-2 text-sm leading-7">
+                {copy.categories.intro}
+              </p>
+            </div>
+            <div className="site-subtle hidden grid-cols-[5rem_5rem_1fr] gap-4 text-sm font-semibold md:grid">
+              <span>{copy.forumIndex.headers.topics}</span>
+              <span>{copy.forumIndex.headers.replies}</span>
+              <span>{copy.forumIndex.headers.latest}</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <article className="site-callout p-8 sm:p-10">
-          <p className="site-kicker">{copy.safety.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-            {copy.safety.title}
-          </h2>
-          <p className="mt-5 text-base leading-8">{copy.safety.intro}</p>
-          <Link href="/community/guidelines" className="site-text-link mt-6">
-            {copy.safety.guidelinesLinkLabel}
-          </Link>
-        </article>
-
-        <ul className="site-card divide-y divide-(--color-border) p-3">
-          {copy.safety.rules.map((rule) => (
-            <li key={rule} className="flex gap-3 p-4 text-sm leading-7">
-              <span className="site-dot" />
-              <span>{rule}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="site-divider grid gap-6 border-t pt-10 lg:grid-cols-[0.75fr_1.25fr]">
         <div>
-          <p className="site-kicker">{copy.roadmap.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-            {copy.roadmap.title}
-          </h2>
-          <p className="site-muted mt-4 text-sm leading-7">
-            {copy.roadmap.caution}
-          </p>
-        </div>
-        <ol className="grid gap-3 sm:grid-cols-2">
-          {copy.roadmap.items.map((item, index) => (
-            <li key={item} className="site-card flex items-center gap-4 p-5">
-              <span className="site-subtle text-sm font-semibold">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <span className="font-semibold">{item}</span>
-            </li>
+          {copy.forumIndex.groups.map((group) => (
+            <section key={group.title}>
+              <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 sm:px-6">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                  {group.title}
+                </h3>
+              </div>
+
+              {group.slugs.map((slug) => {
+                const board = copy.categories.items.find(
+                  (category) => category.slug === slug,
+                );
+
+                if (!board) {
+                  return null;
+                }
+
+                return (
+                  <Link
+                    key={board.slug}
+                    href={`/community/categories/${board.slug}`}
+                    className="site-divider grid gap-4 border-b p-5 transition hover:bg-[var(--color-surface)] sm:p-6 md:grid-cols-[1fr_20rem] md:items-center"
+                  >
+                    <div>
+                      <h4 className="text-xl font-semibold">{board.name}</h4>
+                      <p className="site-muted mt-2 max-w-2xl text-sm leading-7">
+                        {board.description}
+                      </p>
+                    </div>
+
+                    <dl className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <dt className="site-subtle md:hidden">
+                          {copy.forumIndex.headers.topics}
+                        </dt>
+                        <dd className="mt-1 font-semibold md:mt-0">0</dd>
+                      </div>
+                      <div>
+                        <dt className="site-subtle md:hidden">
+                          {copy.forumIndex.headers.replies}
+                        </dt>
+                        <dd className="mt-1 font-semibold md:mt-0">0</dd>
+                      </div>
+                      <div>
+                        <dt className="site-subtle md:hidden">
+                          {copy.forumIndex.headers.latest}
+                        </dt>
+                        <dd className="site-muted mt-1 md:mt-0">
+                          {copy.forumIndex.latestEmpty}
+                        </dd>
+                      </div>
+                    </dl>
+                  </Link>
+                );
+              })}
+            </section>
           ))}
-        </ol>
+        </div>
       </section>
     </PageShell>
   );

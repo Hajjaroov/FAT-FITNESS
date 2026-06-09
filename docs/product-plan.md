@@ -43,9 +43,10 @@ Current structure:
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
 - Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
 - `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
-- `/community` is the static front door for the future forum-style community.
+- `/community` is the static forum index for the future forum-style community.
 - `/community/guidelines` is a static community guidelines page for safety and behavior rules.
-- Community category and post detail routes are still placeholders until real forum mechanics are approved.
+- Community category routes are static empty board pages for planned forum boards.
+- Community post detail routes are still placeholders until real forum mechanics are approved.
 - Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
 - Page copy/data should live in frontend content modules instead of long hardcoded text blocks in route TSX files.
 
@@ -126,16 +127,16 @@ Learn content must be careful with health claims. It can organize personal learn
 
 ### Community
 
-Start with a forum-style community, not a Reddit clone or infinite feed.
+Start with a forum-style community.
 
 Current state:
 
-- `/community` is a static forum landing page.
+- `/community` is a static forum index page.
 - `/community/guidelines` is a static guidelines page.
-- It explains that Community means a structured support forum, not a Twitter/X or Instagram clone.
-- It previews planned forum areas and safety rules.
+- `/community/categories/[slug]` generates static empty board pages for the planned forum categories.
+- It shows forum boards with topics/replies/latest columns.
 - It does not allow posting, accounts, comments, persistence, or moderation actions yet.
-- Category and post routes remain placeholders until implementation is intentionally approved.
+- Post routes remain placeholders until implementation is intentionally approved.
 
 Forum categories for MVP:
 
@@ -279,7 +280,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Review and refine the static Community forum landing page before building real forum mechanics.
+Review and refine the static Community forum index before building real forum mechanics.
 
 Goals:
 
@@ -288,9 +289,10 @@ Goals:
 - Keep public copy in editable content objects with English and German support
 - Do not add backend persistence, MDX, or CMS yet
 - Do not add real photos yet
-- Make clear that Community is a forum-style peer-support space
-- Show planned forum categories without making them active yet
-- Put safety and moderation expectations in front before posting exists
+- Make `/community` look and behave like a forum index
+- Show planned boards without making them active yet
+- Make planned boards linkable as empty board pages without enabling posting
+- Keep safety and moderation expectations available without turning the index into a rules page
 - Keep `/community/guidelines` as the behavior/safety page for now
 - Do not add accounts, posts, comments, likes, reports, moderation actions, or database entities yet
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
@@ -302,6 +304,7 @@ Content direction:
 - `Training` uses the extracted workout PDF source material in `docs/content-notes.md`, but exact current loads should be verified before publishing.
 - `Training` can include exercise photo placeholders, but real images should be reviewed before publishing.
 - `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
-- Current Community page: static forum landing page with planned categories and safety rules.
+- Current Community page: static forum index with planned boards and zero-state forum metadata.
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
+- Current Community Category pages: static empty board pages for each planned forum category.
 - Photos and deeper tools can be added later after the static content is reviewed.
