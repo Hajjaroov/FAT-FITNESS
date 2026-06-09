@@ -44,6 +44,7 @@ Current structure:
 - Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
 - `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
 - `/community` is the static front door for the future forum-style community.
+- `/community/guidelines` is a static community guidelines page for safety and behavior rules.
 - Community category and post detail routes are still placeholders until real forum mechanics are approved.
 - Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
 - Page copy/data should live in frontend content modules instead of long hardcoded text blocks in route TSX files.
@@ -130,6 +131,7 @@ Start with a forum-style community, not a Reddit clone or infinite feed.
 Current state:
 
 - `/community` is a static forum landing page.
+- `/community/guidelines` is a static guidelines page.
 - It explains that Community means a structured support forum, not a Twitter/X or Instagram clone.
 - It previews planned forum areas and safety rules.
 - It does not allow posting, accounts, comments, persistence, or moderation actions yet.
@@ -229,6 +231,12 @@ Minimum moderation features:
 - Community rules page
 - Medical disclaimer
 
+Current static safety page:
+
+- `/community/guidelines` defines practical community behavior rules before posting exists.
+- It is not a complete legal terms page.
+- It should later be supported by real reporting, moderation actions, Terms of use, privacy pages, and medical disclaimer pages.
+
 Community rules should include:
 
 - No medical advice as fact
@@ -283,6 +291,7 @@ Goals:
 - Make clear that Community is a forum-style peer-support space
 - Show planned forum categories without making them active yet
 - Put safety and moderation expectations in front before posting exists
+- Keep `/community/guidelines` as the behavior/safety page for now
 - Do not add accounts, posts, comments, likes, reports, moderation actions, or database entities yet
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
 
@@ -294,4 +303,5 @@ Content direction:
 - `Training` can include exercise photo placeholders, but real images should be reviewed before publishing.
 - `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
 - Current Community page: static forum landing page with planned categories and safety rules.
+- Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Photos and deeper tools can be added later after the static content is reviewed.

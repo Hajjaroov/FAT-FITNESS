@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PageShell } from "@/app/_components/PageShell";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { communityCopy } from "@/content/community";
@@ -71,7 +72,7 @@ export function CommunityView() {
                 className="site-divider border-b pb-4 sm:border sm:p-5"
               >
                 <div className="flex items-start gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-semibold">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-sm font-semibold">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div>
@@ -94,9 +95,12 @@ export function CommunityView() {
             {copy.safety.title}
           </h2>
           <p className="mt-5 text-base leading-8">{copy.safety.intro}</p>
+          <Link href="/community/guidelines" className="site-text-link mt-6">
+            {copy.safety.guidelinesLinkLabel}
+          </Link>
         </article>
 
-        <ul className="site-card divide-y divide-[var(--color-border)] p-3">
+        <ul className="site-card divide-y divide-(--color-border) p-3">
           {copy.safety.rules.map((rule) => (
             <li key={rule} className="flex gap-3 p-4 text-sm leading-7">
               <span className="site-dot" />
