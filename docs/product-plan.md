@@ -43,6 +43,8 @@ Current structure:
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
 - Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
 - `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
+- `/community` is the static front door for the future forum-style community.
+- Community category and post detail routes are still placeholders until real forum mechanics are approved.
 - Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
 - Page copy/data should live in frontend content modules instead of long hardcoded text blocks in route TSX files.
 
@@ -124,6 +126,14 @@ Learn content must be careful with health claims. It can organize personal learn
 ### Community
 
 Start with a forum-style community, not a Reddit clone or infinite feed.
+
+Current state:
+
+- `/community` is a static forum landing page.
+- It explains that Community means a structured support forum, not a Twitter/X or Instagram clone.
+- It previews planned forum areas and safety rules.
+- It does not allow posting, accounts, comments, persistence, or moderation actions yet.
+- Category and post routes remain placeholders until implementation is intentionally approved.
 
 Forum categories for MVP:
 
@@ -261,17 +271,19 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Prepare the public frontend foundation before the forum/community implementation.
+Review and refine the static Community forum landing page before building real forum mechanics.
 
 Goals:
 
-- Keep Learn beginner-friendly and rooted in personal experience
-- Split Learn into `Food & Diet`, `Training`, and `Medical Journey`
 - Start with static frontend content
 - Keep public page styling consistent with shared light/dark theme tokens
 - Keep public copy in editable content objects with English and German support
 - Do not add backend persistence, MDX, or CMS yet
 - Do not add real photos yet
+- Make clear that Community is a forum-style peer-support space
+- Show planned forum categories without making them active yet
+- Put safety and moderation expectations in front before posting exists
+- Do not add accounts, posts, comments, likes, reports, moderation actions, or database entities yet
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
 
 Content direction:
@@ -281,4 +293,5 @@ Content direction:
 - `Training` uses the extracted workout PDF source material in `docs/content-notes.md`, but exact current loads should be verified before publishing.
 - `Training` can include exercise photo placeholders, but real images should be reviewed before publishing.
 - `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
+- Current Community page: static forum landing page with planned categories and safety rules.
 - Photos and deeper tools can be added later after the static content is reviewed.
