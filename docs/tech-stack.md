@@ -34,6 +34,9 @@ Frontend rules:
 - Keep API base configuration in `src/lib/config.ts`.
 - Keep placeholder pages minimal until a route gets an approved milestone.
 - Start content as static frontend content unless backend persistence is needed.
+- Use shared frontend styling primitives and CSS variables for light/dark theme support.
+- Keep public copy/data in `src/content` modules instead of embedding long text directly in route components.
+- Use the lightweight local language foundation for now; do not add an i18n package until routing, SEO, or translation workflow needs justify it.
 
 ## Backend
 
@@ -78,6 +81,7 @@ Database rules:
 Start with:
 
 - Static pages
+- Local typed content modules in the frontend
 - MDX later for Learn content if static pages become hard to maintain
 
 Do not add a CMS yet.

@@ -43,6 +43,8 @@ Current structure:
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
 - Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
 - `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
+- Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
+- Page copy/data should live in frontend content modules instead of long hardcoded text blocks in route TSX files.
 
 ### Homepage Story / Journal
 
@@ -259,15 +261,17 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Build Learn as static frontend content before the forum/community implementation.
+Prepare the public frontend foundation before the forum/community implementation.
 
 Goals:
 
 - Keep Learn beginner-friendly and rooted in personal experience
 - Split Learn into `Food & Diet`, `Training`, and `Medical Journey`
 - Start with static frontend content
+- Keep public page styling consistent with shared light/dark theme tokens
+- Keep public copy in editable content objects with English and German support
 - Do not add backend persistence, MDX, or CMS yet
-- Do not add photos yet
+- Do not add real photos yet
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
 
 Content direction:
@@ -275,5 +279,6 @@ Content direction:
 - Current Learn pages: overview, `Food & Diet`, `Training`, and `Medical Journey`.
 - `Food & Diet` uses the diet and supplement source material in `docs/content-notes.md`.
 - `Training` uses the extracted workout PDF source material in `docs/content-notes.md`, but exact current loads should be verified before publishing.
+- `Training` can include exercise photo placeholders, but real images should be reviewed before publishing.
 - `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
 - Photos and deeper tools can be added later after the static content is reviewed.
