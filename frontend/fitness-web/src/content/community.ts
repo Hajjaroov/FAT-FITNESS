@@ -203,15 +203,15 @@ export const communityCopy = {
   de: {
     hero: {
       eyebrow: "Community",
-      title: "Ein Forum fuer realistische Unterstuetzung.",
+      title: "Ein Forum für realistische Unterstützung.",
       intro:
-        "Ein Ort fuer Journey Logs, Anfaengerfragen, Essen- und Trainingsdiskussionen, GLP-1 Erfahrung, Fortschritts-Wins und praktische Unterstuetzung.",
+        "Ein Ort für Journey Logs, Anfängerfragen, Essen- und Trainingsdiskussionen, GLP-1 Erfahrung, Fortschritts-Wins und praktische Unterstützung.",
     },
     categories: {
       eyebrow: "Forum-Index",
       title: "Boards",
-      intro: "Waehle ein Board, um spaeter darin zu lesen oder zu posten.",
-      openCategoryLabel: "Board oeffnen",
+      intro: "Wähle ein Board, um später darin zu lesen oder zu posten.",
+      openCategoryLabel: "Board öffnen",
       items: [
         {
           slug: "introductions",
@@ -222,31 +222,31 @@ export const communityCopy = {
           slug: "journey-logs",
           name: "Journey Logs",
           description:
-            "Langfristige Fortschritts-Threads mit Updates, Rueckschlaegen und kleinen Erfolgen.",
+            "Langfristige Fortschritts-Threads mit Updates, Rückschlägen und kleinen Erfolgen.",
         },
         {
           slug: "food-and-diet",
-          name: "Essen & Ernaehrung",
+          name: "Essen & Ernährung",
           description:
             "Mahlzeitenideen, praktische Routinen, Einkaufnotizen und was funktioniert oder nicht.",
         },
         {
           slug: "training-at-high-bodyweight",
-          name: "Training bei hohem Koerpergewicht",
+          name: "Training bei hohem Körpergewicht",
           description:
-            "Anfaengerbewegung, Gym-Angst, Equipment, Erholung und realistische Startpunkte.",
+            "Anfängerbewegung, Gym-Angst, Equipment, Erholung und realistische Startpunkte.",
         },
         {
           slug: "glp-1-experience",
           name: "GLP-1 Erfahrung",
           description:
-            "Persoenliche Erfahrungen und Fragen fuer qualifizierte Fachpersonen.",
+            "Persönliche Erfahrungen und Fragen für qualifizierte Fachpersonen.",
         },
         {
           slug: "questions-and-support",
           name: "Fragen & Support",
           description:
-            "Anfaengerfragen, bei denen Antworten vorsichtig, freundlich und nicht vorschreibend sein sollen.",
+            "Anfängerfragen, bei denen Antworten vorsichtig, freundlich und nicht vorschreibend sein sollen.",
         },
         {
           slug: "progress-wins",
@@ -258,14 +258,14 @@ export const communityCopy = {
           slug: "equipment-and-tools",
           name: "Equipment & Tools",
           description:
-            "Baenke, Kurzhanteln, Tracking-Apps, Food-Tools und andere praktische Produktnotizen.",
+            "Bänke, Kurzhanteln, Tracking-Apps, Food-Tools und andere praktische Produktnotizen.",
         },
       ],
     },
     forumIndex: {
       statusLabel: "Forum-Status",
       statusText:
-        "Posten startet spaeter, wenn Accounts, Meldungen und Moderation bereit sind.",
+        "Posten startet später, wenn Accounts, Meldungen und Moderation bereit sind.",
       guidelinesLabel: "Community-Regeln",
       headers: {
         board: "Board",
@@ -300,10 +300,10 @@ export const communityCopy = {
       threadsTitle: "Threads",
       emptyTitle: "Noch keine Threads",
       emptyText:
-        "Dieses Board oeffnet spaeter, wenn Accounts, Meldungen und Moderation bereit sind.",
+        "Dieses Board öffnet später, wenn Accounts, Meldungen und Moderation bereit sind.",
       pinnedTitle: "Angepinnt",
       pinnedGuidelinesTitle: "Community-Regeln",
-      pinnedGuidelinesText: "Lies die Regeln, bevor spaeter gepostet wird.",
+      pinnedGuidelinesText: "Lies die Regeln, bevor später gepostet wird.",
       topicsLabel: "Themen",
       repliesLabel: "Antworten",
       latestLabel: "Letztes",
@@ -312,9 +312,9 @@ export const communityCopy = {
       backLinkLabel: "Community",
       hero: {
         eyebrow: "Community-Regeln",
-        title: "Regeln fuer ein sichereres Support-Forum.",
+        title: "Regeln für ein sichereres Support-Forum.",
         intro:
-          "Diese Regeln definieren Ton und Grenzen fuer das zukuenftige Forum. Die Themen hier koennen sensibel sein: Gewicht, Essen, Training, GLP-1, medizinische Entscheidungen, Selbstvertrauen, Scham und Fortschritt.",
+          "Diese Regeln definieren Ton und Grenzen für das zukünftige Forum. Die Themen hier können sensibel sein: Gewicht, Essen, Training, GLP-1, medizinische Entscheidungen, Selbstvertrauen, Scham und Fortschritt.",
         note:
           "Diese Seite ist der praktische Verhaltensrahmen, um den das Forum gebaut werden soll.",
         statusLabel: "Status",
@@ -324,15 +324,15 @@ export const communityCopy = {
         items: [
           {
             title: "Support, kein Coaching",
-            text: "Mitglieder koennen persoenliche Erfahrungen teilen, aber niemand soll so auftreten, als duerfte er anderen vorschreiben, wie sie abnehmen muessen.",
+            text: "Mitglieder können persönliche Erfahrungen teilen, aber niemand soll so auftreten, als dürfte er anderen vorschreiben, wie sie abnehmen müssen.",
           },
           {
             title: "Kontext statt Urteil",
-            text: "Menschen starten mit unterschiedlichen Gesundheits-, Geld-, Mobilitaets-, Zeit- und Selbstvertrauenssituationen. Antworten sollen dafuer Platz lassen.",
+            text: "Menschen starten mit unterschiedlichen Gesundheits-, Geld-, Mobilitäts-, Zeit- und Selbstvertrauenssituationen. Antworten sollen dafür Platz lassen.",
           },
           {
             title: "Sicherheit vor Engagement",
-            text: "Wenn ein Post dramatisch, aber schaedlich, unsicher, beschaemend oder medizinisch riskant ist, soll Moderation wichtiger sein als Aktivitaetszahlen.",
+            text: "Wenn ein Post dramatisch, aber schädlich, unsicher, beschämend oder medizinisch riskant ist, soll Moderation wichtiger sein als Aktivitätszahlen.",
           },
         ],
       },
@@ -340,10 +340,10 @@ export const communityCopy = {
         eyebrow: "Regeln",
         title: "Kernregeln",
         items: [
-          "Kein Body Shaming, keine Erniedrigung, keine Belaestigung und kein Auslachen von Fortschritt.",
-          "Keine extremen Diaeten, Hunger-Challenges, Purging-Tipps oder Ermutigung zu Essstoerungen.",
-          "Keine medizinische Beratung als Fakt. Persoenliche Erfahrung ist okay; Anweisungen fuer andere nicht.",
-          "Niemandem sagen, Medikamente zu starten, zu stoppen, zu dosieren oder zu aendern, inklusive GLP-1.",
+          "Kein Body Shaming, keine Erniedrigung, keine Belästigung und kein Auslachen von Fortschritt.",
+          "Keine extremen Diäten, Hunger-Challenges, Purging-Tipps oder Ermutigung zu Essstörungen.",
+          "Keine medizinische Beratung als Fakt. Persönliche Erfahrung ist okay; Anweisungen für andere nicht.",
+          "Niemandem sagen, Medikamente zu starten, zu stoppen, zu dosieren oder zu ändern, inklusive GLP-1.",
           "Keine Supplement-Scams, Steroid-Promotion, Wunderheilungen oder Affiliate-Spam als Hilfe tarnen.",
           "Kein Missbrauch von Vorher/Nachher-Fotos, kein Reposting, keine sexualisierten Kommentare und kein Druck, Fortschrittsfotos zu teilen.",
         ],
@@ -352,7 +352,7 @@ export const communityCopy = {
         eyebrow: "Gesundheitsthemen",
         title: "Wie Gesundheitsthemen besprochen werden sollen",
         intro:
-          "Diaet, Training, Medikamente, OP/Surgery, Symptome, Nebenwirkungen und Gewichtsdaten koennen als persoenlicher Kontext besprochen werden. Sie sollen nicht zu Anweisungen, Diagnosen oder Druck werden.",
+          "Diät, Training, Medikamente, OP/Surgery, Symptome, Nebenwirkungen und Gewichtsdaten können als persönlicher Kontext besprochen werden. Sie sollen nicht zu Anweisungen, Diagnosen oder Druck werden.",
         examplesTitle: "Sicherere Formulierungen",
         avoidLabel: "Vermeiden",
         preferLabel: "Besser",
@@ -360,10 +360,10 @@ export const communityCopy = {
           {
             avoid: "Du solltest diese Dosis nehmen.",
             prefer:
-              "Das ist in meiner eigenen Behandlung passiert, und Dosierung gehoert zu einem Arzt.",
+              "Das ist in meiner eigenen Behandlung passiert, und Dosierung gehört zu einem Arzt.",
           },
           {
-            avoid: "Diese Diaet funktioniert fuer alle.",
+            avoid: "Diese Diät funktioniert für alle.",
             prefer:
               "Diese Struktur hat mir geholfen, aber sie passt vielleicht nicht zu Gesundheit oder Leben einer anderen Person.",
           },
@@ -375,25 +375,25 @@ export const communityCopy = {
         ],
       },
       moderation: {
-        title: "Zukuenftige Moderationsaktionen",
+        title: "Zukünftige Moderationsaktionen",
         intro:
-          "Wenn Posten existiert, soll Moderation ab dem ersten echten Forum-Meilenstein verfuegbar sein.",
+          "Wenn Posten existiert, soll Moderation ab dem ersten echten Forum-Meilenstein verfügbar sein.",
         items: [
           "Post oder Antwort melden",
-          "Unsichere Inhalte verstecken oder loeschen",
+          "Unsichere Inhalte verstecken oder löschen",
           "Aufgeheizte oder riskante Threads sperren",
           "Wichtige Sicherheitsinformationen pinnen",
           "User bannen, die der Community wiederholt schaden",
-          "Moderatornotizen fuer ernste Vorfaelle fuehren",
+          "Moderatornotizen für ernste Vorfälle führen",
         ],
       },
       posting: {
-        title: "Spaeter vor dem Posten",
+        title: "Später vor dem Posten",
         items: [
           "Teile ich meine eigene Erfahrung, statt eine Methode vorzuschreiben?",
-          "Koennte das jemanden zu unsicheren Essens-, Medikamenten- oder Trainingsentscheidungen draengen?",
-          "Wuerde ich das jemandem sagen, der aengstlich, beschaemt oder ganz am Anfang ist?",
-          "Gehoert das eher zu Arzt, Therapeut, Ernaehrungsfachperson oder Notfallhilfe statt in ein Forum?",
+          "Könnte das jemanden zu unsicheren Essens-, Medikamenten- oder Trainingsentscheidungen drängen?",
+          "Würde ich das jemandem sagen, der ängstlich, beschämt oder ganz am Anfang ist?",
+          "Gehört das eher zu Arzt, Therapeut, Ernährungsfachperson oder Notfallhilfe statt in ein Forum?",
         ],
       },
     },

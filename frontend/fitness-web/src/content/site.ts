@@ -60,12 +60,12 @@ export const siteCopy = {
       switchToDarkTheme: "Zu dunklem Modus wechseln",
     },
     links: {
-      backToLearn: "Zurueck zu Lernen",
-      open: "Oeffnen",
+      backToLearn: "Zurück zu Lernen",
+      open: "Öffnen",
     },
     placeholder: {
       eyebrow: "Platzhalterseite",
-      body: "Diese Seite ist vorerst nur ein Platzhalter und wird in einem spaeteren Meilenstein ausgearbeitet.",
+      body: "Diese Seite ist vorerst nur ein Platzhalter und wird in einem späteren Meilenstein ausgearbeitet.",
     },
   },
 } satisfies Record<Locale, unknown>;

@@ -95,6 +95,30 @@ Later only:
 
 Do not add auth yet.
 
+Planned registration shape when auth is approved:
+
+- `displayName`
+- `email`
+- `countryCode` or coarse `countryRegion` from the frontend country/region picker
+- `password`
+- accepted community rules / privacy terms flags
+
+Do not send or store `confirmPassword` as account data. Use it only for client-side or request validation.
+
+Country/region API direction:
+
+- Prefer structured country/region codes over raw free text.
+- Support the frontend `Other` value for people whose location is not represented well by the list.
+- Do not infer exact location from IP address for this basic registration flow.
+
+Do not include sensitive health/profile fields in the initial register endpoint. Weight, GLP-1 status, OP/surgery status, photos, goals, diet, and training details should be optional profile/tool data only after privacy and visibility rules are planned.
+
+Current frontend-only state:
+
+- `/login` and `/register` exist as disabled static pages.
+- They do not submit credentials and do not call an API.
+- Do not add auth endpoints until the auth approach is explicitly planned.
+
 ## Health And Safety API Guidance
 
 Health-sensitive areas such as GLP-1, weight logs, progress photos, and side-effect journals require extra care.

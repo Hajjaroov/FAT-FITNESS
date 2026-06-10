@@ -53,6 +53,20 @@ Future relational data likely includes:
 - Weight logs later
 - Progress image metadata later
 
+Current user/auth state:
+
+- `/login` and `/register` are frontend-only static placeholders.
+- No user table exists yet.
+- Do not add user/auth migrations until the auth model is approved.
+
+Future user/auth model direction:
+
+- Store password hashes only, never plaintext passwords or password confirmations.
+- Use a structured country/region code when possible for admin reporting and localization, not exact location.
+- Support an `Other` country/region value instead of forcing an inaccurate choice.
+- Keep country/region separate from sensitive health profile data.
+- Keep health details out of the base user table; use separate optional profile/tool tables only after visibility, deletion/export, and moderation rules are defined.
+
 ## Sensitive Data
 
 Treat these as sensitive:

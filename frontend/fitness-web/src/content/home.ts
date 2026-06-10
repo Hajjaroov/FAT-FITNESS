@@ -48,12 +48,12 @@ export const homeCopy = {
   },
   de: {
     hero: {
-      eyebrow: "Persoenliche Reise",
+      eyebrow: "Persönliche Reise",
       title:
-        "Realistische Unterstuetzung fuer Menschen, die sich in perfekter Fitness-Kultur nicht wiederfinden.",
+        "Realistische Unterstützung für Menschen, die sich in perfekter Fitness-Kultur nicht wiederfinden.",
       paragraphs: [
-        "Ich bin kein Coach und kein Athlet. Ich dokumentiere meine eigene Abnehmreise ab 203 kg und baue eine Community fuer Menschen auf, die realistische, anfaengerfreundliche Unterstuetzung suchen.",
-        "Mein letzter eingetragener Stand ist 158 kg am 7. Juni 2026. Die Zahlen sind wichtig, aber der groessere Punkt ist: Fortschritt muss nicht perfekt aussehen, um echt zu sein.",
+        "Ich bin kein Coach und kein Athlet. Ich dokumentiere meine eigene Abnehmreise ab 203 kg und baue eine Community für Menschen auf, die realistische, anfängerfreundliche Unterstützung suchen.",
+        "Mein letzter eingetragener Stand ist 158 kg am 7. Juni 2026. Die Zahlen sind wichtig, aber der größere Punkt ist: Fortschritt muss nicht perfekt aussehen, um echt zu sein.",
         "Diese Seite ist der Startpunkt des Projekts. Sie verbindet den Kern der Geschichte, den aktuellen Stand und die Journal-Seite der Reise an einem Ort.",
       ],
     },
@@ -66,18 +66,18 @@ export const homeCopy = {
       ],
       guardrails: [
         "Ich bin kein Coach und kein Athlet.",
-        "Das ist persoenliche Erfahrung, keine medizinische Beratung.",
+        "Das ist persönliche Erfahrung, keine medizinische Beratung.",
         "Nichts hier ist eine garantierte Methode.",
-        "GLP-1 wird nur als Teil meiner eigenen Geschichte erwaehnt.",
+        "GLP-1 wird nur als Teil meiner eigenen Geschichte erwähnt.",
       ],
     },
     why: {
       eyebrow: "Warum es das gibt",
-      title: "Ich wollte einen Ort, der sich ab Tag eins realistisch anfuehlt.",
+      title: "Ich wollte einen Ort, der sich ab Tag eins realistisch anfühlt.",
       paragraphs: [
-        "Viele Fitness-Inhalte drehen sich um Selbstsicherheit, Erfahrung und perfekt formulierte Tipps. Das kann manchen helfen, aber es fuehlt sich oft weit weg an, wenn man mit sehr hohem Gewicht startet und sein Leben veraendern will, ohne so zu tun, als waere es einfach.",
-        "Dieses Projekt ist meine Art, die unordentliche Mitte zu dokumentieren. Gute Tage zaehlen. Schwere Tage auch. Was fuer mich funktioniert hat, soll als meine Erfahrung stehen, nicht als Regel fuer alle.",
-        "Der Ton hier soll bodenstaendig, anfaengerfreundlich und ehrlich bleiben: was schwer ist, was besser wird und was noch herausgefunden werden muss.",
+        "Viele Fitness-Inhalte drehen sich um Selbstsicherheit, Erfahrung und perfekt formulierte Tipps. Das kann manchen helfen, aber es fühlt sich oft weit weg an, wenn man mit sehr hohem Gewicht startet und sein Leben verändern will, ohne so zu tun, als wäre es einfach.",
+        "Dieses Projekt ist meine Art, die unordentliche Mitte zu dokumentieren. Gute Tage zählen. Schwere Tage auch. Was für mich funktioniert hat, soll als meine Erfahrung stehen, nicht als Regel für alle.",
+        "Der Ton hier soll bodenständig, anfängerfreundlich und ehrlich bleiben: was schwer ist, was besser wird und was noch herausgefunden werden muss.",
       ],
     },
     journal: {
@@ -85,9 +85,9 @@ export const homeCopy = {
       title: "Notizen, Fortschritt und praktische Reflexion.",
       points: [
         "Ehrliche Fortschritts-Updates aus dem normalen Alltag.",
-        "Reflexionen darueber, was geholfen hat, was nicht funktioniert hat und was ich noch lerne.",
-        "Eine Anfaengerperspektive statt perfekter Fitness-Ratschlaege.",
-        "Ein einfacher Ort, um die Reise zu dokumentieren, ohne die Struktur unnoetig kompliziert zu machen.",
+        "Reflexionen darüber, was geholfen hat, was nicht funktioniert hat und was ich noch lerne.",
+        "Eine Anfängerperspektive statt perfekter Fitness-Ratschläge.",
+        "Ein einfacher Ort, um die Reise zu dokumentieren, ohne die Struktur unnötig kompliziert zu machen.",
       ],
     },
   },

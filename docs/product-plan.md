@@ -42,11 +42,13 @@ Current structure:
 - The homepage currently acts as the landing page, story page, and journal surface.
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
 - Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
+- German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 - `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
 - `/community` is the static forum index for the future forum-style community.
 - `/community/guidelines` is a static community guidelines page for safety and behavior rules.
 - Community category routes are static empty board pages for planned forum boards.
 - Community post detail routes are still placeholders until real forum mechanics are approved.
+- `/login` and `/register` are styled static account-prep pages only.
 - Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
 - Page copy/data should live in frontend content modules instead of long hardcoded text blocks in route TSX files.
 
@@ -137,6 +139,45 @@ Current state:
 - It shows forum boards with topics/replies/latest columns.
 - It does not allow posting, accounts, comments, persistence, or moderation actions yet.
 - Post routes remain placeholders until implementation is intentionally approved.
+
+### User Accounts
+
+User accounts are planned after the static community/forum shape is reviewed.
+
+Current state:
+
+- `/login` and `/register` are static frontend pages.
+- The pages show disabled form fields with a short account-unavailable message.
+- No credentials or account data are collected.
+- No authentication API, backend session, cookie, JWT, or database user entity exists yet.
+
+Purpose before real auth:
+
+- Make the future account flow visible.
+- Keep login/register familiar for end users instead of exposing development notes.
+- Keep privacy expectations visible before user data is collected.
+
+Planned minimal registration information:
+
+- Display name: public forum name.
+- Email: login and account communication.
+- Country / region: searchable picker for coarse location, future admin/community insight, and localization.
+- Password and confirm password: confirmation is UI validation only and should never be stored separately.
+- Agreement to community rules and privacy terms before posting opens.
+
+Country / region UX:
+
+- Use a searchable text input backed by a maintained country/region list, not an open free-text field.
+- Users search and select by country/region name; internal codes must not be shown in the end-user dropdown.
+- Show up to 9 matching country/region suggestions plus `Other`.
+- Include commonly missed countries and regions such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
+- Store a country/region code later when auth exists; `Other` can be used when someone does not find the right entry.
+
+Do not collect during basic registration:
+
+- Exact address, city, or GPS location.
+- Starting weight, current weight, GLP-1 use, OP/surgery status, diet, exercise ability, photos, or medical history.
+- Goals or sensitive profile details unless they become clearly optional profile/tool fields later.
 
 Forum categories for MVP:
 
@@ -294,6 +335,8 @@ Goals:
 - Make planned boards linkable as empty board pages without enabling posting
 - Keep safety and moderation expectations available without turning the index into a rules page
 - Keep `/community/guidelines` as the behavior/safety page for now
+- Keep `/login` and `/register` static, disabled, and end-user friendly until auth is intentionally planned
+- Keep planned registration minimal: display name, email, country/region, password confirmation, and rules/privacy agreement
 - Do not add accounts, posts, comments, likes, reports, moderation actions, or database entities yet
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
 
@@ -307,4 +350,5 @@ Content direction:
 - Current Community page: static forum index with planned boards and zero-state forum metadata.
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Current Community Category pages: static empty board pages for each planned forum category.
+- Current Login/Register pages: static disabled account-prep pages.
 - Photos and deeper tools can be added later after the static content is reviewed.

@@ -158,32 +158,32 @@ const englishSchedule: TrainingDay[] = [
 const germanSchedule: TrainingDay[] = [
   {
     day: "Montag",
-    focus: "Oberkoerper A",
+    focus: "Oberkörper A",
     exercises: englishSchedule[0].exercises,
     notes: [
-      "Chest-supported Row nutzt eine Schraegbank.",
-      "Einige Oberkoerperuebungen nutzen in den ersten 2 Wochen 2 Saetze.",
+      "Chest-supported Row nutzt eine Schrägbank.",
+      "Einige Oberkörperübungen nutzen in den ersten 2 Wochen 2 Sätze.",
       "Overhead Tricep Extension kann mit einem Stuhl besser funktionieren.",
     ],
   },
   {
     day: "Mittwoch",
-    focus: "Unterkoerper + Core",
+    focus: "Unterkörper + Core",
     exercises: englishSchedule[1].exercises,
     notes: [
-      "Die Stuhltiefe dient als Ziel fuer die Kniebeuge.",
-      "Hip Thrust kann mit Bankunterstuetzung gemacht werden, wenn es bequem ist.",
-      "Bei Supported Split Squats einen Stuhl fuer Balance halten.",
-      "Calf Raises koennen von Koerpergewicht zu Kurzhanteln und spaeter Stufe/Treppe gesteigert werden.",
+      "Die Stuhltiefe dient als Ziel für die Kniebeuge.",
+      "Hip Thrust kann mit Bankunterstützung gemacht werden, wenn es bequem ist.",
+      "Bei Supported Split Squats einen Stuhl für Balance halten.",
+      "Calf Raises können von Körpergewicht zu Kurzhanteln und später Stufe/Treppe gesteigert werden.",
     ],
   },
   {
     day: "Freitag",
-    focus: "Oberkoerper B",
+    focus: "Oberkörper B",
     exercises: englishSchedule[2].exercises,
     notes: [
       "Die PDF-Quelle notiert, dass Seated Dumbbell Shoulder Press eine schwierigere Option sein kann.",
-      "Aktuelle Gewichtsnotizen existieren in der Quelle, aber die Row-Zuordnung muss vor Veroeffentlichung geprueft werden.",
+      "Aktuelle Gewichtsnotizen existieren in der Quelle, aber die Row-Zuordnung muss vor Veröffentlichung geprüft werden.",
     ],
   },
   {
@@ -260,7 +260,7 @@ export const learnCopy = {
         {
           name: "Meal 1",
           summary: "350 kcal | 33 g protein | 8 g carbs | 21 g fat",
-          items: ["3 boiled medium eggs", "1 tomato, 83 g", "100 g koerniger Frischkaese"],
+          items: ["3 boiled medium eggs", "1 tomato, 83 g", "100 g körniger Frischkäse"],
         },
         {
           name: "Shake",
@@ -278,7 +278,7 @@ export const learnCopy = {
           items: [
             "Chicken breast",
             "Olive oil, mustard, tomato paste, and yogurt sauce",
-            "Frozen vegetables, broccoli or Kaisergemuese, mushrooms",
+            "Frozen vegetables, broccoli or Kaisergemüse, mushrooms",
             "Potato and bulgur",
           ],
         },
@@ -370,29 +370,29 @@ export const learnCopy = {
     overview: {
       eyebrow: "Lernen",
       title:
-        "Praktische Notizen aus der Reise, geordnet ohne so zu tun, als waere es ein Kurs.",
+        "Praktische Notizen aus der Reise, geordnet ohne so zu tun, als wäre es ein Kurs.",
       intro:
-        "Dieser Bereich sammelt die strukturierteren Teile des Projekts: Essen, Training und medizinische Reise. Das Ziel ist, die Erfahrung verstaendlicher zu machen, ohne daraus Coaching, medizinische Beratung oder eine garantierte Methode zu machen.",
+        "Dieser Bereich sammelt die strukturierteren Teile des Projekts: Essen, Training und medizinische Reise. Das Ziel ist, die Erfahrung verständlicher zu machen, ohne daraus Coaching, medizinische Beratung oder eine garantierte Methode zu machen.",
       sections: [
         {
           href: "/learn/food-and-diet",
-          title: "Essen & Ernaehrung",
+          title: "Essen & Ernährung",
           summary:
-            "Persoenliche Ernaehrungsstruktur, Mahlzeitenideen, Supplements und was aus der aktuellen Routine gelernt wird.",
+            "Persönliche Ernährungsstruktur, Mahlzeitenideen, Supplements und was aus der aktuellen Routine gelernt wird.",
           startsWith: [
-            "Aktuelles Ernaehrungsbeispiel mit etwa 1850 kcal, 190 g Protein, 125 g Carbs und 55 g Fett.",
+            "Aktuelles Ernährungsbeispiel mit etwa 1850 kcal, 190 g Protein, 125 g Carbs und 55 g Fett.",
             "Mahlzeitenstruktur, einfache Lebensmittel, Supplements und Produktnotizen.",
-            "Spaeter kann ein Tool helfen, aehnliche Mahlzeitenstrukturen fuer bestimmte Naehrwerte zu bauen.",
+            "Später kann ein Tool helfen, ähnliche Mahlzeitenstrukturen für bestimmte Nährwerte zu bauen.",
           ],
         },
         {
           href: "/learn/training",
           title: "Training",
           summary:
-            "Training aus einem sehr hohen Startgewicht heraus, mit anfaengerfreundlichen Notizen ohne Fitness-Erfahrung vorauszusetzen.",
+            "Training aus einem sehr hohen Startgewicht heraus, mit anfängerfreundlichen Notizen ohne Fitness-Erfahrung vorauszusetzen.",
           startsWith: [
             "Aktuelle Trainingssituation und 3-4 Einheiten pro Woche.",
-            "Uebungen, die zum echten Startpunkt passen, mit Fotos spaeter.",
+            "Übungen, die zum echten Startpunkt passen, mit Fotos später.",
             "Notizen zu Sicherheit, Gym-Angst, Erholung und Equipment.",
           ],
         },
@@ -400,26 +400,26 @@ export const learnCopy = {
           href: "/learn/medical-journey",
           title: "Medizinische Reise",
           summary:
-            "Persoenlicher medizinischer Kontext, inklusive GLP-1 Historie und andere Entscheidungen, vorsichtig dokumentiert.",
+            "Persönlicher medizinischer Kontext, inklusive GLP-1 Historie und andere Entscheidungen, vorsichtig dokumentiert.",
           startsWith: [
             "GLP-1 Timeline von 203 kg am 16. November 2025 bis 158 kg am 7. Juni 2026.",
-            "Shot- und Gewichtslogs als persoenliche Aufzeichnungen, nicht als Dosierungsanleitung.",
-            "Themen fuer Aerztegespraeche und persoenliche Reflexionen, keine medizinische Beratung.",
+            "Shot- und Gewichtslogs als persönliche Aufzeichnungen, nicht als Dosierungsanleitung.",
+            "Themen für Ärztegespräche und persönliche Reflexionen, keine medizinische Beratung.",
           ],
         },
       ],
       boundariesTitle: "Grenzen",
       boundaries: [
-        "Alles hier startet bei persoenlicher Erfahrung.",
-        "Keine Diaet, kein Training, kein Supplement, keine Medikamente und keine OP-Themen sollen als universelle Methode dargestellt werden.",
-        "Medizinische Entscheidungen gehoeren zu qualifizierten Fachpersonen.",
+        "Alles hier startet bei persönlicher Erfahrung.",
+        "Keine Diät, kein Training, kein Supplement, keine Medikamente und keine OP-Themen sollen als universelle Methode dargestellt werden.",
+        "Medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       ],
     },
     food: {
-      eyebrow: "Essen & Ernaehrung",
-      title: "Die aktuelle Ernaehrungsstruktur hinter der Reise.",
+      eyebrow: "Essen & Ernährung",
+      title: "Die aktuelle Ernährungsstruktur hinter der Reise.",
       intro:
-        "Diese Seite dokumentiert das aktuelle persoenliche Ernaehrungsbeispiel. Es ist als Kontext fuer die Reise und spaetere Tools hilfreich, sollte aber nicht als Plan dargestellt werden, dem jeder folgen soll.",
+        "Diese Seite dokumentiert das aktuelle persönliche Ernährungsbeispiel. Es ist als Kontext für die Reise und spätere Tools hilfreich, sollte aber nicht als Plan dargestellt werden, dem jeder folgen soll.",
       dailyTotals: [
         { label: "Kalorien", value: "1850 kcal" },
         { label: "Protein", value: "190 g" },
@@ -431,7 +431,7 @@ export const learnCopy = {
         {
           name: "Mahlzeit 1",
           summary: "350 kcal | 33 g Protein | 8 g Carbs | 21 g Fett",
-          items: ["3 gekochte Eier, mittel", "1 Tomate, 83 g", "100 g koerniger Frischkaese"],
+          items: ["3 gekochte Eier, mittel", "1 Tomate, 83 g", "100 g körniger Frischkäse"],
         },
         {
           name: "Shake",
@@ -448,9 +448,9 @@ export const learnCopy = {
           summary:
             "2 Mahlzeiten, jeweils etwa 530 kcal | 50 g Protein | 46 g Carbs | 10 g Fett",
           items: [
-            "Haehnchenbrust",
-            "Olivenoel, Senf, Tomatenmark und Joghurt-Sauce",
-            "TK-Gemuese, Brokkoli oder Kaisergemuese, Champignons",
+            "Hähnchenbrust",
+            "Olivenöl, Senf, Tomatenmark und Joghurt-Sauce",
+            "TK-Gemüse, Brokkoli oder Kaisergemüse, Champignons",
             "Kartoffel und Bulgur",
           ],
         },
@@ -462,7 +462,7 @@ export const learnCopy = {
       ],
       supplementsTitle: "Supplements",
       supplementsIntro:
-        "Diese gehoeren standardmaessig zu Essen und Ernaehrung, ausser sie haengen mit Laborwerten, aerztlicher Begleitung, Medikamenten-Interaktionen oder OP-Erholung zusammen.",
+        "Diese gehören standardmäßig zu Essen und Ernährung, außer sie hängen mit Laborwerten, ärztlicher Begleitung, Medikamenten-Interaktionen oder OP-Erholung zusammen.",
       supplements: [
         "D3 5000 IU + K2",
         "Omega-3, 1500 EPA / 750 DHA",
@@ -475,18 +475,18 @@ export const learnCopy = {
       ],
       boundariesTitle: "Grenzen",
       boundaries: [
-        "Das ist eine persoenliche Ernaehrungsstruktur, kein universeller Diaetplan.",
+        "Das ist eine persönliche Ernährungsstruktur, kein universeller Diätplan.",
         "Supplements werden als Teil der aktuellen Routine gelistet, nicht als Empfehlung.",
-        "Ein spaeteres Mahlzeitenstruktur-Tool soll bei Zielwerten helfen, ohne eine Diaet vorzuschreiben.",
+        "Ein späteres Mahlzeitenstruktur-Tool soll bei Zielwerten helfen, ohne eine Diät vorzuschreiben.",
       ],
     },
     training: {
       eyebrow: "Training",
-      title: "Eine Anfaengerroutine, gebaut um den echten Startpunkt.",
+      title: "Eine Anfängerroutine, gebaut um den echten Startpunkt.",
       intro:
-        "Diese Seite sammelt die klare Trainingsstruktur aus der OneNote-PDF: Geh-Progression, Warm-up, Wochenplan, Uebungen, Saetze und praktische Notizen. Sie bleibt persoenlich und macht daraus kein universelles Programm.",
+        "Diese Seite sammelt die klare Trainingsstruktur aus der OneNote-PDF: Geh-Progression, Warm-up, Wochenplan, Übungen, Sätze und praktische Notizen. Sie bleibt persönlich und macht daraus kein universelles Programm.",
       walkingTitle: "Geh-Progression",
-      walkingIntro: "Gehen ist fuer freie Tage geplant und steigert sich mit der Zeit.",
+      walkingIntro: "Gehen ist für freie Tage geplant und steigert sich mit der Zeit.",
       walkingProgression: [
         { phase: "Wochen 01-08", target: "30 Minuten an freien Tagen" },
         { phase: "Wochen 09-16", target: "40 Minuten an freien Tagen" },
@@ -494,47 +494,47 @@ export const learnCopy = {
       ],
       warmupTitle: "Warm-up Protokoll",
       warmupIntro:
-        "Die Notizen sagen: langsam arbeiten und den Stuhl als Beruehrungspunkt nutzen, nicht als volles Hinsetzen.",
+        "Die Notizen sagen: langsam arbeiten und den Stuhl als Berührungspunkt nutzen, nicht als volles Hinsetzen.",
       warmup: [
         "Auf der Stelle marschieren: 2 Minuten",
         "Schulterkreisen: 10 Wiederholungen",
-        "Armkreisen: 10 vorwaerts und 10 rueckwaerts",
-        "Hueftkreisen: 10 pro Richtung",
+        "Armkreisen: 10 vorwärts und 10 rückwärts",
+        "Hüftkreisen: 10 pro Richtung",
         "Bodyweight Chair Squats: 10 langsame Wiederholungen",
-        "Cat-Cow Mobilitaet: 8 Wiederholungen",
+        "Cat-Cow Mobilität: 8 Wiederholungen",
       ],
       scheduleTitle: "Wochenplan, Wochen 1-12",
-      exerciseLabel: "Uebungen",
+      exerciseLabel: "Übungen",
       notesLabel: "Notizen",
-      photoPlaceholder: "Foto spaeter",
+      photoPlaceholder: "Foto später",
       schedule: germanSchedule,
       boundariesTitle: "Grenzen",
       boundaries: [
-        "Das ist eine persoenliche Routine, kein Anfaengerprogramm fuer alle.",
-        "Uebungsfotos koennen spaeter kommen, nachdem die Bewegungen geprueft wurden.",
-        "Exakte aktuelle Gewichte muessen vor oeffentlicher Nutzung aus der Originaltabelle verifiziert werden.",
+        "Das ist eine persönliche Routine, kein Anfängerprogramm für alle.",
+        "Übungsfotos können später kommen, nachdem die Bewegungen geprüft wurden.",
+        "Exakte aktuelle Gewichte müssen vor öffentlicher Nutzung aus der Originaltabelle verifiziert werden.",
       ],
     },
     medical: {
       eyebrow: "Medizinische Reise",
-      title: "Ein persoenlicher GLP-1 Log, vorsichtig dokumentiert.",
+      title: "Ein persönlicher GLP-1 Log, vorsichtig dokumentiert.",
       intro:
-        "Diese Seite haelt die bereitgestellte persoenliche Timeline fest. Sie ist fuer Transparenz und Kontext da, nicht als Medikamentenberatung, Dosierungsanleitung oder Methode zum Kopieren.",
+        "Diese Seite hält die bereitgestellte persönliche Timeline fest. Sie ist für Transparenz und Kontext da, nicht als Medikamentenberatung, Dosierungsanleitung oder Methode zum Kopieren.",
       summary: [
         { label: "Startpunkt", value: "203.0 kg", detail: "2025-11-16" },
         { label: "Letzter eingetragener Stand", value: "158.0 kg", detail: "2026-06-07" },
-        { label: "Eingetragene Veraenderung", value: "-45.0 kg", detail: "Persoenlicher Log" },
+        { label: "Eingetragene Veränderung", value: "-45.0 kg", detail: "Persönlicher Log" },
       ],
       entriesTitle: "Eingetragene Werte",
       entriesIntro:
-        "`MJ` bleibt als Quell-Label erhalten. Die Tabelle zeigt nur abgeschlossene Eintraege bis 2026-06-07.",
-      tableHeaders: ["MJ", "Datum", "Gewicht", "Veraenderung"],
+        "`MJ` bleibt als Quell-Label erhalten. Die Tabelle zeigt nur abgeschlossene Einträge bis 2026-06-07.",
+      tableHeaders: ["MJ", "Datum", "Gewicht", "Veränderung"],
       loggedEntries,
       boundariesTitle: "Grenzen",
       boundaries: [
-        "Das ist ein persoenlicher Log, keine GLP-1 Empfehlung.",
-        "Diese Seite soll keine Dosierungsentscheidungen erklaeren und niemandem sagen, wann Medikamente geaendert werden sollen.",
-        "Medizinische Entscheidungen gehoeren zu qualifizierten Fachpersonen.",
+        "Das ist ein persönlicher Log, keine GLP-1 Empfehlung.",
+        "Diese Seite soll keine Dosierungsentscheidungen erklären und niemandem sagen, wann Medikamente geändert werden sollen.",
+        "Medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       ],
     },
   },
