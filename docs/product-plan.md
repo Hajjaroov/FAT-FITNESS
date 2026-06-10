@@ -142,12 +142,14 @@ Current state:
 
 ### User Accounts
 
-User accounts are planned after the static community/forum shape is reviewed.
+User accounts are the next planning milestone after the static community/forum shape and frontend auth placeholders.
 
 Current state:
 
 - `/login` and `/register` are static frontend pages.
 - The pages show disabled form fields with a short account-unavailable message.
+- Registration preview includes display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
+- The country/region picker lets users search and select country/region names, keeps codes internal, shows up to 9 suggestions plus `Other`, and includes commonly missed entries such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
 - No credentials or account data are collected.
 - No authentication API, backend session, cookie, JWT, or database user entity exists yet.
 
@@ -321,24 +323,30 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Review and refine the static Community forum index before building real forum mechanics.
+Plan real user accounts before implementing auth, forum posting, comments, reports, or moderation mechanics.
 
-Goals:
+Completed-enough checkpoints for now:
 
-- Start with static frontend content
-- Keep public page styling consistent with shared light/dark theme tokens
-- Keep public copy in editable content objects with English and German support
-- Do not add backend persistence, MDX, or CMS yet
-- Do not add real photos yet
-- Make `/community` look and behave like a forum index
-- Show planned boards without making them active yet
-- Make planned boards linkable as empty board pages without enabling posting
-- Keep safety and moderation expectations available without turning the index into a rules page
-- Keep `/community/guidelines` as the behavior/safety page for now
-- Keep `/login` and `/register` static, disabled, and end-user friendly until auth is intentionally planned
-- Keep planned registration minimal: display name, email, country/region, password confirmation, and rules/privacy agreement
-- Do not add accounts, posts, comments, likes, reports, moderation actions, or database entities yet
-- Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods
+- Homepage owns the landing, personal story, and journal direction.
+- Learn has static overview and detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
+- `/community` has been reworked into a static forum index with planned boards and zero-state forum metadata.
+- `/community/guidelines` exists as the static behavior/safety page.
+- `/community/categories/[slug]` generates static empty board pages.
+- `/login` and `/register` exist as static disabled account-prep pages.
+- German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
+
+Auth planning goals:
+
+- Decide the auth/session approach before writing code: cookie session vs JWT, token lifetime, CSRF expectations, and logout behavior.
+- Decide registration policy: open registration, invite-only/manual approval, or admin-created accounts for the first launch.
+- Define roles before persistence: `USER`, `MODERATOR`, and `ADMIN`.
+- Define the first user table shape and Flyway migration before adding database entities.
+- Define password hashing, email uniqueness, account status, and basic validation.
+- Define privacy/GDPR expectations before collecting real account data: deletion/export, visibility, moderation access, and country/region handling.
+- Keep planned registration minimal: display name, email, country/region code from the picker, password confirmation validation, and rules/privacy agreement.
+- Keep health-sensitive data out of initial registration.
+- Do not add forum posts, comments, likes/bookmarks, reporting, moderation actions, tracking tools, or sensitive health data until accounts and privacy rules are intentionally designed.
+- Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods.
 
 Content direction:
 

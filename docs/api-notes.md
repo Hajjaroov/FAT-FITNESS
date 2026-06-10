@@ -86,14 +86,14 @@ Likely endpoints later:
 
 ### Users And Auth
 
-Later only:
+Next planning milestone, implementation later only:
 
 - Register/login
 - Session or JWT/cookie strategy
 - Roles: `USER`, `MODERATOR`, `ADMIN`
 - Google login later
 
-Do not add auth yet.
+Do not add auth endpoints yet. First decide the auth model: cookie session vs JWT, registration policy, roles, CSRF/logout behavior, account status, password hashing, and GDPR/privacy expectations.
 
 Planned registration shape when auth is approved:
 
@@ -116,8 +116,9 @@ Do not include sensitive health/profile fields in the initial register endpoint.
 Current frontend-only state:
 
 - `/login` and `/register` exist as disabled static pages.
+- Register previews display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - They do not submit credentials and do not call an API.
-- Do not add auth endpoints until the auth approach is explicitly planned.
+- Do not add auth endpoints until the auth approach is explicitly planned and approved.
 
 ## Health And Safety API Guidance
 

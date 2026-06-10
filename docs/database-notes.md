@@ -56,8 +56,15 @@ Future relational data likely includes:
 Current user/auth state:
 
 - `/login` and `/register` are frontend-only static placeholders.
+- Register previews display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - No user table exists yet.
 - Do not add user/auth migrations until the auth model is approved.
+
+Next user/auth step:
+
+- Plan the first user model before implementation.
+- Decide required columns, account status values, role handling, country/region storage, timestamps, password hash strategy, and deletion/export expectations.
+- Add the first user migration only after that model is explicitly approved.
 
 Future user/auth model direction:
 
