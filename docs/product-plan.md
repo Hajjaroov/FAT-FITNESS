@@ -151,7 +151,8 @@ Current state:
 - Registration preview includes display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - The country/region picker lets users search and select country/region names, keeps codes internal, shows up to 9 suggestions plus `Other`, and includes commonly missed entries such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
 - No credentials or account data are collected.
-- No authentication API, backend session, cookie, JWT, or database user entity exists yet.
+- Backend auth persistence foundation exists: users, role storage, email verification token storage, and refresh-token session storage.
+- No public authentication API, token issuing, frontend form submission, or real account session exists yet.
 
 Approved auth direction:
 
@@ -358,7 +359,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Implement the user accounts foundation from the approved auth plan before implementing forum posting, comments, reports, or moderation mechanics.
+Continue the user accounts foundation from the approved auth plan before implementing forum posting, comments, reports, or moderation mechanics.
 
 Completed-enough checkpoints for now:
 
@@ -368,12 +369,12 @@ Completed-enough checkpoints for now:
 - `/community/guidelines` exists as the static behavior/safety page.
 - `/community/categories/[slug]` generates static empty board pages.
 - `/login` and `/register` exist as static disabled account-prep pages.
+- Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:
 
-- Add the first user/account persistence model with Flyway.
-- Implement API-first auth with short-lived JWT access tokens and refresh-token session records.
+- Implement API-first auth endpoints and token issuing with short-lived JWT access tokens and refresh-token session records.
 - Support web, mobile, and future desktop clients through the shared Spring Boot API.
 - Require email verification before posting or other account-only community actions.
 - Define roles before persistence: `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.

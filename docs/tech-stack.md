@@ -57,6 +57,7 @@ Backend rules:
 
 - Expose REST APIs.
 - Use feature-based package structure.
+- Use `com.fatfitness.api` as the Java base package.
 - Keep `/api/status` public and minimal.
 - Authentication is now planned as an API-first token model for web, mobile, and possible desktop clients.
 - Use short-lived JWT access tokens plus refresh-token session records when auth is implemented.

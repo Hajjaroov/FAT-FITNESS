@@ -57,13 +57,15 @@ Current user/auth state:
 
 - `/login` and `/register` are frontend-only static placeholders.
 - Register previews display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
-- No user table exists yet.
-- The auth direction is now approved, but no user/auth migration has been added yet.
+- The first auth Flyway migration exists.
+- User/auth persistence includes users, role storage, email verification tokens, and refresh-token session records.
+- JPA entities and repositories exist for the auth persistence foundation.
+- Public auth endpoints and token issuing are not implemented yet.
 
 Next user/auth step:
 
-- Add the first user/auth Flyway migration in a small, reviewable implementation slice.
-- Include users, role storage, email verification support, and refresh-token session records.
+- Implement auth services and endpoints for register, verify email, resend verification, login, refresh, logout, and current user.
+- Add JWT access-token issuing and refresh-token rotation using the existing persistence foundation.
 - Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:

@@ -1,4 +1,4 @@
-package com.mohamad.fitnessapi.config;
+package com.fatfitness.api.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

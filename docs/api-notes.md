@@ -105,7 +105,7 @@ Auth model:
 - Do not store tokens in browser `localStorage`.
 - Ban, delete, logout, and password-change flows should be able to revoke sessions.
 
-Initial auth endpoints, when implementation starts:
+Next auth endpoint slice:
 
 - `POST /api/auth/register`
 - `POST /api/auth/verify-email`
@@ -153,7 +153,12 @@ Current frontend-only state:
 - `/login` and `/register` exist as disabled static pages.
 - Register previews display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - They do not submit credentials and do not call an API.
-- Do not add auth endpoints until the auth approach is explicitly planned and approved.
+
+Current backend auth state:
+
+- Auth persistence foundation exists with users, user roles, email verification tokens, and refresh-token session records.
+- Password hashing support exists.
+- No public auth endpoints, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
 
 ## Health And Safety API Guidance
 

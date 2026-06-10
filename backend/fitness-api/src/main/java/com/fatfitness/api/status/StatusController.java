@@ -1,4 +1,4 @@
-package com.mohamad.fitnessapi.status;
+package com.fatfitness.api.status;
 
 import java.time.Instant;
 

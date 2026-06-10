@@ -1,4 +1,4 @@
-package com.mohamad.fitnessapi.status;
+package com.fatfitness.api.status;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
