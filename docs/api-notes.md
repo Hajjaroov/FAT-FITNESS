@@ -14,7 +14,7 @@ Response shape:
 
 ```json
 {
-  "service": "fitness-api",
+  "service": "fatfitness-api",
   "status": "UP",
   "timestamp": "2026-06-08T16:49:06.581076400Z"
 }

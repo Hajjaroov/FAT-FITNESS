@@ -162,7 +162,7 @@ Important note:
 - The PDF text was extractable, but some current weight/load cells were difficult to map perfectly because the exported table split rows and columns across pages.
 - Do not publish exact current loads until the owner verifies them.
 - The clear parts below are safe to use: walking progression, warm-up, weekly schedule, exercises, sets/reps, and personal notes.
-- The Training page has a photo placeholder for each exercise. Each placeholder uses a stable `photoKey`; add a `photoSrc` for that exercise in `frontend/fitness-web/src/app/learn/training/page.tsx` when real photos are ready.
+- The Training page has a photo placeholder for each exercise. Each placeholder uses a stable `photoKey`; add a `photoSrc` for that exercise in `frontend/fatfitness-web/src/app/learn/training/page.tsx` when real photos are ready.
 
 ### Walking Progression
 

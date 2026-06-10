@@ -1,4 +1,4 @@
-# Fitness Community
+# Fat Fitness Community
 
 Personal fat fitness journey, blog, and community platform.
 
@@ -21,14 +21,14 @@ docker compose up -d
 ### Start backend
 
 ```
-cd backend/fitness-api
+cd backend/fatfitness-api
 ./gradlew bootRun
 ```
 
 ### start frontend
 
 ```
-cd frontend/fitness-web
+cd frontend/fatfitness-web
 npm run dev
 ```
 

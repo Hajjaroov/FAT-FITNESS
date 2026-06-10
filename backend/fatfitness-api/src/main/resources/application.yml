@@ -1,6 +1,6 @@
 spring:
   application:
-    name: fitness-api
+    name: fatfitness-api
 
   datasource:
     url: jdbc:postgresql://localhost:5432/fitness_db

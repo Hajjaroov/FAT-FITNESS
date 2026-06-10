@@ -1,6 +1,6 @@
 spring:
   application:
-    name: fitness-api
+    name: fatfitness-api
 
   datasource:
     url: jdbc:h2:mem:fitness_api_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH

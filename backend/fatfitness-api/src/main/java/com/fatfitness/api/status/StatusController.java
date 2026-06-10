@@ -13,7 +13,7 @@ public class StatusController {
 
 	private final String serviceName;
 
-	public StatusController(@Value("${spring.application.name:fitness-api}") String serviceName) {
+	public StatusController(@Value("${spring.application.name:fatfitness-api}") String serviceName) {
 		this.serviceName = serviceName;
 	}
 

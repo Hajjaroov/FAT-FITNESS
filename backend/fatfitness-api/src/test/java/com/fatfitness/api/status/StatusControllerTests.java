@@ -26,7 +26,7 @@ class StatusControllerTests {
 						.header("Origin", "http://localhost:3000"))
 				.andExpect(status().isOk())
 				.andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"))
-				.andExpect(jsonPath("$.service").value("fitness-api"))
+				.andExpect(jsonPath("$.service").value("fatfitness-api"))
 				.andExpect(jsonPath("$.status").value("UP"))
 				.andExpect(jsonPath("$.timestamp", notNullValue()));
 	}

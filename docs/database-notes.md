@@ -26,7 +26,7 @@ Use Flyway for all schema changes.
 
 Migration directory:
 
-- `backend/fitness-api/src/main/resources/db/migration`
+- `backend/fatfitness-api/src/main/resources/db/migration`
 
 Rules:
 
