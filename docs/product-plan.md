@@ -153,6 +153,35 @@ Current state:
 - No credentials or account data are collected.
 - No authentication API, backend session, cookie, JWT, or database user entity exists yet.
 
+Approved auth direction:
+
+- Use an API-first auth model because the Spring Boot API should serve the website now and mobile/desktop apps later.
+- Use short-lived JWT access tokens for API authentication.
+- Use refresh tokens with server-side session/device records so logout, bans, and token revocation are possible.
+- Store refresh tokens hashed in the database, not as plaintext.
+- Rotate refresh tokens on refresh.
+- Web clients should use secure `HttpOnly`, `Secure`, `SameSite` cookies for refresh handling where possible.
+- Mobile and desktop clients should use secure platform storage for refresh tokens and send access tokens with `Authorization: Bearer <token>`.
+- Do not store access or refresh tokens in browser `localStorage`.
+
+Approved registration direction:
+
+- Signup should be open.
+- Users must confirm their email before they can post or use account-only community actions.
+- Registration remains minimal and should not collect health-sensitive details.
+- Initial roles should be `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.
+- Account statuses should include at least `PENDING_EMAIL_VERIFICATION`, `ACTIVE`, `BANNED`, and `DELETED`.
+
+Deleted and banned account display:
+
+- Public forum display for deleted users should show `Deleted account`.
+- Public forum display for banned users should show `Banned account`.
+- Posts/comments can remain visible by default unless moderation removes them.
+- User rows should be soft-deleted with a deleted status and timestamp instead of immediate hard deletion.
+- Normal admin/moderator views should not expose deleted-user personal profile details.
+- Retained deleted-user records are for the site owner/database owner and required audit/data-integrity needs.
+- GDPR deletion/export and any permanent purge policy must be defined before launch.
+
 Purpose before real auth:
 
 - Make the future account flow visible.
@@ -180,6 +209,12 @@ Do not collect during basic registration:
 - Exact address, city, or GPS location.
 - Starting weight, current weight, GLP-1 use, OP/surgery status, diet, exercise ability, photos, or medical history.
 - Goals or sensitive profile details unless they become clearly optional profile/tool fields later.
+
+Optional profile/badge direction later:
+
+- Goals such as weight loss, muscle gain, or maintenance can become optional profile badges or preferences later.
+- GLP-1 and OP/surgery flags are health-sensitive optional profile flags, not registration fields.
+- These fields need privacy controls before they are implemented.
 
 Forum categories for MVP:
 
@@ -323,7 +358,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Plan real user accounts before implementing auth, forum posting, comments, reports, or moderation mechanics.
+Implement the user accounts foundation from the approved auth plan before implementing forum posting, comments, reports, or moderation mechanics.
 
 Completed-enough checkpoints for now:
 
@@ -335,13 +370,15 @@ Completed-enough checkpoints for now:
 - `/login` and `/register` exist as static disabled account-prep pages.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
-Auth planning goals:
+Approved auth implementation goals:
 
-- Decide the auth/session approach before writing code: cookie session vs JWT, token lifetime, CSRF expectations, and logout behavior.
-- Decide registration policy: open registration, invite-only/manual approval, or admin-created accounts for the first launch.
-- Define roles before persistence: `USER`, `MODERATOR`, and `ADMIN`.
-- Define the first user table shape and Flyway migration before adding database entities.
+- Add the first user/account persistence model with Flyway.
+- Implement API-first auth with short-lived JWT access tokens and refresh-token session records.
+- Support web, mobile, and future desktop clients through the shared Spring Boot API.
+- Require email verification before posting or other account-only community actions.
+- Define roles before persistence: `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.
 - Define password hashing, email uniqueness, account status, and basic validation.
+- Define soft-delete and banned-user display behavior before forum posts rely on authors.
 - Define privacy/GDPR expectations before collecting real account data: deletion/export, visibility, moderation access, and country/region handling.
 - Keep planned registration minimal: display name, email, country/region code from the picker, password confirmation validation, and rules/privacy agreement.
 - Keep health-sensitive data out of initial registration.

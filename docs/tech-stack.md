@@ -58,7 +58,10 @@ Backend rules:
 - Expose REST APIs.
 - Use feature-based package structure.
 - Keep `/api/status` public and minimal.
-- Do not add authentication until it is intentionally planned.
+- Authentication is now planned as an API-first token model for web, mobile, and possible desktop clients.
+- Use short-lived JWT access tokens plus refresh-token session records when auth is implemented.
+- Store refresh tokens hashed and support revocation/rotation.
+- Do not couple backend auth to Next.js-only sessions.
 - Do not add entities until a feature needs persistence.
 - Add tests for endpoint behavior and security/CORS expectations.
 

@@ -86,14 +86,34 @@ Likely endpoints later:
 
 ### Users And Auth
 
-Next planning milestone, implementation later only:
+Approved next implementation area:
 
 - Register/login
-- Session or JWT/cookie strategy
-- Roles: `USER`, `MODERATOR`, `ADMIN`
+- API-first JWT access tokens with refresh-token sessions
+- Roles: `OWNER`, `ADMIN`, `MODERATOR`, `USER`
 - Google login later
 
-Do not add auth endpoints yet. First decide the auth model: cookie session vs JWT, registration policy, roles, CSRF/logout behavior, account status, password hashing, and GDPR/privacy expectations.
+Auth model:
+
+- Use short-lived JWT access tokens for API authentication.
+- Use refresh tokens backed by server-side session/device records.
+- Store refresh tokens hashed in the database.
+- Rotate refresh tokens when they are used.
+- Web clients may use secure `HttpOnly`, `Secure`, `SameSite` cookies for refresh handling.
+- Mobile and desktop clients should use secure platform storage for refresh tokens.
+- API requests should use `Authorization: Bearer <accessToken>`.
+- Do not store tokens in browser `localStorage`.
+- Ban, delete, logout, and password-change flows should be able to revoke sessions.
+
+Initial auth endpoints, when implementation starts:
+
+- `POST /api/auth/register`
+- `POST /api/auth/verify-email`
+- `POST /api/auth/resend-verification`
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
 
 Planned registration shape when auth is approved:
 
@@ -104,6 +124,21 @@ Planned registration shape when auth is approved:
 - accepted community rules / privacy terms flags
 
 Do not send or store `confirmPassword` as account data. Use it only for client-side or request validation.
+
+Registration policy:
+
+- Signup is open.
+- Accounts start as `PENDING_EMAIL_VERIFICATION`.
+- Users must verify email before posting or using account-only community actions.
+- Basic account statuses should include `PENDING_EMAIL_VERIFICATION`, `ACTIVE`, `BANNED`, and `DELETED`.
+
+Deleted and banned account API behavior:
+
+- Public author display for deleted users should return `Deleted account`.
+- Public author display for banned users should return `Banned account`.
+- Normal admin/moderator APIs should not expose deleted-user personal profile details by default.
+- Owner-level or direct database access may retain deleted-user records for audit/data-integrity needs.
+- GDPR export/deletion and permanent purge behavior must be designed before launch.
 
 Country/region API direction:
 

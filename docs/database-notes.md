@@ -58,13 +58,13 @@ Current user/auth state:
 - `/login` and `/register` are frontend-only static placeholders.
 - Register previews display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - No user table exists yet.
-- Do not add user/auth migrations until the auth model is approved.
+- The auth direction is now approved, but no user/auth migration has been added yet.
 
 Next user/auth step:
 
-- Plan the first user model before implementation.
-- Decide required columns, account status values, role handling, country/region storage, timestamps, password hash strategy, and deletion/export expectations.
-- Add the first user migration only after that model is explicitly approved.
+- Add the first user/auth Flyway migration in a small, reviewable implementation slice.
+- Include users, role storage, email verification support, and refresh-token session records.
+- Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:
 
@@ -73,6 +73,30 @@ Future user/auth model direction:
 - Support an `Other` country/region value instead of forcing an inaccurate choice.
 - Keep country/region separate from sensitive health profile data.
 - Keep health details out of the base user table; use separate optional profile/tool tables only after visibility, deletion/export, and moderation rules are defined.
+
+Approved user/auth data direction:
+
+- Use UUID primary keys for user-facing persisted entities.
+- Store lowercase unique email.
+- Store display name separately from email.
+- Store `password_hash`, never raw passwords.
+- Store country/region as a code from the frontend picker, including support for `OTHER`.
+- Store account status values such as `PENDING_EMAIL_VERIFICATION`, `ACTIVE`, `BANNED`, and `DELETED`.
+- Store timestamps such as `created_at`, `updated_at`, `email_verified_at`, `last_login_at`, and `deleted_at`.
+- Support roles `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.
+- Prefer a join table for user roles so role changes remain flexible.
+- Store email verification tokens hashed or store only a hashed selector/token value.
+- Store refresh/session records with hashed refresh tokens, device/client metadata, expiry, revocation timestamp, and rotation/replacement tracking.
+
+Deleted and banned account data direction:
+
+- Use soft delete for user accounts at first.
+- Public forum author display should show `Deleted account` for deleted users.
+- Public forum author display should show `Banned account` for banned users.
+- Keep retained user rows for audit, moderation history, and relational integrity.
+- Normal admin/moderator product views should not expose deleted-user personal profile details.
+- Site owner/database owner can access retained records when needed.
+- Define GDPR export, deletion, anonymization, and permanent purge policy before public launch.
 
 ## Sensitive Data
 
