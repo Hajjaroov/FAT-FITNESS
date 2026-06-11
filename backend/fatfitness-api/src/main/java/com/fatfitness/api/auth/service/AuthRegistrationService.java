@@ -3,6 +3,7 @@ package com.fatfitness.api.auth.service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fatfitness.api.config.AuthProperties;
+import com.fatfitness.api.auth.dto.CurrentUserResponse;
 import com.fatfitness.api.auth.dto.LoginRequest;
 import com.fatfitness.api.auth.dto.LoginResponse;
 import com.fatfitness.api.auth.dto.LogoutRequest;
@@ -219,6 +221,27 @@ public class AuthRegistrationService {
 		return new LogoutResponse("Logged out if the session existed.");
 	}
 
+	@Transactional(readOnly = true)
+	public CurrentUserResponse currentUser(String userIdSubject) {
+		UUID userId = parseUserIdSubject(userIdSubject);
+		UserAccount user = userAccountRepository.findById(userId)
+				.orElseThrow(AuthRegistrationService::invalidAccessToken);
+
+		if (user.getStatus() != UserStatus.ACTIVE) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not active");
+		}
+
+		return new CurrentUserResponse(
+				user.getId(),
+				user.getEmail(),
+				user.getDisplayName(),
+				user.getCountryRegionCode(),
+				user.getStatus(),
+				user.getRoles(),
+				user.getEmailVerifiedAt(),
+				user.getLastLoginAt());
+	}
+
 	private static String normalizeEmail(String email) {
 		return email.trim().toLowerCase(Locale.ROOT);
 	}
@@ -255,5 +278,18 @@ public class AuthRegistrationService {
 
 	private static ResponseStatusException invalidRefreshToken() {
 		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+	}
+
+	private static UUID parseUserIdSubject(String subject) {
+		try {
+			return UUID.fromString(subject);
+		}
+		catch (RuntimeException ex) {
+			throw invalidAccessToken();
+		}
+	}
+
+	private static ResponseStatusException invalidAccessToken() {
+		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid access token");
 	}
 }

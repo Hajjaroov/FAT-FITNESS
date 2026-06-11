@@ -227,14 +227,45 @@ Response shape:
 
 This endpoint is public and intentionally returns success even when the refresh token is unknown or already revoked. Existing access tokens remain valid until their short expiry; logout revokes the ability to extend the session.
 
+### `GET /api/auth/me`
+
+Purpose:
+
+- Return the current authenticated account for a valid JWT bearer token.
+- Reject missing or invalid access tokens with `401`.
+- Reject valid tokens for accounts that are no longer active with `403`.
+
+Request headers:
+
+```http
+Authorization: Bearer jwt-access-token
+```
+
+Response shape:
+
+```json
+{
+  "userId": "2abda4f4-8f0d-4988-9b0e-1a76f43c83e2",
+  "email": "new@example.com",
+  "displayName": "New Member",
+  "countryRegionCode": "DE",
+  "status": "ACTIVE",
+  "roles": ["USER"],
+  "emailVerifiedAt": "2026-06-11T12:00:00Z",
+  "lastLoginAt": "2026-06-11T12:05:00Z"
+}
+```
+
+This is the first protected auth endpoint. It uses Spring Security bearer-token validation and then checks the persisted user status so banned or deleted accounts cannot keep using old access tokens until expiry for current-user reads.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
 - Frontend consumes API through `NEXT_PUBLIC_API_BASE_URL`.
 - Keep response shapes explicit and typed in the frontend.
 - Validate request bodies with Spring Validation when write endpoints are added.
-- Keep public endpoints clearly separated from authenticated endpoints later.
-- Do not add auth-only API behavior until authentication is planned.
+- Keep public endpoints clearly separated from authenticated endpoints.
+- Add auth-only API behavior in small, approved slices.
 - Do not expose internal exception details to clients.
 
 ## Planned API Areas
@@ -318,10 +349,12 @@ Current implemented auth endpoint:
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
-
-Next auth endpoint slice:
-
 - `GET /api/auth/me`
+
+Next auth slices:
+
+- Decide and implement frontend auth form submission/session handling.
+- Add real email delivery before production launch.
 
 Planned registration shape when auth is approved:
 
@@ -373,11 +406,13 @@ Current backend auth state:
 - `POST /api/auth/login` exists and issues a short-lived JWT access token plus a raw refresh token backed by a hashed refresh-session record.
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session.
 - `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing.
-- Bearer-token validation for protected endpoints, email sending, and frontend form submission do not exist yet.
+- `GET /api/auth/me` exists as the first protected endpoint and returns the current active user for a valid bearer token.
+- Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints, email sending, and frontend form submission do not exist yet.
 
 JWT configuration:
 
 - Access tokens are signed with a local HMAC secret from `fatfitness.auth.jwt.secret`.
+- Access tokens are validated by Spring Security resource-server support for protected endpoints.
 - Local development uses the fallback secret from `application.yml`.
 - Production must set `FATFITNESS_JWT_SECRET`; do not commit production secrets.
 - Access-token TTL is configured by `fatfitness.auth.jwt.access-token-ttl`.

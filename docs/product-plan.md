@@ -159,7 +159,8 @@ Current state:
 - `POST /api/auth/login` exists and issues a JWT access token plus a raw refresh token backed by hashed refresh-session storage.
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking old sessions and creating replacement sessions.
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
-- No frontend form submission, real email delivery, current-user endpoint, or protected account session exists yet.
+- `GET /api/auth/me` exists as the first protected endpoint and returns the current active account for a valid bearer token.
+- No frontend form submission, real email delivery, or web account session exists yet.
 
 Approved auth direction:
 
@@ -385,11 +386,12 @@ Completed-enough checkpoints for now:
 - `POST /api/auth/login` exists for active users and creates hashed refresh-session records.
 - `POST /api/auth/refresh` exists and rotates refresh-session records.
 - `POST /api/auth/logout` exists and revokes refresh-session records.
+- `GET /api/auth/me` exists and is protected by bearer-token validation.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:
 
-- Implement API-first auth endpoints and token issuing with short-lived JWT access tokens and refresh-token session records.
+- Implement API-first auth endpoints with short-lived JWT access tokens, bearer-token validation, and refresh-token session records.
 - Support web, mobile, and future desktop clients through the shared Spring Boot API.
 - Require email verification before posting or other account-only community actions.
 - Define roles before persistence: `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.

@@ -2,6 +2,7 @@ package com.fatfitness.api.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -589,6 +590,50 @@ class AuthRegistrationControllerTests {
 				.andExpect(jsonPath("$.message").value("Logged out if the session existed."));
 
 		assertThat(refreshSessionRepository.count()).isEqualTo(refreshSessionCount);
+	}
+
+	@Test
+	void meReturnsCurrentUserForBearerToken() throws Exception {
+		MvcResult loginResult = loginActiveMember("me@example.com");
+		String accessToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
+
+		mockMvc.perform(get("/api/auth/me")
+						.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.userId", notNullValue()))
+				.andExpect(jsonPath("$.email").value("me@example.com"))
+				.andExpect(jsonPath("$.displayName").value("New Member"))
+				.andExpect(jsonPath("$.countryRegionCode").value("DE"))
+				.andExpect(jsonPath("$.status").value("ACTIVE"))
+				.andExpect(jsonPath("$.roles[0]").value("USER"))
+				.andExpect(jsonPath("$.emailVerifiedAt", notNullValue()))
+				.andExpect(jsonPath("$.lastLoginAt", notNullValue()));
+	}
+
+	@Test
+	void meRejectsMissingBearerToken() throws Exception {
+		mockMvc.perform(get("/api/auth/me"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void meRejectsInvalidBearerToken() throws Exception {
+		mockMvc.perform(get("/api/auth/me")
+						.header("Authorization", "Bearer invalid-token"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void meRejectsBannedUserEvenWithValidToken() throws Exception {
+		MvcResult loginResult = loginActiveMember("banned-me@example.com");
+		String accessToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
+		UserAccount user = userAccountRepository.findByEmail("banned-me@example.com").orElseThrow();
+		user.ban();
+		userAccountRepository.saveAndFlush(user);
+
+		mockMvc.perform(get("/api/auth/me")
+						.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isForbidden());
 	}
 
 	private MvcResult registerNewMember(String email) throws Exception {

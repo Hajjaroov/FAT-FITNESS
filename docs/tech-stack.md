@@ -71,7 +71,8 @@ Backend rules:
 - `POST /api/auth/login` issues Spring Security JWT access tokens and stores hashed refresh-session records.
 - `POST /api/auth/refresh` rotates refresh-session records and revokes old refresh tokens.
 - `POST /api/auth/logout` revokes refresh sessions idempotently.
-- JWT signing uses `spring-security-oauth2-jose`; production must provide `FATFITNESS_JWT_SECRET`.
+- `GET /api/auth/me` is protected by Spring Security bearer-token validation and returns the current active user.
+- JWT signing uses `spring-security-oauth2-jose`; bearer-token validation uses `spring-security-oauth2-resource-server`; production must provide `FATFITNESS_JWT_SECRET`.
 - Add real transactional email later through a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.
 - Remove dev-only raw verification token responses before production launch.
 

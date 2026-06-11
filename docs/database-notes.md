@@ -67,13 +67,14 @@ Current user/auth state:
 - `POST /api/auth/login` exists and creates hashed refresh-session records for active users.
 - `POST /api/auth/refresh` exists and rotates refresh sessions by revoking/linking the old session and creating a replacement session.
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
-- Bearer-token validation for protected endpoints and real email delivery are not implemented yet.
+- `GET /api/auth/me` exists as the first protected endpoint and reads the current active user from the bearer-token subject.
+- Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and real email delivery are not implemented yet.
 
 Next user/auth step:
 
+- Decide and implement frontend auth form submission/session handling.
 - Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
-- Implement current-user endpoint now that login, refresh, and logout exist.
-- Add bearer-token validation for protected endpoints before connecting account-only frontend features.
+- Add bearer-token validation to future protected feature endpoints before connecting account-only frontend features.
 - Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:
