@@ -167,7 +167,7 @@ Response shape:
 }
 ```
 
-This endpoint is public. The refresh token is currently returned in JSON for API-first development. Web cookie handling can be added later when frontend form submission is intentionally wired.
+This endpoint is public. For `WEB` clients, the backend sets the refresh token as an `HttpOnly` refresh cookie and returns `refreshToken: null` in JSON. For non-web API clients such as future mobile/desktop apps, the raw refresh token can still be returned in JSON so the client can store it in secure platform storage.
 
 ### `POST /api/auth/refresh`
 
@@ -187,7 +187,9 @@ Request shape:
 }
 ```
 
-Response shape:
+Web clients may also call this endpoint with no JSON body when the refresh cookie is present.
+
+Response shape for JSON-token clients:
 
 ```json
 {
@@ -198,6 +200,8 @@ Response shape:
   "refreshTokenExpiresAt": "2026-07-11T12:15:00Z"
 }
 ```
+
+For web cookie refresh, the backend rotates the refresh session, sets a replacement `HttpOnly` refresh cookie, and returns `refreshToken: null`.
 
 This endpoint is public because access tokens can expire before a user session should end. Reusing an old rotated refresh token returns `401`.
 
@@ -217,6 +221,8 @@ Request shape:
 }
 ```
 
+Web clients may also call this endpoint with no JSON body when the refresh cookie is present.
+
 Response shape:
 
 ```json
@@ -225,7 +231,7 @@ Response shape:
 }
 ```
 
-This endpoint is public and intentionally returns success even when the refresh token is unknown or already revoked. Existing access tokens remain valid until their short expiry; logout revokes the ability to extend the session.
+This endpoint is public and intentionally returns success even when the refresh token is unknown or already revoked. Existing access tokens remain valid until their short expiry; logout revokes the ability to extend the session. Web logout also clears the refresh cookie.
 
 ### `GET /api/auth/me`
 
@@ -335,7 +341,7 @@ Auth model:
 - Use refresh tokens backed by server-side session/device records.
 - Store refresh tokens hashed in the database.
 - Rotate refresh tokens when they are used.
-- Web clients may use secure `HttpOnly`, `Secure`, `SameSite` cookies for refresh handling.
+- Web clients use `HttpOnly`, `SameSite` refresh cookies for refresh handling; production should enable `Secure`.
 - Mobile and desktop clients should use secure platform storage for refresh tokens.
 - API requests should use `Authorization: Bearer <accessToken>`.
 - Do not store tokens in browser `localStorage`.
@@ -403,9 +409,9 @@ Current backend auth state:
 - Register creates a pending account, hashes the password, stores a hashed email verification token, and returns the raw verification token only in the development response.
 - `POST /api/auth/verify-email` exists and activates pending accounts with valid, unexpired, unused verification tokens.
 - `POST /api/auth/resend-verification` exists and creates a fresh development token only for pending accounts while keeping unknown/active-account responses non-revealing.
-- `POST /api/auth/login` exists and issues a short-lived JWT access token plus a raw refresh token backed by a hashed refresh-session record.
-- `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session.
-- `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing.
+- `POST /api/auth/login` exists and issues a short-lived JWT access token plus a refresh session; web clients receive the refresh token as an `HttpOnly` cookie while non-web clients can use JSON refresh tokens.
+- `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session, including cookie rotation for web clients.
+- `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing, and clears the web refresh cookie.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active user for a valid bearer token.
 - Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints, email sending, and frontend form submission do not exist yet.
 
@@ -417,6 +423,7 @@ JWT configuration:
 - Production must set `FATFITNESS_JWT_SECRET`; do not commit production secrets.
 - Access-token TTL is configured by `fatfitness.auth.jwt.access-token-ttl`.
 - Refresh-token TTL is configured by `fatfitness.auth.refresh-token-ttl`.
+- Web refresh-cookie name/path/security/SameSite behavior is configured by `fatfitness.auth.refresh-cookie`.
 
 Email provider direction:
 

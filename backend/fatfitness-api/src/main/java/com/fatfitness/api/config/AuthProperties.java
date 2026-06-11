@@ -18,7 +18,11 @@ public record AuthProperties(
 		Jwt jwt,
 
 		@NotNull
-		Duration refreshTokenTtl
+		Duration refreshTokenTtl,
+
+		@Valid
+		@NotNull
+		RefreshCookie refreshCookie
 ) {
 
 	public record Jwt(
@@ -31,6 +35,20 @@ public record AuthProperties(
 
 			@NotNull
 			Duration accessTokenTtl
+	) {
+	}
+
+	public record RefreshCookie(
+			@NotBlank
+			String name,
+
+			@NotBlank
+			String path,
+
+			boolean secure,
+
+			@NotBlank
+			String sameSite
 	) {
 	}
 }

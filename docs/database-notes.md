@@ -68,6 +68,7 @@ Current user/auth state:
 - `POST /api/auth/refresh` exists and rotates refresh sessions by revoking/linking the old session and creating a replacement session.
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
 - `GET /api/auth/me` exists as the first protected endpoint and reads the current active user from the bearer-token subject.
+- Web auth can now keep refresh tokens in an `HttpOnly` cookie while the database still stores only hashed refresh tokens.
 - Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and real email delivery are not implemented yet.
 
 Next user/auth step:

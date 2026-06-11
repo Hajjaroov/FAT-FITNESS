@@ -1,9 +1,12 @@
 package com.fatfitness.api.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,11 +18,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fatfitness.api.config.AuthProperties;
 import com.fatfitness.api.auth.repository.EmailVerificationTokenRepository;
 import com.fatfitness.api.auth.model.EmailVerificationToken;
 import com.fatfitness.api.auth.model.ClientType;
@@ -31,6 +37,8 @@ import com.fatfitness.api.auth.service.SecureTokenService;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserStatus;
 import com.fatfitness.api.user.repository.UserAccountRepository;
+
+import jakarta.servlet.http.Cookie;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -57,6 +65,9 @@ class AuthRegistrationControllerTests {
 
 	@Autowired
 	private SecureTokenService secureTokenService;
+
+	@Autowired
+	private AuthProperties authProperties;
 
 	@Test
 	void registerCreatesPendingUserAndReturnsDevVerificationToken() throws Exception {
@@ -308,8 +319,8 @@ class AuthRegistrationControllerTests {
 								{
 								  "email": "LOGIN@example.com",
 								  "password": "very-secret-password",
-								  "clientType": "WEB",
-								  "deviceLabel": "Test browser"
+								  "clientType": "MOBILE",
+								  "deviceLabel": "Test app"
 								}
 								"""))
 				.andExpect(status().isOk())
@@ -328,14 +339,37 @@ class AuthRegistrationControllerTests {
 		RefreshSession refreshSession = refreshSessionRepository.findByRefreshTokenHash(refreshTokenHash).orElseThrow();
 
 		assertThat(accessToken).contains(".");
+		assertThat(result.getResponse().getHeader(HttpHeaders.SET_COOKIE)).isNull();
 		assertThat(refreshSessionRepository.findByRefreshTokenHash(refreshToken)).isNotPresent();
-		assertThat(refreshSession.getClientType()).isEqualTo(ClientType.WEB);
-		assertThat(refreshSession.getDeviceLabel()).isEqualTo("Test browser");
+		assertThat(refreshSession.getClientType()).isEqualTo(ClientType.MOBILE);
+		assertThat(refreshSession.getDeviceLabel()).isEqualTo("Test app");
 		assertThat(refreshSession.getUserAgent()).isEqualTo("JUnit Browser");
 		assertThat(refreshSession.getRevokedAt()).isNull();
 
 		UserAccount savedUser = userAccountRepository.findByEmail("login@example.com").orElseThrow();
 		assertThat(savedUser.getLastLoginAt()).isNotNull();
+	}
+
+	@Test
+	void webLoginSetsHttpOnlyRefreshCookieAndOmitsJsonRefreshToken() throws Exception {
+		registerAndVerifyMember("web-login@example.com");
+
+		MvcResult result = loginWebMember("web-login@example.com")
+				.andExpect(jsonPath("$.email").value("web-login@example.com"))
+				.andExpect(jsonPath("$.tokenType").value("Bearer"))
+				.andExpect(jsonPath("$.accessToken", notNullValue()))
+				.andExpect(jsonPath("$.refreshToken").value(nullValue()))
+				.andReturn();
+
+		String setCookie = result.getResponse().getHeader(HttpHeaders.SET_COOKIE);
+		String refreshToken = refreshCookieValueFrom(result);
+
+		assertThat(setCookie)
+				.contains(refreshCookieName() + "=")
+				.contains("HttpOnly")
+				.contains("Path=/api/auth")
+				.contains("SameSite=Lax");
+		assertThat(refreshSessionRepository.findByRefreshTokenHash(secureTokenService.hashToken(refreshToken))).isPresent();
 	}
 
 	@Test
@@ -427,8 +461,44 @@ class AuthRegistrationControllerTests {
 		assertThat(oldSession.getRevokedAt()).isNotNull();
 		assertThat(oldSession.getLastUsedAt()).isNotNull();
 		assertThat(oldSession.getReplacedBySession().getId()).isEqualTo(newSession.getId());
+		assertThat(newSession.getClientType()).isEqualTo(ClientType.MOBILE);
+		assertThat(newSession.getDeviceLabel()).isEqualTo("Test client");
+		assertThat(newSession.getUserAgent()).isEqualTo("Refresh Browser");
+		assertThat(newSession.getRevokedAt()).isNull();
+	}
+
+	@Test
+	void webRefreshUsesCookieRotatesSessionAndOmitsJsonRefreshToken() throws Exception {
+		registerAndVerifyMember("web-refresh@example.com");
+		MvcResult loginResult = loginWebMember("web-refresh@example.com").andReturn();
+		Cookie oldRefreshCookie = refreshCookieFrom(loginResult);
+		String oldRefreshToken = oldRefreshCookie.getValue();
+		RefreshSession oldSessionBeforeRefresh = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(oldRefreshToken))
+				.orElseThrow();
+
+		MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
+						.cookie(oldRefreshCookie)
+						.header("User-Agent", "Refresh Browser"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.tokenType").value("Bearer"))
+				.andExpect(jsonPath("$.accessToken", notNullValue()))
+				.andExpect(jsonPath("$.accessTokenExpiresAt", notNullValue()))
+				.andExpect(jsonPath("$.refreshToken").value(nullValue()))
+				.andExpect(jsonPath("$.refreshTokenExpiresAt", notNullValue()))
+				.andReturn();
+
+		String newRefreshToken = refreshCookieValueFrom(refreshResult);
+		assertThat(newRefreshToken).isNotEqualTo(oldRefreshToken);
+
+		RefreshSession oldSession = refreshSessionRepository.findById(oldSessionBeforeRefresh.getId()).orElseThrow();
+		RefreshSession newSession = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(newRefreshToken))
+				.orElseThrow();
+
+		assertThat(oldSession.getRevokedAt()).isNotNull();
+		assertThat(oldSession.getReplacedBySession().getId()).isEqualTo(newSession.getId());
 		assertThat(newSession.getClientType()).isEqualTo(ClientType.WEB);
-		assertThat(newSession.getDeviceLabel()).isEqualTo("Test browser");
 		assertThat(newSession.getUserAgent()).isEqualTo("Refresh Browser");
 		assertThat(newSession.getRevokedAt()).isNull();
 	}
@@ -593,6 +663,26 @@ class AuthRegistrationControllerTests {
 	}
 
 	@Test
+	void webLogoutUsesCookieRevokesSessionAndClearsCookie() throws Exception {
+		registerAndVerifyMember("web-logout@example.com");
+		MvcResult loginResult = loginWebMember("web-logout@example.com").andReturn();
+		Cookie refreshCookie = refreshCookieFrom(loginResult);
+		String refreshToken = refreshCookie.getValue();
+
+		mockMvc.perform(post("/api/auth/logout")
+						.cookie(refreshCookie))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.message").value("Logged out if the session existed."))
+				.andExpect(header().string(HttpHeaders.SET_COOKIE, containsString(refreshCookieName() + "=")))
+				.andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("Max-Age=0")));
+
+		RefreshSession refreshSession = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(refreshToken))
+				.orElseThrow();
+		assertThat(refreshSession.getRevokedAt()).isNotNull();
+	}
+
+	@Test
 	void meReturnsCurrentUserForBearerToken() throws Exception {
 		MvcResult loginResult = loginActiveMember("me@example.com");
 		String accessToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
@@ -680,11 +770,50 @@ class AuthRegistrationControllerTests {
 								{
 								  "email": "%s",
 								  "password": "very-secret-password",
-								  "clientType": "WEB",
-								  "deviceLabel": "Test browser"
+								  "clientType": "MOBILE",
+								  "deviceLabel": "Test client"
 								}
 								""".formatted(email)))
 				.andExpect(status().isOk())
 				.andReturn();
+	}
+
+	private ResultActions loginWebMember(String email) throws Exception {
+		return mockMvc.perform(post("/api/auth/login")
+						.header("User-Agent", "JUnit Browser")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "%s",
+								  "password": "very-secret-password",
+								  "clientType": "WEB",
+								  "deviceLabel": "Test browser"
+								}
+								""".formatted(email)))
+				.andExpect(status().isOk());
+	}
+
+	private Cookie refreshCookieFrom(MvcResult result) {
+		return new Cookie(refreshCookieName(), refreshCookieValueFrom(result));
+	}
+
+	private String refreshCookieValueFrom(MvcResult result) {
+		String setCookie = result.getResponse().getHeader(HttpHeaders.SET_COOKIE);
+		assertThat(setCookie).isNotNull();
+
+		String cookiePrefix = refreshCookieName() + "=";
+		int valueStart = setCookie.indexOf(cookiePrefix);
+		assertThat(valueStart).isGreaterThanOrEqualTo(0);
+
+		String cookieValueAndAttributes = setCookie.substring(valueStart + cookiePrefix.length());
+		int valueEnd = cookieValueAndAttributes.indexOf(';');
+
+		return valueEnd >= 0
+				? cookieValueAndAttributes.substring(0, valueEnd)
+				: cookieValueAndAttributes;
+	}
+
+	private String refreshCookieName() {
+		return authProperties.refreshCookie().name();
 	}
 }

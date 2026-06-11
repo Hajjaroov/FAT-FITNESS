@@ -23,3 +23,8 @@ fatfitness:
       secret: test-only-change-me-secret-keep-at-least-32-characters
       access-token-ttl: PT15M
     refresh-token-ttl: P30D
+    refresh-cookie:
+      name: fatfitness_refresh_token
+      path: /api/auth
+      secure: false
+      same-site: Lax

@@ -62,6 +62,8 @@ Backend rules:
 - Authentication is now planned as an API-first token model for web, mobile, and possible desktop clients.
 - Use short-lived JWT access tokens plus refresh-token session records when auth is implemented.
 - Store refresh tokens hashed and support revocation/rotation.
+- Use `HttpOnly`, `SameSite` refresh cookies for web clients; enable `Secure` in production.
+- Keep JSON refresh tokens available for future non-web clients that use secure platform storage.
 - Do not couple backend auth to Next.js-only sessions.
 - Do not add entities until a feature needs persistence.
 - Add tests for endpoint behavior and security/CORS expectations.
@@ -71,6 +73,7 @@ Backend rules:
 - `POST /api/auth/login` issues Spring Security JWT access tokens and stores hashed refresh-session records.
 - `POST /api/auth/refresh` rotates refresh-session records and revokes old refresh tokens.
 - `POST /api/auth/logout` revokes refresh sessions idempotently.
+- Web login/refresh/logout can use an `HttpOnly` refresh cookie and CORS credentials from the local frontend origin.
 - `GET /api/auth/me` is protected by Spring Security bearer-token validation and returns the current active user.
 - JWT signing uses `spring-security-oauth2-jose`; bearer-token validation uses `spring-security-oauth2-resource-server`; production must provide `FATFITNESS_JWT_SECRET`.
 - Add real transactional email later through a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.

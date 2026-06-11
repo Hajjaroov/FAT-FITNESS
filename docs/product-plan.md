@@ -160,7 +160,8 @@ Current state:
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking old sessions and creating replacement sessions.
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active account for a valid bearer token.
-- No frontend form submission, real email delivery, or web account session exists yet.
+- Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
+- No frontend form submission, real email delivery, or complete web account UI session exists yet.
 
 Approved auth direction:
 
@@ -169,7 +170,7 @@ Approved auth direction:
 - Use refresh tokens with server-side session/device records so logout, bans, and token revocation are possible.
 - Store refresh tokens hashed in the database, not as plaintext.
 - Rotate refresh tokens on refresh.
-- Web clients should use secure `HttpOnly`, `Secure`, `SameSite` cookies for refresh handling where possible.
+- Web clients should use `HttpOnly`, `SameSite` cookies for refresh handling, with `Secure` enabled in production.
 - Mobile and desktop clients should use secure platform storage for refresh tokens and send access tokens with `Authorization: Bearer <token>`.
 - Do not store access or refresh tokens in browser `localStorage`.
 
@@ -387,6 +388,7 @@ Completed-enough checkpoints for now:
 - `POST /api/auth/refresh` exists and rotates refresh-session records.
 - `POST /api/auth/logout` exists and revokes refresh-session records.
 - `GET /api/auth/me` exists and is protected by bearer-token validation.
+- Web refresh-token cookie handling exists for login, refresh, and logout.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:

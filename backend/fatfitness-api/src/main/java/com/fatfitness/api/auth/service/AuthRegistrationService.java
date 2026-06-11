@@ -164,8 +164,14 @@ public class AuthRegistrationService {
 
 	@Transactional
 	public RefreshResponse refresh(RefreshRequest request, String userAgent, String ipAddress) {
+		return refresh(request.refreshToken(), userAgent, ipAddress);
+	}
+
+	@Transactional
+	public RefreshResponse refresh(String refreshToken, String userAgent, String ipAddress) {
+		String cleanedRefreshToken = requireRefreshToken(refreshToken);
 		RefreshSession currentSession = refreshSessionRepository
-				.findByRefreshTokenHash(secureTokenService.hashToken(request.refreshToken()))
+				.findByRefreshTokenHash(secureTokenService.hashToken(cleanedRefreshToken))
 				.orElseThrow(AuthRegistrationService::invalidRefreshToken);
 
 		if (currentSession.getRevokedAt() != null) {
@@ -210,8 +216,18 @@ public class AuthRegistrationService {
 
 	@Transactional
 	public LogoutResponse logout(LogoutRequest request) {
+		return logout(request.refreshToken());
+	}
+
+	@Transactional
+	public LogoutResponse logout(String refreshToken) {
+		String cleanedRefreshToken = optionalRefreshToken(refreshToken);
+		if (cleanedRefreshToken == null) {
+			return new LogoutResponse("Logged out if the session existed.");
+		}
+
 		refreshSessionRepository
-				.findByRefreshTokenHash(secureTokenService.hashToken(request.refreshToken()))
+				.findByRefreshTokenHash(secureTokenService.hashToken(cleanedRefreshToken))
 				.ifPresent(session -> {
 					if (session.getRevokedAt() == null) {
 						session.revoke();
@@ -278,6 +294,28 @@ public class AuthRegistrationService {
 
 	private static ResponseStatusException invalidRefreshToken() {
 		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+	}
+
+	private static String requireRefreshToken(String refreshToken) {
+		String cleanedRefreshToken = optionalRefreshToken(refreshToken);
+		if (cleanedRefreshToken == null) {
+			throw invalidRefreshToken();
+		}
+
+		return cleanedRefreshToken;
+	}
+
+	private static String optionalRefreshToken(String refreshToken) {
+		if (refreshToken == null) {
+			return null;
+		}
+
+		String cleanedRefreshToken = refreshToken.trim();
+		if (cleanedRefreshToken.isEmpty() || cleanedRefreshToken.length() > 256) {
+			return null;
+		}
+
+		return cleanedRefreshToken;
 	}
 
 	private static UUID parseUserIdSubject(String subject) {
