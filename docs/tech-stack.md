@@ -38,6 +38,8 @@ Frontend rules:
 - Keep public copy/data in `src/content` modules instead of embedding long text directly in route components.
 - Use the lightweight local language foundation for now; do not add an i18n package until routing, SEO, or translation workflow needs justify it.
 - Keep available languages in `src/content/site.ts` as dropdown options; adding a language also requires matching content dictionaries.
+- Frontend auth keeps JWT access tokens in React memory only and restores web sessions through the backend `HttpOnly` refresh cookie.
+- Do not store access or refresh tokens in browser `localStorage`.
 
 ## Backend
 

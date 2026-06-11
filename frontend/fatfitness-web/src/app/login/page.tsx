@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { AuthPlaceholderView } from "@/app/_components/AuthPlaceholderView";
+import { AuthAccountView } from "@/app/_components/AuthAccountView";
 
 export const metadata: Metadata = {
   title: "Login | Fat Fitness Community",
   description:
-    "Static account access placeholder for the future Fat Fitness Community forum.",
+    "Sign in to a Fat Fitness Community account for local account-flow testing.",
 };
 
 export default function LoginPage() {
-  return <AuthPlaceholderView mode="login" />;
+  return <AuthAccountView mode="login" />;
 }

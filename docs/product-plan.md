@@ -48,7 +48,7 @@ Current structure:
 - `/community/guidelines` is a static community guidelines page for safety and behavior rules.
 - Community category routes are static empty board pages for planned forum boards.
 - Community post detail routes are still placeholders until real forum mechanics are approved.
-- `/login` and `/register` are styled static account-prep pages only.
+- `/login` and `/register` are styled account pages connected to the local backend auth flow.
 - Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
 - Page copy/data should live in frontend content modules instead of long hardcoded text blocks in route TSX files.
 
@@ -142,15 +142,15 @@ Current state:
 
 ### User Accounts
 
-User accounts are the next planning milestone after the static community/forum shape and frontend auth placeholders.
+User accounts are the current foundation milestone after the static community/forum shape.
 
 Current state:
 
-- `/login` and `/register` are static frontend pages.
-- The pages show disabled form fields with a short account-unavailable message.
-- Registration preview includes display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
+- `/login` and `/register` are frontend account pages connected to the backend auth APIs.
+- `/login` submits credentials, keeps the JWT access token in React memory, restores through the web refresh cookie, and can log out.
+- `/register` submits display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
+- Registration currently shows the development-only email verification token and can verify it locally until real email delivery exists.
 - The country/region picker lets users search and select country/region names, keeps codes internal, shows up to 9 suggestions plus `Other`, and includes commonly missed entries such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
-- No credentials or account data are collected.
 - Backend auth persistence foundation exists: users, role storage, email verification token storage, and refresh-token session storage.
 - `POST /api/auth/register` exists as the first backend auth endpoint.
 - Registration currently creates pending accounts and returns a development-only raw verification token for local testing.
@@ -161,7 +161,7 @@ Current state:
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active account for a valid bearer token.
 - Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
-- No frontend form submission, real email delivery, or complete web account UI session exists yet.
+- No real email delivery, protected forum actions, or complete account settings UI exists yet.
 
 Approved auth direction:
 
@@ -379,7 +379,7 @@ Completed-enough checkpoints for now:
 - `/community` has been reworked into a static forum index with planned boards and zero-state forum metadata.
 - `/community/guidelines` exists as the static behavior/safety page.
 - `/community/categories/[slug]` generates static empty board pages.
-- `/login` and `/register` exist as static disabled account-prep pages.
+- `/login` and `/register` exist as working frontend account pages for the local backend auth flow.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
 - `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
 - `POST /api/auth/verify-email` exists and consumes valid email verification tokens while activating accounts.
@@ -389,6 +389,7 @@ Completed-enough checkpoints for now:
 - `POST /api/auth/logout` exists and revokes refresh-session records.
 - `GET /api/auth/me` exists and is protected by bearer-token validation.
 - Web refresh-token cookie handling exists for login, refresh, and logout.
+- Frontend login/register form submission and in-memory access-token session restore exist.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:
@@ -415,5 +416,5 @@ Content direction:
 - Current Community page: static forum index with planned boards and zero-state forum metadata.
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Current Community Category pages: static empty board pages for each planned forum category.
-- Current Login/Register pages: static disabled account-prep pages.
+- Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Photos and deeper tools can be added later after the static content is reviewed.

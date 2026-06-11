@@ -359,8 +359,8 @@ Current implemented auth endpoint:
 
 Next auth slices:
 
-- Decide and implement frontend auth form submission/session handling.
 - Add real email delivery before production launch.
+- Add protected account UI/session polish only where it supports the next community milestone.
 
 Planned registration shape when auth is approved:
 
@@ -395,11 +395,15 @@ Country/region API direction:
 
 Do not include sensitive health/profile fields in the initial register endpoint. Weight, GLP-1 status, OP/surgery status, photos, goals, diet, and training details should be optional profile/tool data only after privacy and visibility rules are planned.
 
-Current frontend-only state:
+Current frontend auth state:
 
-- `/login` and `/register` exist as disabled static pages.
-- Register previews display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
-- They do not submit credentials and do not call an API.
+- `/login` submits to `POST /api/auth/login` for verified active accounts.
+- The frontend keeps the JWT access token in React memory only and restores sessions through the web refresh cookie.
+- `/login` can show the active browser session and call logout.
+- `/register` submits to `POST /api/auth/register` with display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
+- Registration currently shows the development-only email verification token and can submit it to `POST /api/auth/verify-email` for local testing.
+- Frontend auth forms do not use `localStorage`.
+- No real email delivery, protected forum actions, or production-ready account settings UI exists yet.
 
 Current backend auth state:
 
@@ -413,7 +417,7 @@ Current backend auth state:
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session, including cookie rotation for web clients.
 - `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing, and clears the web refresh cookie.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active user for a valid bearer token.
-- Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints, email sending, and frontend form submission do not exist yet.
+- Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and email sending do not exist yet.
 
 JWT configuration:
 

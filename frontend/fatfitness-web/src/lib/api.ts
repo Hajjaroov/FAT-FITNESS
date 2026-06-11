@@ -1,21 +1,146 @@
 import { apiBaseUrl } from "@/lib/config";
+import type {
+  CurrentUser,
+  LoginRequest,
+  LoginResponse,
+  LogoutResponse,
+  RegisterRequest,
+  RegisterResponse,
+  TokenResponse,
+  VerifyEmailResponse,
+} from "@/types/auth";
 import type { BackendStatus } from "@/types/api";
 
-async function apiRequest<T>(path: string): Promise<T> {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    headers: {
-      Accept: "application/json",
-    },
-    cache: "no-store",
-  });
+type ApiRequestOptions = {
+  method?: "GET" | "POST";
+  body?: unknown;
+  accessToken?: string;
+  credentials?: RequestCredentials;
+};
 
-  if (!response.ok) {
-    throw new Error(`API request failed with status ${response.status}`);
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly payload: unknown,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+async function parseResponseBody(response: Response) {
+  const contentType = response.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    return null;
   }
 
-  return response.json() as Promise<T>;
+  return response.json() as Promise<unknown>;
+}
+
+function getApiErrorMessage(payload: unknown, fallback: string) {
+  if (payload && typeof payload === "object") {
+    const problem = payload as { detail?: unknown; message?: unknown; title?: unknown };
+
+    if (typeof problem.detail === "string") {
+      return problem.detail;
+    }
+
+    if (typeof problem.message === "string") {
+      return problem.message;
+    }
+
+    if (typeof problem.title === "string") {
+      return problem.title;
+    }
+  }
+
+  return fallback;
+}
+
+async function apiRequest<T>(
+  path: string,
+  {
+    method = "GET",
+    body,
+    accessToken,
+    credentials = "same-origin",
+  }: ApiRequestOptions = {},
+): Promise<T> {
+  const headers = new Headers({
+    Accept: "application/json",
+  });
+
+  if (body !== undefined) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (accessToken) {
+    headers.set("Authorization", `Bearer ${accessToken}`);
+  }
+
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    method,
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+    cache: "no-store",
+    credentials,
+  });
+  const payload = await parseResponseBody(response);
+
+  if (!response.ok) {
+    throw new ApiError(
+      getApiErrorMessage(payload, `API request failed with status ${response.status}`),
+      response.status,
+      payload,
+    );
+  }
+
+  return payload as T;
 }
 
 export function getBackendStatus() {
   return apiRequest<BackendStatus>("/api/status");
+}
+
+export function registerUser(request: RegisterRequest) {
+  return apiRequest<RegisterResponse>("/api/auth/register", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export function verifyEmail(token: string) {
+  return apiRequest<VerifyEmailResponse>("/api/auth/verify-email", {
+    method: "POST",
+    body: { token },
+  });
+}
+
+export function loginUser(request: LoginRequest) {
+  return apiRequest<LoginResponse>("/api/auth/login", {
+    method: "POST",
+    body: request,
+    credentials: "include",
+  });
+}
+
+export function refreshAuthSession() {
+  return apiRequest<TokenResponse>("/api/auth/refresh", {
+    method: "POST",
+    credentials: "include",
+  });
+}
+
+export function logoutUser() {
+  return apiRequest<LogoutResponse>("/api/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+}
+
+export function getCurrentUser(accessToken: string) {
+  return apiRequest<CurrentUser>("/api/auth/me", {
+    accessToken,
+  });
 }
