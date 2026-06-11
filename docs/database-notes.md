@@ -60,11 +60,15 @@ Current user/auth state:
 - The first auth Flyway migration exists.
 - User/auth persistence includes users, role storage, email verification tokens, and refresh-token session records.
 - JPA entities and repositories exist for the auth persistence foundation.
-- Public auth endpoints and token issuing are not implemented yet.
+- `POST /api/auth/register` exists as the first backend auth endpoint.
+- Registration stores a pending user, password hash, user role, and hashed email verification token.
+- Token issuing, login, refresh, verify-email, resend verification, and real email delivery are not implemented yet.
 
 Next user/auth step:
 
-- Implement auth services and endpoints for register, verify email, resend verification, login, refresh, logout, and current user.
+- Implement verify email and resend verification using the existing hashed email verification token storage.
+- Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
+- Implement login, refresh, logout, and current-user endpoints after email verification flow is in place.
 - Add JWT access-token issuing and refresh-token rotation using the existing persistence foundation.
 - Keep forum posts/comments out of the first auth migration.
 

@@ -22,6 +22,44 @@ Response shape:
 
 This endpoint is public.
 
+### `POST /api/auth/register`
+
+Purpose:
+
+- Create a minimal user account.
+- Store the password as a hash.
+- Start the account as `PENDING_EMAIL_VERIFICATION`.
+- Create an email verification token record.
+
+Request shape:
+
+```json
+{
+  "displayName": "New Member",
+  "email": "new@example.com",
+  "countryRegionCode": "DE",
+  "password": "very-secret-password",
+  "confirmPassword": "very-secret-password",
+  "acceptedCommunityRules": true,
+  "acceptedPrivacyPolicy": true
+}
+```
+
+Current development-only response shape:
+
+```json
+{
+  "userId": "2abda4f4-8f0d-4988-9b0e-1a76f43c83e2",
+  "email": "new@example.com",
+  "status": "PENDING_EMAIL_VERIFICATION",
+  "message": "Account created. Verify email before posting or using account-only community features.",
+  "devEmailVerificationToken": "raw-dev-only-token",
+  "verificationExpiresAt": "2026-06-12T12:00:00Z"
+}
+```
+
+This endpoint is public. The raw `devEmailVerificationToken` exists only so local development can continue before an email provider is configured. The database stores the hashed token, not the raw token.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -105,9 +143,12 @@ Auth model:
 - Do not store tokens in browser `localStorage`.
 - Ban, delete, logout, and password-change flows should be able to revoke sessions.
 
-Next auth endpoint slice:
+Current implemented auth endpoint:
 
 - `POST /api/auth/register`
+
+Next auth endpoint slice:
+
 - `POST /api/auth/verify-email`
 - `POST /api/auth/resend-verification`
 - `POST /api/auth/login`
@@ -158,7 +199,17 @@ Current backend auth state:
 
 - Auth persistence foundation exists with users, user roles, email verification tokens, and refresh-token session records.
 - Password hashing support exists.
-- No public auth endpoints, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
+- `POST /api/auth/register` exists as a backend-only development slice.
+- Register creates a pending account, hashes the password, stores a hashed email verification token, and returns the raw verification token only in the development response.
+- No verify-email endpoint, resend endpoint, login endpoint, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
+
+Email provider direction:
+
+- Real email delivery should be added later through a dedicated provider integration, likely Resend if the existing account/domain setup fits.
+- Use environment variables for provider keys, for example `RESEND_API_KEY`; never commit email provider keys.
+- Prefer a separate API key for Fat Fitness instead of sharing a portfolio-site key long term.
+- Use a verified sending domain or subdomain before public launch.
+- Remove the raw `devEmailVerificationToken` response before production email verification is enabled.
 
 ## Health And Safety API Guidance
 

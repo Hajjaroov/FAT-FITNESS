@@ -152,7 +152,9 @@ Current state:
 - The country/region picker lets users search and select country/region names, keeps codes internal, shows up to 9 suggestions plus `Other`, and includes commonly missed entries such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
 - No credentials or account data are collected.
 - Backend auth persistence foundation exists: users, role storage, email verification token storage, and refresh-token session storage.
-- No public authentication API, token issuing, frontend form submission, or real account session exists yet.
+- `POST /api/auth/register` exists as the first backend auth endpoint.
+- Registration currently creates pending accounts and returns a development-only raw verification token for local testing.
+- No frontend form submission, verify-email endpoint, real email delivery, token issuing, or real account session exists yet.
 
 Approved auth direction:
 
@@ -172,6 +174,8 @@ Approved registration direction:
 - Registration remains minimal and should not collect health-sensitive details.
 - Initial roles should be `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.
 - Account statuses should include at least `PENDING_EMAIL_VERIFICATION`, `ACTIVE`, `BANNED`, and `DELETED`.
+- Real email delivery should be added later with a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.
+- The current raw development verification token response must be removed before production email verification is enabled.
 
 Deleted and banned account display:
 
@@ -370,6 +374,7 @@ Completed-enough checkpoints for now:
 - `/community/categories/[slug]` generates static empty board pages.
 - `/login` and `/register` exist as static disabled account-prep pages.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
+- `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:
