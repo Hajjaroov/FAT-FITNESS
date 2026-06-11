@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { isLocale, localeOptions, siteCopy, siteNavigation } from "@/content/site";
+import { useState } from "react";
+import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { useTheme } from "@/app/_components/ThemeProvider";
+import { isLocale, localeOptions, siteCopy, siteNavigation } from "@/content/site";
 
 function isActiveRoute(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -14,9 +16,21 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { locale, setLocale } = useLocale();
   const { theme, toggleTheme } = useTheme();
+  const { status, user, logout } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const copy = useLocalizedContent(siteCopy);
   const nextTheme = theme === "dark" ? "light" : "dark";
   const themeIcon = theme === "dark" ? "☾" : "☀";
+
+  async function handleLogout() {
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
 
   return (
     <header className="site-header">
@@ -86,6 +100,33 @@ export function SiteHeader() {
           >
             <span aria-hidden="true">{themeIcon}</span>
           </button>
+
+          {status === "checking" ? (
+            <span className="site-control" aria-live="polite">
+              {copy.account.checking}
+            </span>
+          ) : user ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="site-control"
+                title={`${copy.account.signedInAs} ${user.email}`}
+              >
+                {copy.account.signedInAs} {user.displayName}
+              </span>
+              <button
+                type="button"
+                className="site-control"
+                disabled={isLoggingOut}
+                onClick={handleLogout}
+              >
+                {isLoggingOut ? copy.account.logoutPending : copy.account.logout}
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="site-control">
+              {copy.account.login}
+            </Link>
+          )}
         </div>
       </div>
     </header>

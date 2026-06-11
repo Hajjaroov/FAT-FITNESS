@@ -35,6 +35,13 @@ export const siteCopy = {
       switchToLightTheme: "Switch to light mode",
       switchToDarkTheme: "Switch to dark mode",
     },
+    account: {
+      checking: "Checking session...",
+      login: "Sign in",
+      signedInAs: "Signed in:",
+      logout: "Log out",
+      logoutPending: "Logging out...",
+    },
     links: {
       backToLearn: "Back to Learn",
       open: "Open",
@@ -58,6 +65,13 @@ export const siteCopy = {
       dark: "Dunkel",
       switchToLightTheme: "Zu hellem Modus wechseln",
       switchToDarkTheme: "Zu dunklem Modus wechseln",
+    },
+    account: {
+      checking: "Sitzung wird geprüft...",
+      login: "Einloggen",
+      signedInAs: "Eingeloggt:",
+      logout: "Ausloggen",
+      logoutPending: "Wird ausgeloggt...",
     },
     links: {
       backToLearn: "Zurück zu Lernen",

@@ -148,6 +148,7 @@ Current state:
 
 - `/login` and `/register` are frontend account pages connected to the backend auth APIs.
 - `/login` submits credentials, keeps the JWT access token in React memory, restores through the web refresh cookie, and can log out.
+- The shared site header shows sign-in/signed-in/logout state from the frontend auth provider.
 - `/register` submits display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - Registration currently shows the development-only email verification token and can verify it locally until real email delivery exists.
 - The country/region picker lets users search and select country/region names, keeps codes internal, shows up to 9 suggestions plus `Other`, and includes commonly missed entries such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
@@ -390,6 +391,7 @@ Completed-enough checkpoints for now:
 - `GET /api/auth/me` exists and is protected by bearer-token validation.
 - Web refresh-token cookie handling exists for login, refresh, and logout.
 - Frontend login/register form submission and in-memory access-token session restore exist.
+- Shared header account session visibility and logout exist.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:
@@ -417,4 +419,5 @@ Content direction:
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Current Community Category pages: static empty board pages for each planned forum category.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
+- Current shared header: shows local account session state and logout.
 - Photos and deeper tools can be added later after the static content is reviewed.

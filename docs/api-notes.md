@@ -400,6 +400,7 @@ Current frontend auth state:
 - `/login` submits to `POST /api/auth/login` for verified active accounts.
 - The frontend keeps the JWT access token in React memory only and restores sessions through the web refresh cookie.
 - `/login` can show the active browser session and call logout.
+- The shared site header shows session-checking, sign-in, signed-in, and logout controls.
 - `/register` submits to `POST /api/auth/register` with display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - Registration currently shows the development-only email verification token and can submit it to `POST /api/auth/verify-email` for local testing.
 - Frontend auth forms do not use `localStorage`.

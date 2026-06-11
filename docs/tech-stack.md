@@ -40,6 +40,7 @@ Frontend rules:
 - Keep available languages in `src/content/site.ts` as dropdown options; adding a language also requires matching content dictionaries.
 - Frontend auth keeps JWT access tokens in React memory only and restores web sessions through the backend `HttpOnly` refresh cookie.
 - Do not store access or refresh tokens in browser `localStorage`.
+- Shared header session controls read from the frontend auth provider.
 
 ## Backend
 

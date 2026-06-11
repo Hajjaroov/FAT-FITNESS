@@ -58,6 +58,7 @@ Current user/auth state:
 - `/login` and `/register` submit to the backend auth APIs for local account-flow testing.
 - Register uses display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - Login keeps the access token in React memory and uses the web refresh cookie for browser session restore.
+- The shared site header can display the current browser session and trigger logout.
 - The first auth Flyway migration exists.
 - User/auth persistence includes users, role storage, email verification tokens, and refresh-token session records.
 - JPA entities and repositories exist for the auth persistence foundation.
@@ -76,7 +77,7 @@ Next user/auth step:
 
 - Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
 - Add bearer-token validation to future protected feature endpoints before connecting account-only frontend features.
-- Add protected account UI/session polish only where it supports the next community milestone.
+- Start the next approved community/forum foundation step.
 - Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:
