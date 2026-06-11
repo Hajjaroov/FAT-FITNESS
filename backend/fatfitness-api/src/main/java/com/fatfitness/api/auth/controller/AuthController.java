@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fatfitness.api.auth.dto.RegisterRequest;
 import com.fatfitness.api.auth.dto.RegisterResponse;
+import com.fatfitness.api.auth.dto.VerifyEmailRequest;
+import com.fatfitness.api.auth.dto.VerifyEmailResponse;
 import com.fatfitness.api.auth.service.AuthRegistrationService;
 
 import jakarta.validation.Valid;
@@ -27,5 +29,10 @@ public class AuthController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public RegisterResponse register(@Valid @RequestBody RegisterRequest request) {
 		return authRegistrationService.register(request);
+	}
+
+	@PostMapping("/verify-email")
+	public VerifyEmailResponse verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+		return authRegistrationService.verifyEmail(request);
 	}
 }

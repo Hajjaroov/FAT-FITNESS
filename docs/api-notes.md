@@ -60,6 +60,38 @@ Current development-only response shape:
 
 This endpoint is public. The raw `devEmailVerificationToken` exists only so local development can continue before an email provider is configured. The database stores the hashed token, not the raw token.
 
+### `POST /api/auth/verify-email`
+
+Purpose:
+
+- Verify a pending account with a raw email verification token.
+- Hash the submitted token and compare it to stored token hashes.
+- Reject unknown, expired, or already-consumed tokens.
+- Mark the token as consumed.
+- Mark the user account as `ACTIVE`.
+
+Request shape:
+
+```json
+{
+  "token": "raw-dev-only-token"
+}
+```
+
+Response shape:
+
+```json
+{
+  "userId": "2abda4f4-8f0d-4988-9b0e-1a76f43c83e2",
+  "email": "new@example.com",
+  "status": "ACTIVE",
+  "emailVerifiedAt": "2026-06-11T12:00:00Z",
+  "message": "Email verified. Account-only community features can use this account when they are available."
+}
+```
+
+This endpoint is public because email verification links must work before login exists. It does not create a session or issue JWTs.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -146,10 +178,10 @@ Auth model:
 Current implemented auth endpoint:
 
 - `POST /api/auth/register`
+- `POST /api/auth/verify-email`
 
 Next auth endpoint slice:
 
-- `POST /api/auth/verify-email`
 - `POST /api/auth/resend-verification`
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
@@ -201,7 +233,8 @@ Current backend auth state:
 - Password hashing support exists.
 - `POST /api/auth/register` exists as a backend-only development slice.
 - Register creates a pending account, hashes the password, stores a hashed email verification token, and returns the raw verification token only in the development response.
-- No verify-email endpoint, resend endpoint, login endpoint, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
+- `POST /api/auth/verify-email` exists and activates pending accounts with valid, unexpired, unused verification tokens.
+- No resend endpoint, login endpoint, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
 
 Email provider direction:
 

@@ -66,6 +66,7 @@ Backend rules:
 - Do not add entities until a feature needs persistence.
 - Add tests for endpoint behavior and security/CORS expectations.
 - Current email verification is development-only: registration returns a raw dev token while the database stores only the token hash.
+- `POST /api/auth/verify-email` consumes valid verification tokens and activates pending accounts.
 - Add real transactional email later through a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.
 - Remove dev-only raw verification token responses before production launch.
 

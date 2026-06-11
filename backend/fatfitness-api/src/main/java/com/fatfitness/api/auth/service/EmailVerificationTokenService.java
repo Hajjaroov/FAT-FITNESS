@@ -8,7 +8,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fatfitness.api.auth.model.EmailVerificationToken;
 import com.fatfitness.api.auth.repository.EmailVerificationTokenRepository;
@@ -35,6 +37,25 @@ public class EmailVerificationTokenService {
 		emailVerificationTokenRepository.save(new EmailVerificationToken(user, tokenHash, expiresAt));
 
 		return new CreatedEmailVerificationToken(rawToken, expiresAt);
+	}
+
+	public UserAccount verify(String rawToken) {
+		EmailVerificationToken token = emailVerificationTokenRepository.findByTokenHash(hashToken(rawToken))
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid verification token"));
+
+		if (token.getConsumedAt() != null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification token has already been used");
+		}
+
+		if (!token.getExpiresAt().isAfter(Instant.now())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Verification token has expired");
+		}
+
+		UserAccount user = token.getUser();
+		user.verifyEmail();
+		token.markConsumed();
+
+		return user;
 	}
 
 	public String hashToken(String rawToken) {

@@ -6,6 +6,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fatfitness.api.auth.repository.EmailVerificationTokenRepository;
+import com.fatfitness.api.auth.model.EmailVerificationToken;
 import com.fatfitness.api.auth.service.EmailVerificationTokenService;
 import com.fatfitness.api.auth.service.PasswordHashingService;
 import com.fatfitness.api.user.entity.UserAccount;
@@ -133,5 +137,109 @@ class AuthRegistrationControllerTests {
 								}
 								"""))
 				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void verifyEmailActivatesUserAndConsumesToken() throws Exception {
+		MvcResult registrationResult = registerNewMember("verify@example.com");
+		String rawToken = JsonPath.read(
+				registrationResult.getResponse().getContentAsString(),
+				"$.devEmailVerificationToken");
+
+		mockMvc.perform(post("/api/auth/verify-email")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "token": "%s"
+								}
+								""".formatted(rawToken)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.email").value("verify@example.com"))
+				.andExpect(jsonPath("$.status").value("ACTIVE"))
+				.andExpect(jsonPath("$.emailVerifiedAt", notNullValue()));
+
+		UserAccount savedUser = userAccountRepository.findByEmail("verify@example.com").orElseThrow();
+		assertThat(savedUser.getStatus()).isEqualTo(UserStatus.ACTIVE);
+		assertThat(savedUser.getEmailVerifiedAt()).isNotNull();
+
+		String tokenHash = emailVerificationTokenService.hashToken(rawToken);
+		EmailVerificationToken token = emailVerificationTokenRepository.findByTokenHash(tokenHash).orElseThrow();
+		assertThat(token.getConsumedAt()).isNotNull();
+	}
+
+	@Test
+	void verifyEmailRejectsUnknownToken() throws Exception {
+		mockMvc.perform(post("/api/auth/verify-email")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "token": "unknown-token"
+								}
+								"""))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void verifyEmailRejectsExpiredToken() throws Exception {
+		String rawToken = "expired-token";
+		UserAccount user = userAccountRepository.saveAndFlush(
+				new UserAccount("expired@example.com", "Expired", "DE", "hash"));
+		emailVerificationTokenRepository.saveAndFlush(new EmailVerificationToken(
+				user,
+				emailVerificationTokenService.hashToken(rawToken),
+				Instant.now().minus(1, ChronoUnit.HOURS)));
+
+		mockMvc.perform(post("/api/auth/verify-email")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "token": "%s"
+								}
+								""".formatted(rawToken)))
+				.andExpect(status().isBadRequest());
+
+		UserAccount savedUser = userAccountRepository.findByEmail("expired@example.com").orElseThrow();
+		assertThat(savedUser.getStatus()).isEqualTo(UserStatus.PENDING_EMAIL_VERIFICATION);
+		assertThat(savedUser.getEmailVerifiedAt()).isNull();
+	}
+
+	@Test
+	void verifyEmailRejectsConsumedToken() throws Exception {
+		String rawToken = "consumed-token";
+		UserAccount user = userAccountRepository.saveAndFlush(
+				new UserAccount("consumed@example.com", "Consumed", "DE", "hash"));
+		EmailVerificationToken token = new EmailVerificationToken(
+				user,
+				emailVerificationTokenService.hashToken(rawToken),
+				Instant.now().plus(1, ChronoUnit.DAYS));
+		token.markConsumed();
+		emailVerificationTokenRepository.saveAndFlush(token);
+
+		mockMvc.perform(post("/api/auth/verify-email")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "token": "%s"
+								}
+								""".formatted(rawToken)))
+				.andExpect(status().isBadRequest());
+	}
+
+	private MvcResult registerNewMember(String email) throws Exception {
+		return mockMvc.perform(post("/api/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "displayName": "New Member",
+								  "email": "%s",
+								  "countryRegionCode": "DE",
+								  "password": "very-secret-password",
+								  "confirmPassword": "very-secret-password",
+								  "acceptedCommunityRules": true,
+								  "acceptedPrivacyPolicy": true
+								}
+								""".formatted(email)))
+				.andExpect(status().isCreated())
+				.andReturn();
 	}
 }

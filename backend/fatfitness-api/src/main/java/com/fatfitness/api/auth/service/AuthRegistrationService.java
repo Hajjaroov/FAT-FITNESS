@@ -9,6 +9,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.fatfitness.api.auth.dto.RegisterRequest;
 import com.fatfitness.api.auth.dto.RegisterResponse;
+import com.fatfitness.api.auth.dto.VerifyEmailRequest;
+import com.fatfitness.api.auth.dto.VerifyEmailResponse;
 import com.fatfitness.api.auth.service.EmailVerificationTokenService.CreatedEmailVerificationToken;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.repository.UserAccountRepository;
@@ -55,6 +57,18 @@ public class AuthRegistrationService {
 				"Account created. Verify email before posting or using account-only community features.",
 				verificationToken.rawToken(),
 				verificationToken.expiresAt());
+	}
+
+	@Transactional
+	public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
+		UserAccount user = emailVerificationTokenService.verify(request.token());
+
+		return new VerifyEmailResponse(
+				user.getId(),
+				user.getEmail(),
+				user.getStatus(),
+				user.getEmailVerifiedAt(),
+				"Email verified. Account-only community features can use this account when they are available.");
 	}
 
 	private static String normalizeEmail(String email) {

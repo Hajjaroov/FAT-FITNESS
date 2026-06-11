@@ -154,7 +154,8 @@ Current state:
 - Backend auth persistence foundation exists: users, role storage, email verification token storage, and refresh-token session storage.
 - `POST /api/auth/register` exists as the first backend auth endpoint.
 - Registration currently creates pending accounts and returns a development-only raw verification token for local testing.
-- No frontend form submission, verify-email endpoint, real email delivery, token issuing, or real account session exists yet.
+- `POST /api/auth/verify-email` exists and activates pending accounts with valid verification tokens.
+- No frontend form submission, real email delivery, token issuing, or real account session exists yet.
 
 Approved auth direction:
 
@@ -375,6 +376,7 @@ Completed-enough checkpoints for now:
 - `/login` and `/register` exist as static disabled account-prep pages.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
 - `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
+- `POST /api/auth/verify-email` exists and consumes valid email verification tokens while activating accounts.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:
