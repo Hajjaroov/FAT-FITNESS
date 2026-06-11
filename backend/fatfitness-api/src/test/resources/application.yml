@@ -15,3 +15,11 @@ spring:
 
   flyway:
     enabled: true
+
+fatfitness:
+  auth:
+    jwt:
+      issuer: fatfitness-api-test
+      secret: test-only-change-me-secret-keep-at-least-32-characters
+      access-token-ttl: PT15M
+    refresh-token-ttl: P30D

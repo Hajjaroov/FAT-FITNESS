@@ -64,13 +64,14 @@ Current user/auth state:
 - Registration stores a pending user, password hash, user role, and hashed email verification token.
 - `POST /api/auth/verify-email` exists and marks valid tokens as consumed while activating the related user.
 - `POST /api/auth/resend-verification` exists and creates fresh development verification tokens for pending accounts.
-- Token issuing, login, refresh, and real email delivery are not implemented yet.
+- `POST /api/auth/login` exists and creates hashed refresh-session records for active users.
+- Refresh-token rotation, logout/session revocation, bearer-token validation for protected endpoints, and real email delivery are not implemented yet.
 
 Next user/auth step:
 
 - Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
-- Implement login, refresh, logout, and current-user endpoints now that the development email verification flow is in place.
-- Add JWT access-token issuing and refresh-token rotation using the existing persistence foundation.
+- Implement refresh, logout/session revocation, and current-user endpoints now that login issues access and refresh tokens.
+- Add bearer-token validation for protected endpoints before connecting account-only frontend features.
 - Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fatfitness.api.auth.dto.LoginRequest;
+import com.fatfitness.api.auth.dto.LoginResponse;
 import com.fatfitness.api.auth.dto.ResendVerificationRequest;
 import com.fatfitness.api.auth.dto.ResendVerificationResponse;
 import com.fatfitness.api.auth.dto.RegisterRequest;
@@ -15,6 +17,7 @@ import com.fatfitness.api.auth.dto.VerifyEmailRequest;
 import com.fatfitness.api.auth.dto.VerifyEmailResponse;
 import com.fatfitness.api.auth.service.AuthRegistrationService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -41,5 +44,15 @@ public class AuthController {
 	@PostMapping("/resend-verification")
 	public ResendVerificationResponse resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
 		return authRegistrationService.resendVerification(request);
+	}
+
+	@PostMapping("/login")
+	public LoginResponse login(
+			@Valid @RequestBody LoginRequest request,
+			HttpServletRequest servletRequest) {
+		return authRegistrationService.login(
+				request,
+				servletRequest.getHeader("User-Agent"),
+				servletRequest.getRemoteAddr());
 	}
 }

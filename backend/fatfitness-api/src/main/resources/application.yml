@@ -20,3 +20,11 @@ spring:
 
 server:
   port: 8080
+
+fatfitness:
+  auth:
+    jwt:
+      issuer: fatfitness-api
+      secret: ${FATFITNESS_JWT_SECRET:dev-only-change-me-secret-keep-at-least-32-characters}
+      access-token-ttl: PT15M
+    refresh-token-ttl: P30D

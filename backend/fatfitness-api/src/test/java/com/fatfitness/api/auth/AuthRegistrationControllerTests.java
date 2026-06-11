@@ -21,8 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fatfitness.api.auth.repository.EmailVerificationTokenRepository;
 import com.fatfitness.api.auth.model.EmailVerificationToken;
+import com.fatfitness.api.auth.model.ClientType;
+import com.fatfitness.api.auth.model.RefreshSession;
+import com.fatfitness.api.auth.repository.RefreshSessionRepository;
 import com.fatfitness.api.auth.service.EmailVerificationTokenService;
 import com.fatfitness.api.auth.service.PasswordHashingService;
+import com.fatfitness.api.auth.service.SecureTokenService;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserStatus;
 import com.fatfitness.api.user.repository.UserAccountRepository;
@@ -42,10 +46,16 @@ class AuthRegistrationControllerTests {
 	private EmailVerificationTokenRepository emailVerificationTokenRepository;
 
 	@Autowired
+	private RefreshSessionRepository refreshSessionRepository;
+
+	@Autowired
 	private EmailVerificationTokenService emailVerificationTokenService;
 
 	@Autowired
 	private PasswordHashingService passwordHashingService;
+
+	@Autowired
+	private SecureTokenService secureTokenService;
 
 	@Test
 	void registerCreatesPendingUserAndReturnsDevVerificationToken() throws Exception {
@@ -286,6 +296,100 @@ class AuthRegistrationControllerTests {
 		assertThat(emailVerificationTokenRepository.count()).isEqualTo(tokenCount);
 	}
 
+	@Test
+	void loginIssuesAccessTokenAndPersistsHashedRefreshSessionForActiveUser() throws Exception {
+		registerAndVerifyMember("login@example.com");
+
+		MvcResult result = mockMvc.perform(post("/api/auth/login")
+						.header("User-Agent", "JUnit Browser")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "LOGIN@example.com",
+								  "password": "very-secret-password",
+								  "clientType": "WEB",
+								  "deviceLabel": "Test browser"
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.email").value("login@example.com"))
+				.andExpect(jsonPath("$.displayName").value("New Member"))
+				.andExpect(jsonPath("$.tokenType").value("Bearer"))
+				.andExpect(jsonPath("$.accessToken", notNullValue()))
+				.andExpect(jsonPath("$.accessTokenExpiresAt", notNullValue()))
+				.andExpect(jsonPath("$.refreshToken", notNullValue()))
+				.andExpect(jsonPath("$.refreshTokenExpiresAt", notNullValue()))
+				.andReturn();
+
+		String accessToken = JsonPath.read(result.getResponse().getContentAsString(), "$.accessToken");
+		String refreshToken = JsonPath.read(result.getResponse().getContentAsString(), "$.refreshToken");
+		String refreshTokenHash = secureTokenService.hashToken(refreshToken);
+		RefreshSession refreshSession = refreshSessionRepository.findByRefreshTokenHash(refreshTokenHash).orElseThrow();
+
+		assertThat(accessToken).contains(".");
+		assertThat(refreshSessionRepository.findByRefreshTokenHash(refreshToken)).isNotPresent();
+		assertThat(refreshSession.getClientType()).isEqualTo(ClientType.WEB);
+		assertThat(refreshSession.getDeviceLabel()).isEqualTo("Test browser");
+		assertThat(refreshSession.getUserAgent()).isEqualTo("JUnit Browser");
+		assertThat(refreshSession.getRevokedAt()).isNull();
+
+		UserAccount savedUser = userAccountRepository.findByEmail("login@example.com").orElseThrow();
+		assertThat(savedUser.getLastLoginAt()).isNotNull();
+	}
+
+	@Test
+	void loginRejectsWrongPasswordWithoutRevealingAccountState() throws Exception {
+		registerAndVerifyMember("wrong-password@example.com");
+
+		mockMvc.perform(post("/api/auth/login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "wrong-password@example.com",
+								  "password": "wrong-password",
+								  "clientType": "WEB",
+								  "deviceLabel": "Test browser"
+								}
+								"""))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void loginRejectsPendingAccount() throws Exception {
+		registerNewMember("pending-login@example.com");
+
+		mockMvc.perform(post("/api/auth/login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "pending-login@example.com",
+								  "password": "very-secret-password",
+								  "clientType": "WEB",
+								  "deviceLabel": "Test browser"
+								}
+								"""))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void loginRejectsUnknownEmailWithoutCreatingRefreshSession() throws Exception {
+		long refreshSessionCount = refreshSessionRepository.count();
+
+		mockMvc.perform(post("/api/auth/login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "unknown-login@example.com",
+								  "password": "very-secret-password",
+								  "clientType": "WEB",
+								  "deviceLabel": "Test browser"
+								}
+								"""))
+				.andExpect(status().isUnauthorized());
+
+		assertThat(refreshSessionRepository.count()).isEqualTo(refreshSessionCount);
+	}
+
 	private MvcResult registerNewMember(String email) throws Exception {
 		return mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -302,5 +406,21 @@ class AuthRegistrationControllerTests {
 								""".formatted(email)))
 				.andExpect(status().isCreated())
 				.andReturn();
+	}
+
+	private void registerAndVerifyMember(String email) throws Exception {
+		MvcResult registrationResult = registerNewMember(email);
+		String rawToken = JsonPath.read(
+				registrationResult.getResponse().getContentAsString(),
+				"$.devEmailVerificationToken");
+
+		mockMvc.perform(post("/api/auth/verify-email")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "token": "%s"
+								}
+								""".formatted(rawToken)))
+				.andExpect(status().isOk());
 	}
 }

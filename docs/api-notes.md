@@ -130,6 +130,45 @@ Response shape for an unknown, active, banned, or deleted account:
 
 This endpoint is public. It intentionally does not reveal whether an email address belongs to an account.
 
+### `POST /api/auth/login`
+
+Purpose:
+
+- Authenticate an active user with email and password.
+- Reject unknown email or wrong password with `401`.
+- Reject pending, banned, or deleted accounts with `403`.
+- Issue a short-lived JWT access token.
+- Create a refresh session and store only the hashed refresh token.
+
+Request shape:
+
+```json
+{
+  "email": "new@example.com",
+  "password": "very-secret-password",
+  "clientType": "WEB",
+  "deviceLabel": "Chrome on Windows"
+}
+```
+
+Response shape:
+
+```json
+{
+  "userId": "2abda4f4-8f0d-4988-9b0e-1a76f43c83e2",
+  "email": "new@example.com",
+  "displayName": "New Member",
+  "roles": ["USER"],
+  "tokenType": "Bearer",
+  "accessToken": "jwt-access-token",
+  "accessTokenExpiresAt": "2026-06-11T12:15:00Z",
+  "refreshToken": "raw-refresh-token",
+  "refreshTokenExpiresAt": "2026-07-11T12:00:00Z"
+}
+```
+
+This endpoint is public. The refresh token is currently returned in JSON for API-first development. Web cookie handling can be added later when frontend form submission is intentionally wired.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -218,10 +257,10 @@ Current implemented auth endpoint:
 - `POST /api/auth/register`
 - `POST /api/auth/verify-email`
 - `POST /api/auth/resend-verification`
+- `POST /api/auth/login`
 
 Next auth endpoint slice:
 
-- `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
@@ -273,7 +312,16 @@ Current backend auth state:
 - Register creates a pending account, hashes the password, stores a hashed email verification token, and returns the raw verification token only in the development response.
 - `POST /api/auth/verify-email` exists and activates pending accounts with valid, unexpired, unused verification tokens.
 - `POST /api/auth/resend-verification` exists and creates a fresh development token only for pending accounts while keeping unknown/active-account responses non-revealing.
-- No login endpoint, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
+- `POST /api/auth/login` exists and issues a short-lived JWT access token plus a raw refresh token backed by a hashed refresh-session record.
+- Refresh-token rotation, logout, bearer-token validation for protected endpoints, email sending, and frontend form submission do not exist yet.
+
+JWT configuration:
+
+- Access tokens are signed with a local HMAC secret from `fatfitness.auth.jwt.secret`.
+- Local development uses the fallback secret from `application.yml`.
+- Production must set `FATFITNESS_JWT_SECRET`; do not commit production secrets.
+- Access-token TTL is configured by `fatfitness.auth.jwt.access-token-ttl`.
+- Refresh-token TTL is configured by `fatfitness.auth.refresh-token-ttl`.
 
 Email provider direction:
 
