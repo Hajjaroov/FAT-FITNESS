@@ -225,6 +225,67 @@ class AuthRegistrationControllerTests {
 				.andExpect(status().isBadRequest());
 	}
 
+	@Test
+	void resendVerificationCreatesNewDevTokenForPendingAccount() throws Exception {
+		registerNewMember("resend@example.com");
+
+		MvcResult result = mockMvc.perform(post("/api/auth/resend-verification")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "RESEND@example.com"
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.devEmailVerificationToken", notNullValue()))
+				.andExpect(jsonPath("$.verificationExpiresAt", notNullValue()))
+				.andReturn();
+
+		String rawToken = JsonPath.read(result.getResponse().getContentAsString(), "$.devEmailVerificationToken");
+		String tokenHash = emailVerificationTokenService.hashToken(rawToken);
+
+		assertThat(emailVerificationTokenRepository.findByTokenHash(tokenHash)).isPresent();
+	}
+
+	@Test
+	void resendVerificationDoesNotCreateTokenForActiveAccount() throws Exception {
+		UserAccount user = new UserAccount("active@example.com", "Active", "DE", "hash");
+		user.verifyEmail();
+		userAccountRepository.saveAndFlush(user);
+		long tokenCount = emailVerificationTokenRepository.count();
+
+		mockMvc.perform(post("/api/auth/resend-verification")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "active@example.com"
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.devEmailVerificationToken").doesNotExist())
+				.andExpect(jsonPath("$.verificationExpiresAt").doesNotExist());
+
+		assertThat(emailVerificationTokenRepository.count()).isEqualTo(tokenCount);
+	}
+
+	@Test
+	void resendVerificationDoesNotRevealUnknownEmail() throws Exception {
+		long tokenCount = emailVerificationTokenRepository.count();
+
+		mockMvc.perform(post("/api/auth/resend-verification")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "unknown@example.com"
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.devEmailVerificationToken").doesNotExist())
+				.andExpect(jsonPath("$.verificationExpiresAt").doesNotExist());
+
+		assertThat(emailVerificationTokenRepository.count()).isEqualTo(tokenCount);
+	}
+
 	private MvcResult registerNewMember(String email) throws Exception {
 		return mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)

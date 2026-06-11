@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fatfitness.api.auth.dto.ResendVerificationRequest;
+import com.fatfitness.api.auth.dto.ResendVerificationResponse;
 import com.fatfitness.api.auth.dto.RegisterRequest;
 import com.fatfitness.api.auth.dto.RegisterResponse;
 import com.fatfitness.api.auth.dto.VerifyEmailRequest;
@@ -34,5 +36,10 @@ public class AuthController {
 	@PostMapping("/verify-email")
 	public VerifyEmailResponse verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
 		return authRegistrationService.verifyEmail(request);
+	}
+
+	@PostMapping("/resend-verification")
+	public ResendVerificationResponse resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
+		return authRegistrationService.resendVerification(request);
 	}
 }

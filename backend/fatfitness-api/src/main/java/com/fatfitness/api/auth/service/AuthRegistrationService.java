@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fatfitness.api.auth.dto.ResendVerificationRequest;
+import com.fatfitness.api.auth.dto.ResendVerificationResponse;
 import com.fatfitness.api.auth.dto.RegisterRequest;
 import com.fatfitness.api.auth.dto.RegisterResponse;
 import com.fatfitness.api.auth.dto.VerifyEmailRequest;
 import com.fatfitness.api.auth.dto.VerifyEmailResponse;
 import com.fatfitness.api.auth.service.EmailVerificationTokenService.CreatedEmailVerificationToken;
 import com.fatfitness.api.user.entity.UserAccount;
+import com.fatfitness.api.user.entity.UserStatus;
 import com.fatfitness.api.user.repository.UserAccountRepository;
 
 @Service
@@ -69,6 +72,26 @@ public class AuthRegistrationService {
 				user.getStatus(),
 				user.getEmailVerifiedAt(),
 				"Email verified. Account-only community features can use this account when they are available.");
+	}
+
+	@Transactional
+	public ResendVerificationResponse resendVerification(ResendVerificationRequest request) {
+		String email = normalizeEmail(request.email());
+		UserAccount user = userAccountRepository.findByEmail(email).orElse(null);
+
+		if (user == null || user.getStatus() != UserStatus.PENDING_EMAIL_VERIFICATION) {
+			return new ResendVerificationResponse(
+					"If an unverified account exists for this email, a verification link will be sent.",
+					null,
+					null);
+		}
+
+		CreatedEmailVerificationToken verificationToken = emailVerificationTokenService.createFor(user);
+
+		return new ResendVerificationResponse(
+				"Verification token created. Real email delivery is not enabled yet.",
+				verificationToken.rawToken(),
+				verificationToken.expiresAt());
 	}
 
 	private static String normalizeEmail(String email) {

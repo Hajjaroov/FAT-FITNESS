@@ -92,6 +92,44 @@ Response shape:
 
 This endpoint is public because email verification links must work before login exists. It does not create a session or issue JWTs.
 
+### `POST /api/auth/resend-verification`
+
+Purpose:
+
+- Create a fresh email verification token for a pending account.
+- Keep the response safe for unknown or already-active emails.
+- Continue development without real email delivery.
+
+Request shape:
+
+```json
+{
+  "email": "new@example.com"
+}
+```
+
+Current development-only response shape for a pending account:
+
+```json
+{
+  "message": "Verification token created. Real email delivery is not enabled yet.",
+  "devEmailVerificationToken": "raw-dev-only-token",
+  "verificationExpiresAt": "2026-06-12T12:00:00Z"
+}
+```
+
+Response shape for an unknown, active, banned, or deleted account:
+
+```json
+{
+  "message": "If an unverified account exists for this email, a verification link will be sent.",
+  "devEmailVerificationToken": null,
+  "verificationExpiresAt": null
+}
+```
+
+This endpoint is public. It intentionally does not reveal whether an email address belongs to an account.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -179,10 +217,10 @@ Current implemented auth endpoint:
 
 - `POST /api/auth/register`
 - `POST /api/auth/verify-email`
+- `POST /api/auth/resend-verification`
 
 Next auth endpoint slice:
 
-- `POST /api/auth/resend-verification`
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
@@ -234,7 +272,8 @@ Current backend auth state:
 - `POST /api/auth/register` exists as a backend-only development slice.
 - Register creates a pending account, hashes the password, stores a hashed email verification token, and returns the raw verification token only in the development response.
 - `POST /api/auth/verify-email` exists and activates pending accounts with valid, unexpired, unused verification tokens.
-- No resend endpoint, login endpoint, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
+- `POST /api/auth/resend-verification` exists and creates a fresh development token only for pending accounts while keeping unknown/active-account responses non-revealing.
+- No login endpoint, JWT issuing, refresh flow, email sending, or frontend form submission exists yet.
 
 Email provider direction:
 
