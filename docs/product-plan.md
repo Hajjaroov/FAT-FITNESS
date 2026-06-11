@@ -158,7 +158,8 @@ Current state:
 - `POST /api/auth/resend-verification` exists and creates a fresh development verification token for pending accounts without revealing unknown emails.
 - `POST /api/auth/login` exists and issues a JWT access token plus a raw refresh token backed by hashed refresh-session storage.
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking old sessions and creating replacement sessions.
-- No frontend form submission, real email delivery, logout, current-user endpoint, or protected account session exists yet.
+- `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
+- No frontend form submission, real email delivery, current-user endpoint, or protected account session exists yet.
 
 Approved auth direction:
 
@@ -383,6 +384,7 @@ Completed-enough checkpoints for now:
 - `POST /api/auth/resend-verification` exists for development-only verification token refresh.
 - `POST /api/auth/login` exists for active users and creates hashed refresh-session records.
 - `POST /api/auth/refresh` exists and rotates refresh-session records.
+- `POST /api/auth/logout` exists and revokes refresh-session records.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
 Approved auth implementation goals:

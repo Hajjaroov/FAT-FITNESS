@@ -201,6 +201,32 @@ Response shape:
 
 This endpoint is public because access tokens can expire before a user session should end. Reusing an old rotated refresh token returns `401`.
 
+### `POST /api/auth/logout`
+
+Purpose:
+
+- Revoke a refresh session.
+- Prevent the refresh token from being used again.
+- Keep logout idempotent and non-revealing.
+
+Request shape:
+
+```json
+{
+  "refreshToken": "raw-refresh-token"
+}
+```
+
+Response shape:
+
+```json
+{
+  "message": "Logged out if the session existed."
+}
+```
+
+This endpoint is public and intentionally returns success even when the refresh token is unknown or already revoked. Existing access tokens remain valid until their short expiry; logout revokes the ability to extend the session.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -291,10 +317,10 @@ Current implemented auth endpoint:
 - `POST /api/auth/resend-verification`
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
+- `POST /api/auth/logout`
 
 Next auth endpoint slice:
 
-- `POST /api/auth/logout`
 - `GET /api/auth/me`
 
 Planned registration shape when auth is approved:
@@ -346,7 +372,8 @@ Current backend auth state:
 - `POST /api/auth/resend-verification` exists and creates a fresh development token only for pending accounts while keeping unknown/active-account responses non-revealing.
 - `POST /api/auth/login` exists and issues a short-lived JWT access token plus a raw refresh token backed by a hashed refresh-session record.
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session.
-- Logout, bearer-token validation for protected endpoints, email sending, and frontend form submission do not exist yet.
+- `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing.
+- Bearer-token validation for protected endpoints, email sending, and frontend form submission do not exist yet.
 
 JWT configuration:
 

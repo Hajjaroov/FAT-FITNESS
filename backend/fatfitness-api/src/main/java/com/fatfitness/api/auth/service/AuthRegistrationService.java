@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fatfitness.api.config.AuthProperties;
 import com.fatfitness.api.auth.dto.LoginRequest;
 import com.fatfitness.api.auth.dto.LoginResponse;
+import com.fatfitness.api.auth.dto.LogoutRequest;
+import com.fatfitness.api.auth.dto.LogoutResponse;
 import com.fatfitness.api.auth.dto.RefreshRequest;
 import com.fatfitness.api.auth.dto.RefreshResponse;
 import com.fatfitness.api.auth.dto.ResendVerificationRequest;
@@ -202,6 +204,19 @@ public class AuthRegistrationService {
 				accessToken.expiresAt(),
 				rawRefreshToken,
 				refreshExpiresAt);
+	}
+
+	@Transactional
+	public LogoutResponse logout(LogoutRequest request) {
+		refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(request.refreshToken()))
+				.ifPresent(session -> {
+					if (session.getRevokedAt() == null) {
+						session.revoke();
+					}
+				});
+
+		return new LogoutResponse("Logged out if the session existed.");
 	}
 
 	private static String normalizeEmail(String email) {

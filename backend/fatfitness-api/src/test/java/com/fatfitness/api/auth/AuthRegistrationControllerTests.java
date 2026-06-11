@@ -520,6 +520,77 @@ class AuthRegistrationControllerTests {
 		assertThat(refreshSession.getRevokedAt()).isNotNull();
 	}
 
+	@Test
+	void logoutRevokesRefreshSessionAndPreventsFutureRefresh() throws Exception {
+		MvcResult loginResult = loginActiveMember("logout@example.com");
+		String refreshToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.refreshToken");
+
+		mockMvc.perform(post("/api/auth/logout")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(refreshToken)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.message").value("Logged out if the session existed."));
+
+		RefreshSession refreshSession = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(refreshToken))
+				.orElseThrow();
+		assertThat(refreshSession.getRevokedAt()).isNotNull();
+
+		mockMvc.perform(post("/api/auth/refresh")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(refreshToken)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void logoutIsIdempotentForAlreadyRevokedToken() throws Exception {
+		MvcResult loginResult = loginActiveMember("logout-twice@example.com");
+		String refreshToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.refreshToken");
+
+		mockMvc.perform(post("/api/auth/logout")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(refreshToken)))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(post("/api/auth/logout")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(refreshToken)))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void logoutDoesNotRevealUnknownToken() throws Exception {
+		long refreshSessionCount = refreshSessionRepository.count();
+
+		mockMvc.perform(post("/api/auth/logout")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "unknown-refresh-token"
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.message").value("Logged out if the session existed."));
+
+		assertThat(refreshSessionRepository.count()).isEqualTo(refreshSessionCount);
+	}
+
 	private MvcResult registerNewMember(String email) throws Exception {
 		return mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)
