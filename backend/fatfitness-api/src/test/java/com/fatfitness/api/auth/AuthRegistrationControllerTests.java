@@ -390,6 +390,136 @@ class AuthRegistrationControllerTests {
 		assertThat(refreshSessionRepository.count()).isEqualTo(refreshSessionCount);
 	}
 
+	@Test
+	void refreshRotatesRefreshSessionAndIssuesNewTokens() throws Exception {
+		MvcResult loginResult = loginActiveMember("refresh@example.com");
+		String oldRefreshToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.refreshToken");
+		RefreshSession oldSessionBeforeRefresh = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(oldRefreshToken))
+				.orElseThrow();
+
+		MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
+						.header("User-Agent", "Refresh Browser")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(oldRefreshToken)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.tokenType").value("Bearer"))
+				.andExpect(jsonPath("$.accessToken", notNullValue()))
+				.andExpect(jsonPath("$.accessTokenExpiresAt", notNullValue()))
+				.andExpect(jsonPath("$.refreshToken", notNullValue()))
+				.andExpect(jsonPath("$.refreshTokenExpiresAt", notNullValue()))
+				.andReturn();
+
+		String newRefreshToken = JsonPath.read(refreshResult.getResponse().getContentAsString(), "$.refreshToken");
+		assertThat(newRefreshToken).isNotEqualTo(oldRefreshToken);
+
+		RefreshSession oldSession = refreshSessionRepository.findById(oldSessionBeforeRefresh.getId()).orElseThrow();
+		RefreshSession newSession = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(newRefreshToken))
+				.orElseThrow();
+
+		assertThat(refreshSessionRepository.findByRefreshTokenHash(newRefreshToken)).isNotPresent();
+		assertThat(oldSession.getRevokedAt()).isNotNull();
+		assertThat(oldSession.getLastUsedAt()).isNotNull();
+		assertThat(oldSession.getReplacedBySession().getId()).isEqualTo(newSession.getId());
+		assertThat(newSession.getClientType()).isEqualTo(ClientType.WEB);
+		assertThat(newSession.getDeviceLabel()).isEqualTo("Test browser");
+		assertThat(newSession.getUserAgent()).isEqualTo("Refresh Browser");
+		assertThat(newSession.getRevokedAt()).isNull();
+	}
+
+	@Test
+	void refreshRejectsUnknownTokenWithoutCreatingSession() throws Exception {
+		long refreshSessionCount = refreshSessionRepository.count();
+
+		mockMvc.perform(post("/api/auth/refresh")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "unknown-refresh-token"
+								}
+								"""))
+				.andExpect(status().isUnauthorized());
+
+		assertThat(refreshSessionRepository.count()).isEqualTo(refreshSessionCount);
+	}
+
+	@Test
+	void refreshRejectsRevokedToken() throws Exception {
+		MvcResult loginResult = loginActiveMember("revoked-refresh@example.com");
+		String oldRefreshToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.refreshToken");
+
+		mockMvc.perform(post("/api/auth/refresh")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(oldRefreshToken)))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(post("/api/auth/refresh")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(oldRefreshToken)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void refreshRejectsExpiredTokenAndRevokesSession() throws Exception {
+		String rawRefreshToken = "expired-refresh-token";
+		UserAccount user = new UserAccount("expired-refresh@example.com", "Expired Refresh", "DE", "hash");
+		user.verifyEmail();
+		UserAccount savedUser = userAccountRepository.saveAndFlush(user);
+		RefreshSession expiredSession = refreshSessionRepository.saveAndFlush(new RefreshSession(
+				savedUser,
+				secureTokenService.hashToken(rawRefreshToken),
+				ClientType.WEB,
+				Instant.now().minus(1, ChronoUnit.HOURS)));
+
+		mockMvc.perform(post("/api/auth/refresh")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(rawRefreshToken)))
+				.andExpect(status().isUnauthorized());
+
+		RefreshSession savedExpiredSession = refreshSessionRepository.findById(expiredSession.getId()).orElseThrow();
+		assertThat(savedExpiredSession.getRevokedAt()).isNotNull();
+	}
+
+	@Test
+	void refreshRejectsBannedUserAndRevokesSession() throws Exception {
+		MvcResult loginResult = loginActiveMember("banned-refresh@example.com");
+		String refreshToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.refreshToken");
+		UserAccount user = userAccountRepository.findByEmail("banned-refresh@example.com").orElseThrow();
+		user.ban();
+		userAccountRepository.saveAndFlush(user);
+
+		mockMvc.perform(post("/api/auth/refresh")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "refreshToken": "%s"
+								}
+								""".formatted(refreshToken)))
+				.andExpect(status().isForbidden());
+
+		RefreshSession refreshSession = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(refreshToken))
+				.orElseThrow();
+		assertThat(refreshSession.getRevokedAt()).isNotNull();
+	}
+
 	private MvcResult registerNewMember(String email) throws Exception {
 		return mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -422,5 +552,23 @@ class AuthRegistrationControllerTests {
 								}
 								""".formatted(rawToken)))
 				.andExpect(status().isOk());
+	}
+
+	private MvcResult loginActiveMember(String email) throws Exception {
+		registerAndVerifyMember(email);
+
+		return mockMvc.perform(post("/api/auth/login")
+						.header("User-Agent", "JUnit Browser")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "%s",
+								  "password": "very-secret-password",
+								  "clientType": "WEB",
+								  "deviceLabel": "Test browser"
+								}
+								""".formatted(email)))
+				.andExpect(status().isOk())
+				.andReturn();
 	}
 }

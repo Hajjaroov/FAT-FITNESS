@@ -169,6 +169,38 @@ Response shape:
 
 This endpoint is public. The refresh token is currently returned in JSON for API-first development. Web cookie handling can be added later when frontend form submission is intentionally wired.
 
+### `POST /api/auth/refresh`
+
+Purpose:
+
+- Rotate a refresh token.
+- Reject unknown, expired, revoked, or non-active-user sessions.
+- Issue a new short-lived JWT access token.
+- Create a replacement refresh session and store only the hashed replacement token.
+- Revoke the old refresh session and link it to the replacement session.
+
+Request shape:
+
+```json
+{
+  "refreshToken": "raw-refresh-token"
+}
+```
+
+Response shape:
+
+```json
+{
+  "tokenType": "Bearer",
+  "accessToken": "new-jwt-access-token",
+  "accessTokenExpiresAt": "2026-06-11T12:30:00Z",
+  "refreshToken": "new-raw-refresh-token",
+  "refreshTokenExpiresAt": "2026-07-11T12:15:00Z"
+}
+```
+
+This endpoint is public because access tokens can expire before a user session should end. Reusing an old rotated refresh token returns `401`.
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -258,10 +290,10 @@ Current implemented auth endpoint:
 - `POST /api/auth/verify-email`
 - `POST /api/auth/resend-verification`
 - `POST /api/auth/login`
+- `POST /api/auth/refresh`
 
 Next auth endpoint slice:
 
-- `POST /api/auth/refresh`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
 
@@ -313,7 +345,8 @@ Current backend auth state:
 - `POST /api/auth/verify-email` exists and activates pending accounts with valid, unexpired, unused verification tokens.
 - `POST /api/auth/resend-verification` exists and creates a fresh development token only for pending accounts while keeping unknown/active-account responses non-revealing.
 - `POST /api/auth/login` exists and issues a short-lived JWT access token plus a raw refresh token backed by a hashed refresh-session record.
-- Refresh-token rotation, logout, bearer-token validation for protected endpoints, email sending, and frontend form submission do not exist yet.
+- `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session.
+- Logout, bearer-token validation for protected endpoints, email sending, and frontend form submission do not exist yet.
 
 JWT configuration:
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fatfitness.api.auth.dto.LoginRequest;
 import com.fatfitness.api.auth.dto.LoginResponse;
+import com.fatfitness.api.auth.dto.RefreshRequest;
+import com.fatfitness.api.auth.dto.RefreshResponse;
 import com.fatfitness.api.auth.dto.ResendVerificationRequest;
 import com.fatfitness.api.auth.dto.ResendVerificationResponse;
 import com.fatfitness.api.auth.dto.RegisterRequest;
@@ -51,6 +53,16 @@ public class AuthController {
 			@Valid @RequestBody LoginRequest request,
 			HttpServletRequest servletRequest) {
 		return authRegistrationService.login(
+				request,
+				servletRequest.getHeader("User-Agent"),
+				servletRequest.getRemoteAddr());
+	}
+
+	@PostMapping("/refresh")
+	public RefreshResponse refresh(
+			@Valid @RequestBody RefreshRequest request,
+			HttpServletRequest servletRequest) {
+		return authRegistrationService.refresh(
 				request,
 				servletRequest.getHeader("User-Agent"),
 				servletRequest.getRemoteAddr());

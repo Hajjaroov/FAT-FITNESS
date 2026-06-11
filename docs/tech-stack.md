@@ -69,6 +69,7 @@ Backend rules:
 - `POST /api/auth/verify-email` consumes valid verification tokens and activates pending accounts.
 - `POST /api/auth/resend-verification` creates fresh development verification tokens for pending accounts without revealing unknown emails.
 - `POST /api/auth/login` issues Spring Security JWT access tokens and stores hashed refresh-session records.
+- `POST /api/auth/refresh` rotates refresh-session records and revokes old refresh tokens.
 - JWT signing uses `spring-security-oauth2-jose`; production must provide `FATFITNESS_JWT_SECRET`.
 - Add real transactional email later through a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.
 - Remove dev-only raw verification token responses before production launch.

@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fatfitness.api.config.AuthProperties;
 import com.fatfitness.api.auth.dto.LoginRequest;
 import com.fatfitness.api.auth.dto.LoginResponse;
+import com.fatfitness.api.auth.dto.RefreshRequest;
+import com.fatfitness.api.auth.dto.RefreshResponse;
 import com.fatfitness.api.auth.dto.ResendVerificationRequest;
 import com.fatfitness.api.auth.dto.ResendVerificationResponse;
 import com.fatfitness.api.auth.dto.RegisterRequest;
@@ -156,6 +158,52 @@ public class AuthRegistrationService {
 				refreshExpiresAt);
 	}
 
+	@Transactional
+	public RefreshResponse refresh(RefreshRequest request, String userAgent, String ipAddress) {
+		RefreshSession currentSession = refreshSessionRepository
+				.findByRefreshTokenHash(secureTokenService.hashToken(request.refreshToken()))
+				.orElseThrow(AuthRegistrationService::invalidRefreshToken);
+
+		if (currentSession.getRevokedAt() != null) {
+			throw invalidRefreshToken();
+		}
+
+		if (!currentSession.getExpiresAt().isAfter(Instant.now())) {
+			currentSession.revoke();
+			throw invalidRefreshToken();
+		}
+
+		UserAccount user = currentSession.getUser();
+		if (user.getStatus() != UserStatus.ACTIVE) {
+			currentSession.revoke();
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not active");
+		}
+
+		currentSession.recordUse();
+		CreatedAccessToken accessToken = jwtAccessTokenService.createFor(user);
+		String rawRefreshToken = secureTokenService.generateToken();
+		Instant refreshExpiresAt = Instant.now().plus(refreshTokenTtl);
+		RefreshSession replacementSession = new RefreshSession(
+				user,
+				secureTokenService.hashToken(rawRefreshToken),
+				currentSession.getClientType(),
+				refreshExpiresAt);
+		replacementSession.setClientMetadata(
+				currentSession.getDeviceLabel(),
+				cleanOptionalOrFallback(userAgent, 512, currentSession.getUserAgent()),
+				cleanOptionalOrFallback(ipAddress, 45, currentSession.getIpAddress()));
+
+		refreshSessionRepository.save(replacementSession);
+		currentSession.replaceWith(replacementSession);
+
+		return new RefreshResponse(
+				"Bearer",
+				accessToken.token(),
+				accessToken.expiresAt(),
+				rawRefreshToken,
+				refreshExpiresAt);
+	}
+
 	private static String normalizeEmail(String email) {
 		return email.trim().toLowerCase(Locale.ROOT);
 	}
@@ -181,7 +229,16 @@ public class AuthRegistrationService {
 		return cleaned.length() <= maxLength ? cleaned : cleaned.substring(0, maxLength);
 	}
 
+	private static String cleanOptionalOrFallback(String value, int maxLength, String fallback) {
+		String cleaned = cleanOptional(value, maxLength);
+		return cleaned == null ? fallback : cleaned;
+	}
+
 	private static ResponseStatusException invalidCredentials() {
 		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+	}
+
+	private static ResponseStatusException invalidRefreshToken() {
+		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
 	}
 }
