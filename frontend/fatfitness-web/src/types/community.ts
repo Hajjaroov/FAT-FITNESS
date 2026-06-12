@@ -1,4 +1,5 @@
 export type ForumPostStatus = "PUBLISHED" | "HIDDEN" | "DELETED";
+export type ForumCommentStatus = "PUBLISHED" | "HIDDEN" | "DELETED";
 
 export type ForumPost = {
   id: string;
@@ -30,6 +31,35 @@ export type ReportForumPostRequest = {
 export type ForumPostReport = {
   id: string;
   postId: string;
+  reason: string;
+  details: string | null;
+  status: ForumReportStatus;
+  createdAt: string;
+};
+
+export type ForumComment = {
+  id: string;
+  postId: string;
+  body: string;
+  authorDisplayName: string;
+  status: ForumCommentStatus;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateForumCommentRequest = {
+  body: string;
+  acceptedCommunityGuidelines: boolean;
+};
+
+export type ReportForumCommentRequest = {
+  reason: string;
+  details?: string;
+};
+
+export type ForumCommentReport = {
+  id: string;
+  commentId: string;
   reason: string;
   details: string | null;
   status: ForumReportStatus;

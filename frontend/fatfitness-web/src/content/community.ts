@@ -210,6 +210,73 @@ export const communityCopy = {
         },
       ],
     },
+    comments: {
+      eyebrow: "Replies",
+      title: "Replies",
+      intro:
+        "Replies appear in the order they were posted. Keep support practical, kind, and based on personal experience.",
+      loading: "Loading replies...",
+      errorTitle: "Could not load replies",
+      retryLabel: "Try again",
+      retryPendingLabel: "Trying again...",
+      emptyTitle: "No replies yet",
+      emptyText:
+        "Be the first to answer with a careful question, a useful reflection, or beginner-friendly support.",
+      postedByLabel: "Reply from",
+      reportLabel: "Report reply",
+      cancelReportLabel: "Cancel",
+      createTitle: "Write a reply",
+      createIntro:
+        "Share support, ask a careful question, or add your personal experience. Avoid instructions, pressure, or medical advice.",
+      checkingSession: "Checking your session before showing reply options.",
+      signInTitle: "Sign in to reply",
+      signInText:
+        "Reading stays public. Replying is only for verified accounts so the forum can stay safer.",
+      signInLabel: "Sign in",
+      registerLabel: "Create account",
+      signInRequiredError: "Sign in with a verified account before replying.",
+      guidelinesRequiredError:
+        "Accept the community guidelines before replying.",
+      bodyLabel: "Reply",
+      bodyPlaceholder:
+        "Write a helpful reply. Share what you experienced, what you noticed, or what might be worth thinking about.",
+      guidelinesLabel:
+        "I understand this is peer support. I will reply with personal experience, not medical instructions or coaching.",
+      submitLabel: "Post reply",
+      submitPendingLabel: "Posting...",
+      createSuccessTitle: "Reply posted",
+      createSuccessText: "Your reply is now visible in this thread.",
+      lockedTitle: "Thread locked",
+      lockedText: "New replies are closed for this thread.",
+      formErrorFallback:
+        "Something went wrong. Please check the reply and try again.",
+    },
+    commentReports: {
+      eyebrow: "Report",
+      title: "Report this reply",
+      intro:
+        "Use this for unsafe, harmful, spammy, or rule-breaking replies.",
+      checkingSession: "Checking your session before showing report options.",
+      signInTitle: "Sign in to report",
+      signInText:
+        "Reading stays public. Reporting is only for verified accounts so reports can be handled responsibly.",
+      signInLabel: "Sign in",
+      registerLabel: "Create account",
+      signInRequiredError: "Sign in with a verified account before reporting.",
+      reasonRequiredError: "Choose a reason for the report.",
+      reasonLabel: "Reason",
+      reasonPlaceholder: "Choose a reason",
+      detailsLabel: "Details optional",
+      detailsPlaceholder:
+        "Add context that helps review the reply. Do not include private information unless it is necessary.",
+      submitLabel: "Send report",
+      submitPendingLabel: "Sending...",
+      successTitle: "Report saved",
+      successText:
+        "Thanks. The report is saved and can be reviewed by the site team.",
+      errorFallback:
+        "Something went wrong. Please check the report and try again.",
+    },
     guidelines: {
       backLinkLabel: "Community",
       hero: {
@@ -513,6 +580,77 @@ export const communityCopy = {
           label: "Andere Regel- oder Sicherheitsfrage",
         },
       ],
+    },
+    comments: {
+      eyebrow: "Antworten",
+      title: "Antworten",
+      intro:
+        "Antworten erscheinen in der Reihenfolge, in der sie gepostet wurden. Bleib praktisch, freundlich und bei persönlicher Erfahrung.",
+      loading: "Antworten werden geladen...",
+      errorTitle: "Antworten konnten nicht geladen werden",
+      retryLabel: "Erneut versuchen",
+      retryPendingLabel: "Wird erneut versucht...",
+      emptyTitle: "Noch keine Antworten",
+      emptyText:
+        "Sei die erste Person mit einer vorsichtigen Frage, einer hilfreichen Reflexion oder anfängerfreundlichem Support.",
+      postedByLabel: "Antwort von",
+      reportLabel: "Antwort melden",
+      cancelReportLabel: "Abbrechen",
+      createTitle: "Antwort schreiben",
+      createIntro:
+        "Teile Support, stelle eine vorsichtige Frage oder ergänze persönliche Erfahrung. Keine Anweisungen, kein Druck und keine medizinische Beratung.",
+      checkingSession:
+        "Sitzung wird geprüft, bevor Antwortoptionen angezeigt werden.",
+      signInTitle: "Einloggen, um zu antworten",
+      signInText:
+        "Lesen bleibt öffentlich. Antworten ist nur für verifizierte Accounts, damit das Forum sicherer bleiben kann.",
+      signInLabel: "Einloggen",
+      registerLabel: "Account erstellen",
+      signInRequiredError:
+        "Logge dich mit einem verifizierten Account ein, bevor du antwortest.",
+      guidelinesRequiredError:
+        "Akzeptiere die Community-Regeln, bevor du antwortest.",
+      bodyLabel: "Antwort",
+      bodyPlaceholder:
+        "Schreibe eine hilfreiche Antwort. Teile, was du erlebt hast, was dir aufgefallen ist oder worüber man nachdenken könnte.",
+      guidelinesLabel:
+        "Ich verstehe, dass das Peer-Support ist. Ich antworte mit persönlicher Erfahrung, nicht mit medizinischen Anweisungen oder Coaching.",
+      submitLabel: "Antwort posten",
+      submitPendingLabel: "Wird gepostet...",
+      createSuccessTitle: "Antwort gepostet",
+      createSuccessText: "Deine Antwort ist jetzt in diesem Thread sichtbar.",
+      lockedTitle: "Thread gesperrt",
+      lockedText: "Neue Antworten sind für diesen Thread geschlossen.",
+      formErrorFallback:
+        "Etwas ist schiefgelaufen. Bitte prüfe die Antwort und versuche es erneut.",
+    },
+    commentReports: {
+      eyebrow: "Melden",
+      title: "Diese Antwort melden",
+      intro:
+        "Nutze das bei unsicheren, schädlichen, spamartigen oder regelwidrigen Antworten.",
+      checkingSession:
+        "Sitzung wird geprüft, bevor Meldeoptionen angezeigt werden.",
+      signInTitle: "Einloggen, um zu melden",
+      signInText:
+        "Lesen bleibt öffentlich. Melden ist nur für verifizierte Accounts, damit Meldungen verantwortungsvoll behandelt werden können.",
+      signInLabel: "Einloggen",
+      registerLabel: "Account erstellen",
+      signInRequiredError:
+        "Logge dich mit einem verifizierten Account ein, bevor du meldest.",
+      reasonRequiredError: "Wähle einen Grund für die Meldung.",
+      reasonLabel: "Grund",
+      reasonPlaceholder: "Grund wählen",
+      detailsLabel: "Details optional",
+      detailsPlaceholder:
+        "Ergänze Kontext, der bei der Prüfung hilft. Teile keine privaten Informationen, außer sie sind notwendig.",
+      submitLabel: "Meldung senden",
+      submitPendingLabel: "Wird gesendet...",
+      successTitle: "Meldung gespeichert",
+      successText:
+        "Danke. Die Meldung ist gespeichert und kann vom Site-Team geprüft werden.",
+      errorFallback:
+        "Etwas ist schiefgelaufen. Bitte prüfe die Meldung und versuche es erneut.",
     },
     guidelines: {
       backLinkLabel: "Community",

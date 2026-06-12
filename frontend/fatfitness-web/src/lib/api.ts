@@ -11,9 +11,13 @@ import type {
 } from "@/types/auth";
 import type { BackendStatus } from "@/types/api";
 import type {
+  CreateForumCommentRequest,
   CreateForumPostRequest,
+  ForumComment,
+  ForumCommentReport,
   ForumPost,
   ForumPostReport,
+  ReportForumCommentRequest,
   ReportForumPostRequest,
 } from "@/types/community";
 
@@ -200,4 +204,51 @@ export function reportForumPost(
     body: request,
     accessToken,
   });
+}
+
+export function getForumComments({
+  postId,
+  limit,
+}: {
+  postId: string;
+  limit?: number;
+}) {
+  const params = new URLSearchParams();
+
+  if (limit) {
+    params.set("limit", String(limit));
+  }
+
+  const query = params.toString();
+
+  return apiRequest<ForumComment[]>(
+    `/api/community/posts/${postId}/comments${query ? `?${query}` : ""}`,
+  );
+}
+
+export function createForumComment(
+  postId: string,
+  request: CreateForumCommentRequest,
+  accessToken: string,
+) {
+  return apiRequest<ForumComment>(`/api/community/posts/${postId}/comments`, {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
+}
+
+export function reportForumComment(
+  commentId: string,
+  request: ReportForumCommentRequest,
+  accessToken: string,
+) {
+  return apiRequest<ForumCommentReport>(
+    `/api/community/comments/${commentId}/reports`,
+    {
+      method: "POST",
+      body: request,
+      accessToken,
+    },
+  );
 }

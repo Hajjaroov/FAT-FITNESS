@@ -74,7 +74,7 @@ Current user/auth state:
 - Web auth can now keep refresh tokens in an `HttpOnly` cookie while the database still stores only hashed refresh tokens.
 - Backend startup can create or ensure a local owner user from environment variables without storing plaintext passwords.
 - The local owner seed is development-only and must be removed or disabled before production/public launch.
-- Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and real email delivery are not implemented yet.
+- Bearer-token validation is wired for `/api/auth/me` and authenticated forum write/report endpoints. Real email delivery is not implemented yet.
 
 Current community/forum state:
 
@@ -99,7 +99,7 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Add frontend comment UI or moderation/report-resolution tools after the next product decision.
+- Add moderation/report-resolution tools after the next product decision.
 - Keep likes/bookmarks, report resolution, and moderation actions out until the next explicit forum slice.
 
 Future user/auth model direction:

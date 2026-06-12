@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CommunityComments } from "@/app/_components/CommunityComments";
 import { PageShell } from "@/app/_components/PageShell";
 import { CommunityPostReportForm } from "@/app/_components/CommunityPostReportForm";
 import {
@@ -97,36 +98,43 @@ export function CommunityPostDetailView({
 
       {state.kind === "success" ? (
         <section className="grid gap-6 lg:grid-cols-[1fr_24rem] lg:items-start">
-          <article className="site-card overflow-hidden">
-            <header className="site-divider border-b p-8 sm:p-10">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-subtle)]">
-                <Link
-                  href={`/community/categories/${state.post.categorySlug}`}
-                  className="transition hover:text-[var(--color-accent-strong)]"
-                >
-                  {state.post.categoryName}
-                </Link>
-                <span aria-hidden="true">/</span>
-                <span>
-                  {copy.posts.postedByLabel} {state.post.authorDisplayName}
-                </span>
-                <span aria-hidden="true">/</span>
-                <time dateTime={state.post.createdAt}>
-                  {formatForumPostDate(state.post.createdAt, locale)}
-                </time>
+          <div className="flex flex-col gap-6">
+            <article className="site-card overflow-hidden">
+              <header className="site-divider border-b p-8 sm:p-10">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
+                  <Link
+                    href={`/community/categories/${state.post.categorySlug}`}
+                    className="transition hover:text-(--color-accent-strong)"
+                  >
+                    {state.post.categoryName}
+                  </Link>
+                  <span aria-hidden="true">/</span>
+                  <span>
+                    {copy.posts.postedByLabel} {state.post.authorDisplayName}
+                  </span>
+                  <span aria-hidden="true">/</span>
+                  <time dateTime={state.post.createdAt}>
+                    {formatForumPostDate(state.post.createdAt, locale)}
+                  </time>
+                </div>
+
+                <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
+                  {state.post.title}
+                </h1>
+              </header>
+
+              <div className="p-8 sm:p-10">
+                <p className="whitespace-pre-wrap text-base leading-8">
+                  {state.post.body}
+                </p>
               </div>
+            </article>
 
-              <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                {state.post.title}
-              </h1>
-            </header>
-
-            <div className="p-8 sm:p-10">
-              <p className="whitespace-pre-wrap text-base leading-8">
-                {state.post.body}
-              </p>
-            </div>
-          </article>
+            <CommunityComments
+              postId={state.post.id}
+              locked={state.post.locked}
+            />
+          </div>
 
           <CommunityPostReportForm postId={state.post.id} />
         </section>

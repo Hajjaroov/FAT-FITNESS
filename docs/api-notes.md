@@ -456,7 +456,7 @@ Response shape:
 }
 ```
 
-Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, and submit reports for published threads. Frontend comment UI, report resolution, moderator actions, and likes/bookmarks are not implemented yet.
+Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, and report replies. Report resolution, moderator actions, and likes/bookmarks are not implemented yet.
 
 Likely next MVP endpoints later:
 
@@ -564,7 +564,8 @@ Current frontend auth state:
 - Registration currently shows the development-only email verification token and can submit it to `POST /api/auth/verify-email` for local testing.
 - `/dashboard` uses the frontend auth provider and `GET /api/auth/me` state to show the current account summary; it does not add new API endpoints.
 - Frontend auth forms do not use `localStorage`.
-- No real email delivery, frontend comments/replies UI, moderation dashboard, or production-ready account settings UI exists yet.
+- Community post detail pages can list published replies, let signed-in verified users post replies, and let signed-in verified users report replies.
+- No real email delivery, moderation dashboard, or production-ready account settings UI exists yet.
 
 Current backend auth state:
 
