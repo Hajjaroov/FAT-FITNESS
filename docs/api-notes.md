@@ -304,17 +304,36 @@ Supplements usually belong under `food-and-diet`. Cross-reference or move them u
 
 ### Community
 
-Likely MVP endpoints later:
+Current implemented read-only endpoints:
 
 - `GET /api/community/categories`
 - `GET /api/community/categories/{slug}`
+
+These return the seeded MVP forum board metadata. They are public and do not require authentication.
+
+`GET /api/community/categories` response shape:
+
+```json
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000101",
+    "slug": "introductions",
+    "name": "Introductions",
+    "description": "Who you are, where you are starting, and what kind of support helps.",
+    "displayOrder": 10
+  }
+]
+```
+
+Likely MVP endpoints later:
+
 - `GET /api/community/posts`
 - `POST /api/community/posts`
 - `GET /api/community/posts/{id}`
 - `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
 
-Community APIs must include moderation/reporting from the first community milestone.
+Community write APIs must include moderation/reporting from the first write milestone.
 
 ### Moderation
 
@@ -356,6 +375,8 @@ Current implemented auth endpoint:
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
+- `GET /api/community/categories`
+- `GET /api/community/categories/{slug}`
 
 Next auth slices:
 

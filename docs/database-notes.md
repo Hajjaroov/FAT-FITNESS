@@ -76,6 +76,13 @@ Current user/auth state:
 - The local owner seed is development-only and must be removed or disabled before production/public launch.
 - Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and real email delivery are not implemented yet.
 
+Current community/forum state:
+
+- The second Flyway migration creates `forum_categories`.
+- The MVP board list is seeded as active forum categories with stable slugs and display order.
+- `GET /api/community/categories` and `GET /api/community/categories/{slug}` read this category metadata.
+- Forum posts, comments, likes/bookmarks, reports, and moderation actions do not have tables yet.
+
 Next user/auth step:
 
 - Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
@@ -84,7 +91,7 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Start the next approved community/forum foundation step after the account dashboard shell.
+- Start the first approved forum write-flow planning step only after category API review.
 - Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:

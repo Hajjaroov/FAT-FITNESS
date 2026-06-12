@@ -138,7 +138,8 @@ Current state:
 - `/community/guidelines` is a static guidelines page.
 - `/community/categories/[slug]` generates static empty board pages for the planned forum categories.
 - It shows forum boards with topics/replies/latest columns.
-- It does not allow posting, accounts, comments, persistence, or moderation actions yet.
+- Backend forum categories are persisted and exposed through public read-only API endpoints.
+- It does not allow posting, comments, reports, moderation actions, or other forum write actions yet.
 - Post routes remain placeholders until implementation is intentionally approved.
 
 ### User Accounts
@@ -385,6 +386,7 @@ Completed-enough checkpoints for now:
 - `/community` has been reworked into a static forum index with planned boards and zero-state forum metadata.
 - `/community/guidelines` exists as the static behavior/safety page.
 - `/community/categories/[slug]` generates static empty board pages.
+- Backend forum category persistence exists with seeded MVP boards and public read-only endpoints.
 - `/login` and `/register` exist as working frontend account pages for the local backend auth flow.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
 - `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
@@ -428,6 +430,7 @@ Content direction:
 - Current Community page: static forum index with planned boards and zero-state forum metadata.
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Current Community Category pages: static empty board pages for each planned forum category.
+- Current Community API: `GET /api/community/categories` and `GET /api/community/categories/{slug}` return the seeded board metadata.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.
