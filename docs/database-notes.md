@@ -85,7 +85,11 @@ Current community/forum state:
 - Active authenticated users can create top-level `PUBLISHED` forum posts.
 - Public reads can list/read published posts.
 - Active authenticated users can report published posts; duplicate reports from the same reporter/post pair are not duplicated.
-- Comments, likes/bookmarks, report resolution, and moderation actions do not have tables yet.
+- The fourth Flyway migration creates `forum_comments` and `forum_comment_reports`.
+- Active authenticated users can create flat `PUBLISHED` comments on published, unlocked posts.
+- Public reads can list published comments for published posts.
+- Active authenticated users can report published comments; duplicate reports from the same reporter/comment pair are not duplicated.
+- Likes/bookmarks, report resolution, and moderation actions do not have tables yet.
 
 Next user/auth step:
 
@@ -95,8 +99,8 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Add backend comments or moderation/report-resolution tools after the next product decision.
-- Keep comments, likes/bookmarks, report resolution, and moderation actions out until the next explicit forum slice.
+- Add frontend comment UI or moderation/report-resolution tools after the next product decision.
+- Keep likes/bookmarks, report resolution, and moderation actions out until the next explicit forum slice.
 
 Future user/auth model direction:
 

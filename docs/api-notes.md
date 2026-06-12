@@ -310,8 +310,9 @@ Current implemented read-only endpoints:
 - `GET /api/community/categories/{slug}`
 - `GET /api/community/posts`
 - `GET /api/community/posts/{id}`
+- `GET /api/community/posts/{id}/comments`
 
-These return the seeded MVP forum board metadata and published top-level posts. They are public and do not require authentication.
+These return the seeded MVP forum board metadata, published top-level posts, and published flat comments. They are public and do not require authentication.
 
 `GET /api/community/categories` response shape:
 
@@ -330,7 +331,9 @@ These return the seeded MVP forum board metadata and published top-level posts. 
 Current implemented authenticated write endpoints:
 
 - `POST /api/community/posts`
+- `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
+- `POST /api/community/comments/{id}/reports`
 
 `POST /api/community/posts` requires a valid bearer token for an active account. The account must already be email-verified because only `ACTIVE` accounts pass the write check.
 
@@ -386,11 +389,77 @@ Response shape:
 }
 ```
 
-Community write APIs now include a first reporting hook. The frontend can list/read published posts, create top-level threads for signed-in verified users, and submit reports for published threads. Comment creation, report resolution, moderator actions, and likes/bookmarks are not implemented yet.
+`GET /api/community/posts/{id}/comments` returns published flat comments for a published post.
+
+Response shape:
+
+```json
+[
+  {
+    "id": "a96737f7-9254-4cc7-bc8a-e7f6f5291435",
+    "postId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
+    "body": "A first reply on this thread.",
+    "authorDisplayName": "Forum Member",
+    "status": "PUBLISHED",
+    "createdAt": "2026-06-12T15:10:00Z",
+    "updatedAt": "2026-06-12T15:10:00Z"
+  }
+]
+```
+
+`POST /api/community/posts/{id}/comments` requires a valid bearer token for an active account. The account must already be email-verified because only `ACTIVE` accounts pass the write check. Locked posts reject new comments.
+
+Request shape:
+
+```json
+{
+  "body": "A first reply on this thread.",
+  "acceptedCommunityGuidelines": true
+}
+```
+
+Response shape:
+
+```json
+{
+  "id": "a96737f7-9254-4cc7-bc8a-e7f6f5291435",
+  "postId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
+  "body": "A first reply on this thread.",
+  "authorDisplayName": "Forum Member",
+  "status": "PUBLISHED",
+  "createdAt": "2026-06-12T15:10:00Z",
+  "updatedAt": "2026-06-12T15:10:00Z"
+}
+```
+
+`POST /api/community/comments/{id}/reports` requires a valid bearer token for an active account. Reports are idempotent per comment/reporter pair and start with status `OPEN`.
+
+Request shape:
+
+```json
+{
+  "reason": "unsafe_advice",
+  "details": "This needs a moderator look."
+}
+```
+
+Response shape:
+
+```json
+{
+  "id": "5303ca87-292a-4b53-8a9e-58c3b5400ae6",
+  "commentId": "a96737f7-9254-4cc7-bc8a-e7f6f5291435",
+  "reason": "unsafe_advice",
+  "details": "This needs a moderator look.",
+  "status": "OPEN",
+  "createdAt": "2026-06-12T15:12:00Z"
+}
+```
+
+Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, and submit reports for published threads. Frontend comment UI, report resolution, moderator actions, and likes/bookmarks are not implemented yet.
 
 Likely next MVP endpoints later:
 
-- `POST /api/community/posts/{id}/comments`
 - `POST /api/moderation/reports/{id}/resolve`
 - `POST /api/moderation/posts/{id}/hide`
 - `POST /api/moderation/posts/{id}/lock`
@@ -439,8 +508,11 @@ Current implemented auth endpoint:
 - `GET /api/community/categories/{slug}`
 - `GET /api/community/posts`
 - `GET /api/community/posts/{id}`
+- `GET /api/community/posts/{id}/comments`
 - `POST /api/community/posts`
+- `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
+- `POST /api/community/comments/{id}/reports`
 
 Next auth slices:
 
@@ -492,7 +564,7 @@ Current frontend auth state:
 - Registration currently shows the development-only email verification token and can submit it to `POST /api/auth/verify-email` for local testing.
 - `/dashboard` uses the frontend auth provider and `GET /api/auth/me` state to show the current account summary; it does not add new API endpoints.
 - Frontend auth forms do not use `localStorage`.
-- No real email delivery, comments/replies, moderation dashboard, or production-ready account settings UI exists yet.
+- No real email delivery, frontend comments/replies UI, moderation dashboard, or production-ready account settings UI exists yet.
 
 Current backend auth state:
 

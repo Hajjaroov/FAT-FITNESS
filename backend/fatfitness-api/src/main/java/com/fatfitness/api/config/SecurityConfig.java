@@ -30,7 +30,9 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
 						.requestMatchers(HttpMethod.POST,
 								"/api/community/posts",
-								"/api/community/posts/*/reports")
+								"/api/community/posts/*/comments",
+								"/api/community/posts/*/reports",
+								"/api/community/comments/*/reports")
 						.authenticated()
 						.anyRequest().permitAll())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
