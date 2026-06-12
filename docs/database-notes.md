@@ -74,7 +74,7 @@ Current user/auth state:
 - Web auth can now keep refresh tokens in an `HttpOnly` cookie while the database still stores only hashed refresh tokens.
 - Backend startup can create or ensure a local owner user from environment variables without storing plaintext passwords.
 - The local owner seed is development-only and must be removed or disabled before production/public launch.
-- Bearer-token validation is wired for `/api/auth/me` and authenticated forum write/report endpoints. Real email delivery is not implemented yet.
+- Bearer-token validation is wired for `/api/auth/me`, authenticated forum write/report endpoints, and moderator report-review endpoints. Real email delivery is not implemented yet.
 
 Current community/forum state:
 
@@ -89,7 +89,9 @@ Current community/forum state:
 - Active authenticated users can create flat `PUBLISHED` comments on published, unlocked posts.
 - Public reads can list published comments for published posts.
 - Active authenticated users can report published comments; duplicate reports from the same reporter/comment pair are not duplicated.
-- Likes/bookmarks, report resolution, and moderation actions do not have tables yet.
+- The fifth Flyway migration adds report resolution metadata to post and comment reports: `resolved_by_user_id` and `resolution_note`.
+- Moderator report resolution uses existing report rows with `status`, `resolved_at`, `resolved_by_user_id`, and `resolution_note`.
+- Likes/bookmarks and separate moderation action history tables do not exist yet.
 
 Next user/auth step:
 
@@ -99,8 +101,8 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Add moderation/report-resolution tools after the next product decision.
-- Keep likes/bookmarks, report resolution, and moderation actions out until the next explicit forum slice.
+- Add a frontend moderation dashboard or content hide/lock/ban actions after the next product decision.
+- Keep likes/bookmarks and content moderation action history tables out until the next explicit forum slice.
 
 Future user/auth model direction:
 

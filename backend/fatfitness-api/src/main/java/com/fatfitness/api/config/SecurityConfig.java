@@ -34,6 +34,7 @@ public class SecurityConfig {
 								"/api/community/posts/*/reports",
 								"/api/community/comments/*/reports")
 						.authenticated()
+						.requestMatchers("/api/moderation/**").authenticated()
 						.anyRequest().permitAll())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
 				.httpBasic(AbstractHttpConfigurer::disable)

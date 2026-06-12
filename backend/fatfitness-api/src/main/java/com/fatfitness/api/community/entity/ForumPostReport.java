@@ -48,6 +48,13 @@ public class ForumPostReport {
 	@Column(name = "resolved_at")
 	private Instant resolvedAt;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "resolved_by_user_id")
+	private UserAccount resolvedBy;
+
+	@Column(name = "resolution_note", length = 1000)
+	private String resolutionNote;
+
 	protected ForumPostReport() {
 	}
 
@@ -65,6 +72,13 @@ public class ForumPostReport {
 		}
 
 		createdAt = Instant.now();
+	}
+
+	public void close(ForumReportStatus status, UserAccount resolvedBy, String resolutionNote) {
+		this.status = status;
+		this.resolvedBy = resolvedBy;
+		this.resolutionNote = resolutionNote;
+		resolvedAt = Instant.now();
 	}
 
 	public UUID getId() {
@@ -97,5 +111,13 @@ public class ForumPostReport {
 
 	public Instant getResolvedAt() {
 		return resolvedAt;
+	}
+
+	public UserAccount getResolvedBy() {
+		return resolvedBy;
+	}
+
+	public String getResolutionNote() {
+		return resolutionNote;
 	}
 }

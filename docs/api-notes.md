@@ -456,20 +456,71 @@ Response shape:
 }
 ```
 
-Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, and report replies. Report resolution, moderator actions, and likes/bookmarks are not implemented yet.
+Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, and report replies. Backend report review/resolution exists for moderator roles. Frontend moderation dashboard, content hide/lock/ban actions, and likes/bookmarks are not implemented yet.
 
 Likely next MVP endpoints later:
 
-- `POST /api/moderation/reports/{id}/resolve`
 - `POST /api/moderation/posts/{id}/hide`
 - `POST /api/moderation/posts/{id}/lock`
 
 ### Moderation
 
-Likely endpoints later:
+Current implemented moderator endpoints:
 
 - `GET /api/moderation/reports`
-- `POST /api/moderation/reports/{id}/resolve`
+- `POST /api/moderation/reports/posts/{id}/resolve`
+- `POST /api/moderation/reports/comments/{id}/resolve`
+
+These require a valid bearer token for an active account with role `OWNER`, `ADMIN`, or `MODERATOR`. Role checks are performed against the persisted user record, not only the JWT claim.
+
+`GET /api/moderation/reports` lists reports from both post and comment report tables.
+
+Supported query parameters:
+
+- `targetType`: optional `POST` or `COMMENT`.
+- `status`: optional `OPEN`, `RESOLVED`, `DISMISSED`, or `ALL`. Default is `OPEN`.
+- `limit`: optional, clamped by the backend.
+
+Response shape:
+
+```json
+[
+  {
+    "id": "d91c70ca-f85b-4cd2-8fbb-b03715f26290",
+    "targetType": "POST",
+    "targetId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
+    "postId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
+    "targetTitle": "Starting here",
+    "targetPreview": "This is my first forum post.",
+    "contentAuthorUserId": "6fdc43ff-7674-4935-9420-61b77b09d083",
+    "contentAuthorDisplayName": "Forum Member",
+    "reporterUserId": "fcbfa3cb-55ae-4744-a50a-294e22f8105b",
+    "reporterDisplayName": "Forum Member",
+    "reason": "medical_misinformation",
+    "details": "This needs a moderator look.",
+    "status": "OPEN",
+    "createdAt": "2026-06-12T15:05:00Z",
+    "resolvedAt": null,
+    "resolvedByUserId": null,
+    "resolvedByDisplayName": null,
+    "resolutionNote": null
+  }
+]
+```
+
+Resolving a post or comment report uses the same request body:
+
+```json
+{
+  "status": "RESOLVED",
+  "resolutionNote": "Reviewed and handled."
+}
+```
+
+`status` must be `RESOLVED` or `DISMISSED`. `resolutionNote` is optional.
+
+Likely moderation endpoints later:
+
 - `POST /api/moderation/posts/{id}/hide`
 - `POST /api/moderation/posts/{id}/lock`
 - `POST /api/moderation/users/{id}/ban`
@@ -513,6 +564,9 @@ Current implemented auth endpoint:
 - `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
 - `POST /api/community/comments/{id}/reports`
+- `GET /api/moderation/reports`
+- `POST /api/moderation/reports/posts/{id}/resolve`
+- `POST /api/moderation/reports/comments/{id}/resolve`
 
 Next auth slices:
 
@@ -580,7 +634,7 @@ Current backend auth state:
 - `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing, and clears the web refresh cookie.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active user for a valid bearer token.
 - Backend startup can seed one local `OWNER` account from environment variables; this is not exposed as an API endpoint.
-- Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and email sending do not exist yet.
+- Bearer-token validation is wired for `/api/auth/me`, authenticated community writes/reports, and moderator report-review endpoints. Email sending does not exist yet.
 
 JWT configuration:
 

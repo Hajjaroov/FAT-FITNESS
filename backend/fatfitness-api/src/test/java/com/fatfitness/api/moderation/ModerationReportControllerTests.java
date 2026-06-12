@@ -1,0 +1,358 @@
+package com.fatfitness.api.moderation;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.jayway.jsonpath.JsonPath;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fatfitness.api.community.entity.ForumReportStatus;
+import com.fatfitness.api.community.repository.ForumCommentReportRepository;
+import com.fatfitness.api.community.repository.ForumPostReportRepository;
+import com.fatfitness.api.user.entity.UserAccount;
+import com.fatfitness.api.user.entity.UserRole;
+import com.fatfitness.api.user.repository.UserAccountRepository;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+class ModerationReportControllerTests {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private ForumPostReportRepository forumPostReportRepository;
+
+	@Autowired
+	private ForumCommentReportRepository forumCommentReportRepository;
+
+	@Autowired
+	private UserAccountRepository userAccountRepository;
+
+	@Test
+	void listReportsRequiresAuthentication() throws Exception {
+		mockMvc.perform(get("/api/moderation/reports"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void listReportsRejectsNormalUsers() throws Exception {
+		String accessToken = registerVerifyAndLogin("normal-report-viewer@example.com");
+
+		mockMvc.perform(get("/api/moderation/reports")
+						.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void ownerCanListOpenPostReports() throws Exception {
+		String ownerAccessToken = registerVerifyAddRoleAndLogin("owner-post-report-list@example.com", UserRole.OWNER);
+		String postAuthorAccessToken = registerVerifyAndLogin("reported-post-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("post-reporter@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "questions-and-support");
+		String reportId = reportPostAndReadId(reporterAccessToken, postId);
+
+		mockMvc.perform(get("/api/moderation/reports")
+						.header("Authorization", "Bearer " + ownerAccessToken)
+						.param("targetType", "POST"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].id").value(reportId))
+				.andExpect(jsonPath("$[0].targetType").value("POST"))
+				.andExpect(jsonPath("$[0].targetId").value(postId))
+				.andExpect(jsonPath("$[0].postId").value(postId))
+				.andExpect(jsonPath("$[0].targetTitle").value("Starting here"))
+				.andExpect(jsonPath("$[0].targetPreview").value("This is a longer first post body for the community."))
+				.andExpect(jsonPath("$[0].contentAuthorDisplayName").value("Forum Member"))
+				.andExpect(jsonPath("$[0].reporterDisplayName").value("Forum Member"))
+				.andExpect(jsonPath("$[0].reason").value("medical_misinformation"))
+				.andExpect(jsonPath("$[0].details").value("This needs a moderator look."))
+				.andExpect(jsonPath("$[0].status").value("OPEN"))
+				.andExpect(jsonPath("$[0].resolvedAt").value(nullValue()))
+				.andExpect(jsonPath("$[0].resolvedByDisplayName").value(nullValue()));
+	}
+
+	@Test
+	void moderatorCanListOpenCommentReports() throws Exception {
+		String moderatorAccessToken = registerVerifyAddRoleAndLogin(
+				"moderator-comment-report-list@example.com",
+				UserRole.MODERATOR);
+		String postAuthorAccessToken = registerVerifyAndLogin("comment-report-post-author@example.com");
+		String commenterAccessToken = registerVerifyAndLogin("reported-comment-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("comment-report-viewer@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "introductions");
+		String commentId = createCommentAndReadId(commenterAccessToken, postId);
+		String reportId = reportCommentAndReadId(reporterAccessToken, commentId);
+
+		mockMvc.perform(get("/api/moderation/reports")
+						.header("Authorization", "Bearer " + moderatorAccessToken)
+						.param("targetType", "COMMENT"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].id").value(reportId))
+				.andExpect(jsonPath("$[0].targetType").value("COMMENT"))
+				.andExpect(jsonPath("$[0].targetId").value(commentId))
+				.andExpect(jsonPath("$[0].postId").value(postId))
+				.andExpect(jsonPath("$[0].targetTitle").value("Starting here"))
+				.andExpect(jsonPath("$[0].targetPreview").value("A first reply on this thread."))
+				.andExpect(jsonPath("$[0].reason").value("unsafe_advice"))
+				.andExpect(jsonPath("$[0].status").value("OPEN"));
+	}
+
+	@Test
+	void ownerCanResolvePostReport() throws Exception {
+		String ownerAccessToken = registerVerifyAddRoleAndLogin("owner-post-resolver@example.com", UserRole.OWNER);
+		String postAuthorAccessToken = registerVerifyAndLogin("post-resolve-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("post-resolve-reporter@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "introductions");
+		String reportId = reportPostAndReadId(reporterAccessToken, postId);
+
+		mockMvc.perform(post("/api/moderation/reports/posts/{reportId}/resolve", reportId)
+						.header("Authorization", "Bearer " + ownerAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "status": "DISMISSED",
+								  "resolutionNote": "Duplicate context handled elsewhere."
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(reportId))
+				.andExpect(jsonPath("$.status").value("DISMISSED"))
+				.andExpect(jsonPath("$.resolvedAt", notNullValue()))
+				.andExpect(jsonPath("$.resolvedByDisplayName").value("Forum Member"))
+				.andExpect(jsonPath("$.resolutionNote").value("Duplicate context handled elsewhere."));
+
+		var report = forumPostReportRepository.findById(java.util.UUID.fromString(reportId)).orElseThrow();
+		assertThat(report.getStatus()).isEqualTo(ForumReportStatus.DISMISSED);
+		assertThat(report.getResolvedBy()).isNotNull();
+		assertThat(report.getResolutionNote()).isEqualTo("Duplicate context handled elsewhere.");
+	}
+
+	@Test
+	void moderatorCanResolveCommentReport() throws Exception {
+		String moderatorAccessToken = registerVerifyAddRoleAndLogin(
+				"moderator-comment-resolver@example.com",
+				UserRole.MODERATOR);
+		String postAuthorAccessToken = registerVerifyAndLogin("comment-resolve-post-author@example.com");
+		String commenterAccessToken = registerVerifyAndLogin("comment-resolve-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("comment-resolve-reporter@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "questions-and-support");
+		String commentId = createCommentAndReadId(commenterAccessToken, postId);
+		String reportId = reportCommentAndReadId(reporterAccessToken, commentId);
+
+		mockMvc.perform(post("/api/moderation/reports/comments/{reportId}/resolve", reportId)
+						.header("Authorization", "Bearer " + moderatorAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "status": "RESOLVED"
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(reportId))
+				.andExpect(jsonPath("$.status").value("RESOLVED"))
+				.andExpect(jsonPath("$.resolvedAt", notNullValue()))
+				.andExpect(jsonPath("$.resolvedByDisplayName").value("Forum Member"))
+				.andExpect(jsonPath("$.resolutionNote").value(nullValue()));
+
+		var report = forumCommentReportRepository.findById(java.util.UUID.fromString(reportId)).orElseThrow();
+		assertThat(report.getStatus()).isEqualTo(ForumReportStatus.RESOLVED);
+		assertThat(report.getResolvedBy()).isNotNull();
+		assertThat(report.getResolutionNote()).isNull();
+	}
+
+	@Test
+	void defaultListOnlyReturnsOpenReports() throws Exception {
+		String ownerAccessToken = registerVerifyAddRoleAndLogin("owner-open-report-list@example.com", UserRole.OWNER);
+		String postAuthorAccessToken = registerVerifyAndLogin("open-list-post-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("open-list-reporter@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "introductions");
+		String reportId = reportPostAndReadId(reporterAccessToken, postId);
+
+		mockMvc.perform(post("/api/moderation/reports/posts/{reportId}/resolve", reportId)
+						.header("Authorization", "Bearer " + ownerAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "status": "RESOLVED"
+								}
+								"""))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(get("/api/moderation/reports")
+						.header("Authorization", "Bearer " + ownerAccessToken))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(0)));
+
+		mockMvc.perform(get("/api/moderation/reports")
+						.header("Authorization", "Bearer " + ownerAccessToken)
+						.param("status", "ALL"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].status").value("RESOLVED"));
+	}
+
+	private String createPostAndReadId(String accessToken, String categorySlug) throws Exception {
+		MvcResult createResult = createPost(accessToken, categorySlug)
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		return JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+	}
+
+	private String createCommentAndReadId(String accessToken, String postId) throws Exception {
+		MvcResult createResult = createComment(accessToken, postId)
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		return JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+	}
+
+	private String reportPostAndReadId(String accessToken, String postId) throws Exception {
+		MvcResult reportResult = reportPost(accessToken, postId)
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		return JsonPath.read(reportResult.getResponse().getContentAsString(), "$.id");
+	}
+
+	private String reportCommentAndReadId(String accessToken, String commentId) throws Exception {
+		MvcResult reportResult = reportComment(accessToken, commentId)
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		return JsonPath.read(reportResult.getResponse().getContentAsString(), "$.id");
+	}
+
+	private ResultActions createPost(String accessToken, String categorySlug) throws Exception {
+		return mockMvc.perform(post("/api/community/posts")
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "categorySlug": "%s",
+						  "title": "Starting here",
+						  "body": "This is a longer first post body for the community.",
+						  "acceptedCommunityGuidelines": true
+						}
+						""".formatted(categorySlug)));
+	}
+
+	private ResultActions createComment(String accessToken, String postId) throws Exception {
+		return mockMvc.perform(post("/api/community/posts/{postId}/comments", postId)
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "body": "A first reply on this thread.",
+						  "acceptedCommunityGuidelines": true
+						}
+						"""));
+	}
+
+	private ResultActions reportPost(String accessToken, String postId) throws Exception {
+		return mockMvc.perform(post("/api/community/posts/{postId}/reports", postId)
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "reason": "medical_misinformation",
+						  "details": "This needs a moderator look."
+						}
+						"""));
+	}
+
+	private ResultActions reportComment(String accessToken, String commentId) throws Exception {
+		return mockMvc.perform(post("/api/community/comments/{commentId}/reports", commentId)
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "reason": "unsafe_advice",
+						  "details": "This needs a moderator look."
+						}
+						"""));
+	}
+
+	private String registerVerifyAddRoleAndLogin(String email, UserRole role) throws Exception {
+		registerAndVerify(email);
+		UserAccount user = userAccountRepository.findByEmail(email).orElseThrow();
+		user.addRole(role);
+		userAccountRepository.saveAndFlush(user);
+
+		return loginActiveMember(email);
+	}
+
+	private String registerVerifyAndLogin(String email) throws Exception {
+		registerAndVerify(email);
+
+		return loginActiveMember(email);
+	}
+
+	private void registerAndVerify(String email) throws Exception {
+		MvcResult registrationResult = registerNewMember(email);
+		String rawToken = JsonPath.read(
+				registrationResult.getResponse().getContentAsString(),
+				"$.devEmailVerificationToken");
+
+		mockMvc.perform(post("/api/auth/verify-email")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "token": "%s"
+								}
+								""".formatted(rawToken)))
+				.andExpect(status().isOk());
+	}
+
+	private MvcResult registerNewMember(String email) throws Exception {
+		return mockMvc.perform(post("/api/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "displayName": "Forum Member",
+								  "email": "%s",
+								  "countryRegionCode": "DE",
+								  "password": "very-secret-password",
+								  "confirmPassword": "very-secret-password",
+								  "acceptedCommunityRules": true,
+								  "acceptedPrivacyPolicy": true
+								}
+								""".formatted(email)))
+				.andExpect(status().isCreated())
+				.andReturn();
+	}
+
+	private String loginActiveMember(String email) throws Exception {
+		MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "email": "%s",
+								  "password": "very-secret-password",
+								  "clientType": "MOBILE",
+								  "deviceLabel": "Test client"
+								}
+								""".formatted(email)))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		return JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
+	}
+}
