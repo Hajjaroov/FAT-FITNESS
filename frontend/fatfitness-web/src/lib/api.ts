@@ -10,7 +10,12 @@ import type {
   VerifyEmailResponse,
 } from "@/types/auth";
 import type { BackendStatus } from "@/types/api";
-import type { CreateForumPostRequest, ForumPost } from "@/types/community";
+import type {
+  CreateForumPostRequest,
+  ForumPost,
+  ForumPostReport,
+  ReportForumPostRequest,
+} from "@/types/community";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST";
@@ -179,6 +184,18 @@ export function createForumPost(
   accessToken: string,
 ) {
   return apiRequest<ForumPost>("/api/community/posts", {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
+}
+
+export function reportForumPost(
+  postId: string,
+  request: ReportForumPostRequest,
+  accessToken: string,
+) {
+  return apiRequest<ForumPostReport>(`/api/community/posts/${postId}/reports`, {
     method: "POST",
     body: request,
     accessToken,

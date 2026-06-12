@@ -19,3 +19,19 @@ export type CreateForumPostRequest = {
   body: string;
   acceptedCommunityGuidelines: boolean;
 };
+
+export type ForumReportStatus = "OPEN" | "RESOLVED" | "DISMISSED";
+
+export type ReportForumPostRequest = {
+  reason: string;
+  details?: string;
+};
+
+export type ForumPostReport = {
+  id: string;
+  postId: string;
+  reason: string;
+  details: string | null;
+  status: ForumReportStatus;
+  createdAt: string;
+};

@@ -158,6 +158,58 @@ export const communityCopy = {
       detailLoading: "Loading thread...",
       detailErrorTitle: "Thread not available",
     },
+    reports: {
+      eyebrow: "Report",
+      title: "Report this thread",
+      intro:
+        "Use this for unsafe, harmful, spammy, or rule-breaking content. It saves a private report for review.",
+      checkingSession: "Checking your session before showing report options.",
+      signInTitle: "Sign in to report",
+      signInText:
+        "Reading stays public. Reporting is only for verified accounts so reports can be handled responsibly.",
+      signInLabel: "Sign in",
+      registerLabel: "Create account",
+      signInRequiredError: "Sign in with a verified account before reporting.",
+      reasonRequiredError: "Choose a reason for the report.",
+      reasonLabel: "Reason",
+      reasonPlaceholder: "Choose a reason",
+      detailsLabel: "Details optional",
+      detailsPlaceholder:
+        "Add context that helps review the thread. Do not include private information unless it is necessary.",
+      submitLabel: "Send report",
+      submitPendingLabel: "Sending...",
+      successTitle: "Report saved",
+      successText:
+        "Thanks. The report is saved and can be reviewed by the site team.",
+      errorFallback:
+        "Something went wrong. Please check the report and try again.",
+      reasons: [
+        {
+          value: "medical_misinformation",
+          label: "Medical misinformation or unsafe health instructions",
+        },
+        {
+          value: "body_shaming",
+          label: "Body shaming or humiliation",
+        },
+        {
+          value: "harassment",
+          label: "Harassment or personal attack",
+        },
+        {
+          value: "unsafe_diet_or_medication",
+          label: "Extreme dieting, medication pressure, or unsafe advice",
+        },
+        {
+          value: "spam_or_scam",
+          label: "Spam, scam, supplement pitch, or affiliate abuse",
+        },
+        {
+          value: "other",
+          label: "Other rule or safety concern",
+        },
+      ],
+    },
     guidelines: {
       backLinkLabel: "Community",
       hero: {
@@ -406,6 +458,61 @@ export const communityCopy = {
       detailBackLabel: "Community",
       detailLoading: "Thread wird geladen...",
       detailErrorTitle: "Thread nicht verfügbar",
+    },
+    reports: {
+      eyebrow: "Melden",
+      title: "Diesen Thread melden",
+      intro:
+        "Nutze das bei unsicheren, schädlichen, spamartigen oder regelwidrigen Inhalten. Es speichert eine private Meldung zur Prüfung.",
+      checkingSession:
+        "Sitzung wird geprüft, bevor Meldeoptionen angezeigt werden.",
+      signInTitle: "Einloggen, um zu melden",
+      signInText:
+        "Lesen bleibt öffentlich. Melden ist nur für verifizierte Accounts, damit Meldungen verantwortungsvoll behandelt werden können.",
+      signInLabel: "Einloggen",
+      registerLabel: "Account erstellen",
+      signInRequiredError:
+        "Logge dich mit einem verifizierten Account ein, bevor du meldest.",
+      reasonRequiredError: "Wähle einen Grund für die Meldung.",
+      reasonLabel: "Grund",
+      reasonPlaceholder: "Grund wählen",
+      detailsLabel: "Details optional",
+      detailsPlaceholder:
+        "Ergänze Kontext, der bei der Prüfung hilft. Teile keine privaten Informationen, außer sie sind notwendig.",
+      submitLabel: "Meldung senden",
+      submitPendingLabel: "Wird gesendet...",
+      successTitle: "Meldung gespeichert",
+      successText:
+        "Danke. Die Meldung ist gespeichert und kann vom Site-Team geprüft werden.",
+      errorFallback:
+        "Etwas ist schiefgelaufen. Bitte prüfe die Meldung und versuche es erneut.",
+      reasons: [
+        {
+          value: "medical_misinformation",
+          label:
+            "Medizinische Fehlinformation oder unsichere Gesundheitsanweisung",
+        },
+        {
+          value: "body_shaming",
+          label: "Body Shaming oder Erniedrigung",
+        },
+        {
+          value: "harassment",
+          label: "Belästigung oder persönlicher Angriff",
+        },
+        {
+          value: "unsafe_diet_or_medication",
+          label: "Extreme Diät, Medikamentendruck oder unsichere Ratschläge",
+        },
+        {
+          value: "spam_or_scam",
+          label: "Spam, Scam, Supplement-Pitch oder Affiliate-Missbrauch",
+        },
+        {
+          value: "other",
+          label: "Andere Regel- oder Sicherheitsfrage",
+        },
+      ],
     },
     guidelines: {
       backLinkLabel: "Community",
