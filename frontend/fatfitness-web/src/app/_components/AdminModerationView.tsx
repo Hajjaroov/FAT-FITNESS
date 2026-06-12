@@ -12,6 +12,8 @@ import { adminCopy } from "@/content/admin";
 import {
   ApiError,
   getModerationReports,
+  hideModerationCommentReport,
+  hideModerationPostReport,
   resolveModerationCommentReport,
   resolveModerationPostReport,
 } from "@/lib/api";
@@ -338,6 +340,9 @@ export function AdminModerationView() {
               setReports((currentReports) =>
                 currentReports.map((report) =>
                   report.id === updatedReport.id ? updatedReport : report,
+                ).filter(
+                  (report) =>
+                    statusFilter === "ALL" || report.status === statusFilter,
                 ),
               );
             }}
@@ -534,7 +539,7 @@ function ModerationResolutionForm({
   const { accessToken } = useAuth();
   const [resolutionNote, setResolutionNote] = useState("");
   const [pendingAction, setPendingAction] = useState<
-    "RESOLVED" | "DISMISSED" | null
+    "HIDDEN" | "RESOLVED" | "DISMISSED" | null
   >(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -584,6 +589,34 @@ function ModerationResolutionForm({
     }
   }
 
+  async function handleHide() {
+    if (!accessToken) {
+      setFormError(copy.actions.errorFallback);
+      return;
+    }
+
+    setPendingAction("HIDDEN");
+    setFormError(null);
+    setSuccessMessage(null);
+
+    try {
+      const request = {
+        resolutionNote: resolutionNote.trim() || undefined,
+      };
+      const updatedReport =
+        report.targetType === "POST"
+          ? await hideModerationPostReport(report.id, request, accessToken)
+          : await hideModerationCommentReport(report.id, request, accessToken);
+
+      onResolved(updatedReport);
+      setSuccessMessage(copy.actions.successHidden);
+    } catch (caughtError) {
+      setFormError(errorMessage(caughtError, copy.actions.errorFallback));
+    } finally {
+      setPendingAction(null);
+    }
+  }
+
   return (
     <form className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
       <p className="site-kicker">{copy.actions.title}</p>
@@ -625,6 +658,18 @@ function ModerationResolutionForm({
       ) : null}
 
       <div className="mt-5 grid gap-3">
+        <button
+          type="button"
+          disabled={pendingAction !== null}
+          onClick={() => {
+            void handleHide();
+          }}
+          className="min-h-12 rounded-full border border-red-500/30 bg-red-600 px-5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-wait disabled:opacity-60"
+        >
+          {pendingAction === "HIDDEN"
+            ? copy.actions.submitPendingLabel
+            : copy.actions.hideLabel}
+        </button>
         <button
           type="button"
           disabled={pendingAction !== null}

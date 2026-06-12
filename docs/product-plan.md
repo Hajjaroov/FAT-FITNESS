@@ -141,10 +141,10 @@ Current state:
 - Backend forum categories are persisted and exposed through public read-only API endpoints.
 - Backend can create and read top-level posts and accept post reports for active authenticated users.
 - Backend can create and read flat comments and accept comment reports for active authenticated users.
-- Backend can list and resolve/dismiss post and comment reports for active `OWNER`, `ADMIN`, or `MODERATOR` accounts.
+- Backend can list, resolve/dismiss, and hide reported post/comment content for active `OWNER`, `ADMIN`, or `MODERATOR` accounts.
 - The frontend can list/read published posts, create top-level threads for signed-in verified users, report published threads, list replies, create replies, and report replies.
-- The frontend `/admin` page can list, filter, resolve, and dismiss post/comment reports for moderator roles.
-- Likes/bookmarks, content hide/lock/ban actions, and other forum write actions are not implemented yet.
+- The frontend `/admin` page can list, filter, hide reported content, resolve, and dismiss post/comment reports for moderator roles.
+- Likes/bookmarks, lock/ban actions, and other forum write actions are not implemented yet.
 
 ### User Accounts
 
@@ -172,7 +172,7 @@ Current state:
 - Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
 - Local development can seed one active `OWNER` account from environment variables without committing credentials.
 - The local owner seed is only for development. It must be removed or disabled before public launch, and any seeded dev owner must not be copied into production data.
-- No real email delivery, content hide/lock/ban UI, or complete account settings UI exists yet.
+- No real email delivery, lock/ban moderation UI, or complete account settings UI exists yet.
 
 Approved auth direction:
 
@@ -393,7 +393,7 @@ Completed-enough checkpoints for now:
 - Backend forum category persistence exists with seeded MVP boards and public read-only endpoints.
 - Backend forum post persistence exists for top-level posts and post reports.
 - Backend forum comment persistence exists for flat comments and comment reports.
-- Backend moderation report review/resolution exists for post and comment reports.
+- Backend moderation report review/resolution and report-scoped content hiding exist for post and comment reports.
 - Frontend community pages can list/read published posts, let signed-in verified users create top-level threads, and support reply list/create/report flows on post detail pages.
 - `/login` and `/register` exist as working frontend account pages for the local backend auth flow.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
@@ -425,7 +425,7 @@ Approved auth implementation goals:
 - Define privacy/GDPR expectations before collecting real account data: deletion/export, visibility, moderation access, and country/region handling.
 - Keep planned registration minimal: display name, email, country/region code from the picker, password confirmation validation, and rules/privacy agreement.
 - Keep health-sensitive data out of initial registration.
-- Do not add likes/bookmarks, content hide/lock/ban actions, tracking tools, or sensitive health data until each next slice is intentionally approved.
+- Do not add likes/bookmarks, lock/ban moderation actions, tracking tools, or sensitive health data until each next slice is intentionally approved.
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods.
 
 Content direction:
@@ -442,8 +442,8 @@ Content direction:
 - Current Forum Post API: active authenticated users can create top-level posts and report published posts; public users can list/read published posts.
 - Current Forum Comment API: active authenticated users can create flat comments and report published comments; public users can list published comments for published posts.
 - Current Moderation API: active `OWNER`, `ADMIN`, or `MODERATOR` users can list open/all reports and resolve or dismiss post/comment reports.
-- Current Community UI: frontend post lists, category thread lists, post detail rendering, signed-in create-thread form, signed-in report form, reply list, signed-in reply form, signed-in reply report form, and `/admin` report dashboard are connected to the API.
-- Current Community UI gap: likes/bookmarks and content hide/lock/ban actions are not connected yet.
+- Current Community UI: frontend post lists, category thread lists, post detail rendering, signed-in create-thread form, signed-in report form, reply list, signed-in reply form, signed-in reply report form, and `/admin` report dashboard with hide/resolve/dismiss actions are connected to the API.
+- Current Community UI gap: likes/bookmarks and lock/ban actions are not connected yet.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.

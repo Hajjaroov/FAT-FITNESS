@@ -21,6 +21,7 @@ import type {
   ReportForumPostRequest,
 } from "@/types/community";
 import type {
+  HideModerationReportRequest,
   ModerationReport,
   ModerationReportStatusFilter,
   ModerationReportTargetType,
@@ -317,6 +318,36 @@ export function resolveModerationCommentReport(
 ) {
   return apiRequest<ModerationReport>(
     `/api/moderation/reports/comments/${reportId}/resolve`,
+    {
+      method: "POST",
+      body: request,
+      accessToken,
+    },
+  );
+}
+
+export function hideModerationPostReport(
+  reportId: string,
+  request: HideModerationReportRequest,
+  accessToken: string,
+) {
+  return apiRequest<ModerationReport>(
+    `/api/moderation/reports/posts/${reportId}/hide`,
+    {
+      method: "POST",
+      body: request,
+      accessToken,
+    },
+  );
+}
+
+export function hideModerationCommentReport(
+  reportId: string,
+  request: HideModerationReportRequest,
+  accessToken: string,
+) {
+  return apiRequest<ModerationReport>(
+    `/api/moderation/reports/comments/${reportId}/hide`,
     {
       method: "POST",
       body: request,

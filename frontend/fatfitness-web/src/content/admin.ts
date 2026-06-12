@@ -5,7 +5,7 @@ export const adminCopy = {
     eyebrow: "Admin",
     title: "Moderation reports",
     intro:
-      "Review reports from forum threads and replies. This dashboard only resolves or dismisses reports for now; hiding, locking, banning, and full audit tools come later.",
+      "Review reports from forum threads and replies. This dashboard can hide reported content, resolve reports, or dismiss reports; locking, banning, and full audit tools come later.",
     loading: {
       title: "Checking admin access",
       body: "The dashboard is checking your current session before loading reports.",
@@ -63,10 +63,12 @@ export const adminCopy = {
       title: "Review",
       noteLabel: "Resolution note optional",
       notePlaceholder:
-        "Add what happened, for example: duplicate report, reviewed and safe, or handled manually.",
+        "Add what happened, for example: hidden after review, duplicate report, reviewed and safe, or handled manually.",
+      hideLabel: "Hide content and resolve",
       resolveLabel: "Mark resolved",
       dismissLabel: "Dismiss",
       submitPendingLabel: "Saving...",
+      successHidden: "Content hidden and report marked resolved.",
       successResolved: "Report marked resolved.",
       successDismissed: "Report dismissed.",
       closedTitle: "Already reviewed",
@@ -84,7 +86,7 @@ export const adminCopy = {
     eyebrow: "Admin",
     title: "Moderationsmeldungen",
     intro:
-      "Prüfe Meldungen aus Forum-Threads und Antworten. Dieses Dashboard kann Meldungen aktuell nur lösen oder ablehnen; Verstecken, Sperren, Bann und vollständige Audit-Werkzeuge kommen später.",
+      "Prüfe Meldungen aus Forum-Threads und Antworten. Dieses Dashboard kann gemeldete Inhalte verstecken, Meldungen lösen oder Meldungen ablehnen; Sperren, Bann und vollständige Audit-Werkzeuge kommen später.",
     loading: {
       title: "Admin-Zugriff wird geprüft",
       body:
@@ -143,10 +145,12 @@ export const adminCopy = {
       title: "Prüfen",
       noteLabel: "Lösungsnotiz optional",
       notePlaceholder:
-        "Ergänze, was passiert ist, zum Beispiel: doppelte Meldung, geprüft und sicher, oder manuell behandelt.",
+        "Ergänze, was passiert ist, zum Beispiel: nach Prüfung versteckt, doppelte Meldung, geprüft und sicher, oder manuell behandelt.",
+      hideLabel: "Inhalt verstecken und lösen",
       resolveLabel: "Als gelöst markieren",
       dismissLabel: "Ablehnen",
       submitPendingLabel: "Wird gespeichert...",
+      successHidden: "Inhalt versteckt und Meldung als gelöst markiert.",
       successResolved: "Meldung als gelöst markiert.",
       successDismissed: "Meldung abgelehnt.",
       closedTitle: "Bereits geprüft",

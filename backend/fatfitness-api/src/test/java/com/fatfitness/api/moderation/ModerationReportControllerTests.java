@@ -20,9 +20,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fatfitness.api.community.entity.ForumCommentStatus;
+import com.fatfitness.api.community.entity.ForumPostStatus;
 import com.fatfitness.api.community.entity.ForumReportStatus;
 import com.fatfitness.api.community.repository.ForumCommentReportRepository;
+import com.fatfitness.api.community.repository.ForumCommentRepository;
 import com.fatfitness.api.community.repository.ForumPostReportRepository;
+import com.fatfitness.api.community.repository.ForumPostRepository;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserRole;
 import com.fatfitness.api.user.repository.UserAccountRepository;
@@ -39,7 +43,13 @@ class ModerationReportControllerTests {
 	private ForumPostReportRepository forumPostReportRepository;
 
 	@Autowired
+	private ForumPostRepository forumPostRepository;
+
+	@Autowired
 	private ForumCommentReportRepository forumCommentReportRepository;
+
+	@Autowired
+	private ForumCommentRepository forumCommentRepository;
 
 	@Autowired
 	private UserAccountRepository userAccountRepository;
@@ -175,6 +185,79 @@ class ModerationReportControllerTests {
 		assertThat(report.getStatus()).isEqualTo(ForumReportStatus.RESOLVED);
 		assertThat(report.getResolvedBy()).isNotNull();
 		assertThat(report.getResolutionNote()).isNull();
+	}
+
+	@Test
+	void ownerCanHideReportedPostAndResolveReport() throws Exception {
+		String ownerAccessToken = registerVerifyAddRoleAndLogin("owner-post-hider@example.com", UserRole.OWNER);
+		String postAuthorAccessToken = registerVerifyAndLogin("post-hide-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("post-hide-reporter@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "introductions");
+		String reportId = reportPostAndReadId(reporterAccessToken, postId);
+
+		mockMvc.perform(post("/api/moderation/reports/posts/{reportId}/hide", reportId)
+						.header("Authorization", "Bearer " + ownerAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "resolutionNote": "Hidden because it repeated unsafe medical claims."
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(reportId))
+				.andExpect(jsonPath("$.status").value("RESOLVED"))
+				.andExpect(jsonPath("$.resolvedAt", notNullValue()))
+				.andExpect(jsonPath("$.resolutionNote").value("Hidden because it repeated unsafe medical claims."));
+
+		mockMvc.perform(get("/api/community/posts/{postId}", postId))
+				.andExpect(status().isNotFound());
+
+		var post = forumPostRepository.findById(java.util.UUID.fromString(postId)).orElseThrow();
+		assertThat(post.getStatus()).isEqualTo(ForumPostStatus.HIDDEN);
+		assertThat(post.getHiddenAt()).isNotNull();
+
+		var report = forumPostReportRepository.findById(java.util.UUID.fromString(reportId)).orElseThrow();
+		assertThat(report.getStatus()).isEqualTo(ForumReportStatus.RESOLVED);
+		assertThat(report.getResolvedBy()).isNotNull();
+	}
+
+	@Test
+	void moderatorCanHideReportedCommentAndResolveReport() throws Exception {
+		String moderatorAccessToken = registerVerifyAddRoleAndLogin(
+				"moderator-comment-hider@example.com",
+				UserRole.MODERATOR);
+		String postAuthorAccessToken = registerVerifyAndLogin("comment-hide-post-author@example.com");
+		String commenterAccessToken = registerVerifyAndLogin("comment-hide-author@example.com");
+		String reporterAccessToken = registerVerifyAndLogin("comment-hide-reporter@example.com");
+		String postId = createPostAndReadId(postAuthorAccessToken, "questions-and-support");
+		String commentId = createCommentAndReadId(commenterAccessToken, postId);
+		String reportId = reportCommentAndReadId(reporterAccessToken, commentId);
+
+		mockMvc.perform(post("/api/moderation/reports/comments/{reportId}/hide", reportId)
+						.header("Authorization", "Bearer " + moderatorAccessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "resolutionNote": "Hidden after review."
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(reportId))
+				.andExpect(jsonPath("$.status").value("RESOLVED"))
+				.andExpect(jsonPath("$.resolvedAt", notNullValue()))
+				.andExpect(jsonPath("$.resolutionNote").value("Hidden after review."));
+
+		mockMvc.perform(get("/api/community/posts/{postId}/comments", postId))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(0)));
+
+		var comment = forumCommentRepository.findById(java.util.UUID.fromString(commentId)).orElseThrow();
+		assertThat(comment.getStatus()).isEqualTo(ForumCommentStatus.HIDDEN);
+		assertThat(comment.getHiddenAt()).isNotNull();
+
+		var report = forumCommentReportRepository.findById(java.util.UUID.fromString(reportId)).orElseThrow();
+		assertThat(report.getStatus()).isEqualTo(ForumReportStatus.RESOLVED);
+		assertThat(report.getResolvedBy()).isNotNull();
 	}
 
 	@Test

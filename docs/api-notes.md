@@ -456,12 +456,12 @@ Response shape:
 }
 ```
 
-Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, and report replies. `/admin` can list and resolve/dismiss reports for moderator roles. Content hide/lock/ban actions and likes/bookmarks are not implemented yet.
+Community write APIs now include top-level posts, flat comments, reporting hooks, and report-scoped hide actions for posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, report replies, and use `/admin` to hide reported content or resolve/dismiss reports. Lock/ban actions and likes/bookmarks are not implemented yet.
 
 Likely next MVP endpoints later:
 
-- `POST /api/moderation/posts/{id}/hide`
 - `POST /api/moderation/posts/{id}/lock`
+- `POST /api/moderation/users/{id}/ban`
 
 ### Moderation
 
@@ -469,7 +469,9 @@ Current implemented moderator endpoints:
 
 - `GET /api/moderation/reports`
 - `POST /api/moderation/reports/posts/{id}/resolve`
+- `POST /api/moderation/reports/posts/{id}/hide`
 - `POST /api/moderation/reports/comments/{id}/resolve`
+- `POST /api/moderation/reports/comments/{id}/hide`
 
 These require a valid bearer token for an active account with role `OWNER`, `ADMIN`, or `MODERATOR`. Role checks are performed against the persisted user record, not only the JWT claim.
 
@@ -519,9 +521,18 @@ Resolving a post or comment report uses the same request body:
 
 `status` must be `RESOLVED` or `DISMISSED`. `resolutionNote` is optional.
 
+Hiding a reported post or comment uses the report-scoped hide endpoints:
+
+```json
+{
+  "resolutionNote": "Hidden after review."
+}
+```
+
+The backend marks the target post/comment as `HIDDEN`, which removes it from public reads, and marks the related report as `RESOLVED`. `resolutionNote` is optional.
+
 Likely moderation endpoints later:
 
-- `POST /api/moderation/posts/{id}/hide`
 - `POST /api/moderation/posts/{id}/lock`
 - `POST /api/moderation/users/{id}/ban`
 
@@ -566,7 +577,9 @@ Current implemented auth endpoint:
 - `POST /api/community/comments/{id}/reports`
 - `GET /api/moderation/reports`
 - `POST /api/moderation/reports/posts/{id}/resolve`
+- `POST /api/moderation/reports/posts/{id}/hide`
 - `POST /api/moderation/reports/comments/{id}/resolve`
+- `POST /api/moderation/reports/comments/{id}/hide`
 
 Next auth slices:
 
@@ -619,8 +632,8 @@ Current frontend auth state:
 - `/dashboard` uses the frontend auth provider and `GET /api/auth/me` state to show the current account summary; it does not add new API endpoints.
 - Frontend auth forms do not use `localStorage`.
 - Community post detail pages can list published replies, let signed-in verified users post replies, and let signed-in verified users report replies.
-- `/admin` uses the frontend auth provider and moderation APIs to list, filter, resolve, and dismiss reports for users with `OWNER`, `ADMIN`, or `MODERATOR` roles.
-- No real email delivery, content hide/lock/ban UI, or production-ready account settings UI exists yet.
+- `/admin` uses the frontend auth provider and moderation APIs to list, filter, hide reported content, resolve, and dismiss reports for users with `OWNER`, `ADMIN`, or `MODERATOR` roles.
+- No real email delivery, lock/ban moderation UI, or production-ready account settings UI exists yet.
 
 Current backend auth state:
 

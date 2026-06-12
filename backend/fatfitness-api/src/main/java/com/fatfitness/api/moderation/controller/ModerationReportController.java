@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fatfitness.api.moderation.dto.HideModerationReportRequest;
 import com.fatfitness.api.moderation.dto.ModerationReportResponse;
 import com.fatfitness.api.moderation.dto.ResolveModerationReportRequest;
 import com.fatfitness.api.moderation.service.ModerationReportService;
@@ -46,11 +47,27 @@ public class ModerationReportController {
 		return moderationReportService.resolvePostReport(reportId, request, jwt.getSubject());
 	}
 
+	@PostMapping("/posts/{reportId}/hide")
+	public ModerationReportResponse hidePostFromReport(
+			@PathVariable UUID reportId,
+			@Valid @RequestBody HideModerationReportRequest request,
+			@AuthenticationPrincipal Jwt jwt) {
+		return moderationReportService.hidePostFromReport(reportId, request, jwt.getSubject());
+	}
+
 	@PostMapping("/comments/{reportId}/resolve")
 	public ModerationReportResponse resolveCommentReport(
 			@PathVariable UUID reportId,
 			@Valid @RequestBody ResolveModerationReportRequest request,
 			@AuthenticationPrincipal Jwt jwt) {
 		return moderationReportService.resolveCommentReport(reportId, request, jwt.getSubject());
+	}
+
+	@PostMapping("/comments/{reportId}/hide")
+	public ModerationReportResponse hideCommentFromReport(
+			@PathVariable UUID reportId,
+			@Valid @RequestBody HideModerationReportRequest request,
+			@AuthenticationPrincipal Jwt jwt) {
+		return moderationReportService.hideCommentFromReport(reportId, request, jwt.getSubject());
 	}
 }

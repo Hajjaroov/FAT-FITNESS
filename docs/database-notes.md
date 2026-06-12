@@ -91,6 +91,7 @@ Current community/forum state:
 - Active authenticated users can report published comments; duplicate reports from the same reporter/comment pair are not duplicated.
 - The fifth Flyway migration adds report resolution metadata to post and comment reports: `resolved_by_user_id` and `resolution_note`.
 - Moderator report resolution uses existing report rows with `status`, `resolved_at`, `resolved_by_user_id`, and `resolution_note`.
+- Report-scoped moderation hide actions now use the existing `HIDDEN` post/comment statuses and `hidden_at` timestamps; no new migration was needed for this slice.
 - Likes/bookmarks and separate moderation action history tables do not exist yet.
 
 Next user/auth step:
@@ -101,7 +102,7 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Add content hide/lock/ban actions after the next product decision.
+- Add lock/ban moderation actions after the next product decision.
 - Keep likes/bookmarks and content moderation action history tables out until the next explicit forum slice.
 
 Future user/auth model direction:

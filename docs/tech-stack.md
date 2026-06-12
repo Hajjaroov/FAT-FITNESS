@@ -43,7 +43,7 @@ Frontend rules:
 - Shared header session controls read from the frontend auth provider.
 - `/dashboard` uses the existing frontend auth provider for account/session visibility and stays frontend-only for now.
 - Community pages consume the forum APIs for published post lists, category thread lists, post detail reads, signed-in create-thread forms, signed-in post reports, reply lists, signed-in reply forms, and signed-in reply reports.
-- `/admin` consumes moderation APIs for role-gated report list/filter/resolve/dismiss workflows.
+- `/admin` consumes moderation APIs for role-gated report list/filter/hide/resolve/dismiss workflows.
 
 ## Backend
 
@@ -76,7 +76,7 @@ Backend rules:
 - Forum category metadata is now persisted with Flyway and exposed through public read-only REST endpoints.
 - Forum top-level posts and post reports are persisted with Flyway; authenticated write endpoints use bearer-token validation.
 - Forum flat comments and comment reports are persisted with Flyway; authenticated write endpoints use bearer-token validation.
-- Moderator report review/resolution endpoints use bearer-token validation plus persisted role checks for `OWNER`, `ADMIN`, and `MODERATOR`.
+- Moderator report review/resolution/hide endpoints use bearer-token validation plus persisted role checks for `OWNER`, `ADMIN`, and `MODERATOR`.
 - Current email verification is development-only: registration returns a raw dev token while the database stores only the token hash.
 - `POST /api/auth/verify-email` consumes valid verification tokens and activates pending accounts.
 - `POST /api/auth/resend-verification` creates fresh development verification tokens for pending accounts without revealing unknown emails.

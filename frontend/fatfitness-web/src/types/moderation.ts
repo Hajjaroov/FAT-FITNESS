@@ -29,3 +29,7 @@ export type ResolveModerationReportRequest = {
   status: "RESOLVED" | "DISMISSED";
   resolutionNote?: string;
 };
+
+export type HideModerationReportRequest = {
+  resolutionNote?: string;
+};

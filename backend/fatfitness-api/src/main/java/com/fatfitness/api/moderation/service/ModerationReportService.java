@@ -19,6 +19,7 @@ import com.fatfitness.api.community.entity.ForumPostReport;
 import com.fatfitness.api.community.entity.ForumReportStatus;
 import com.fatfitness.api.community.repository.ForumCommentReportRepository;
 import com.fatfitness.api.community.repository.ForumPostReportRepository;
+import com.fatfitness.api.moderation.dto.HideModerationReportRequest;
 import com.fatfitness.api.moderation.dto.ModerationReportResolutionStatus;
 import com.fatfitness.api.moderation.dto.ModerationReportResponse;
 import com.fatfitness.api.moderation.dto.ModerationReportTargetType;
@@ -121,6 +122,42 @@ public class ModerationReportService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment report not found"));
 
 		report.close(toReportStatus(request.status()), moderator, cleanOptionalSingleLine(request.resolutionNote()));
+
+		return toResponse(report);
+	}
+
+	@Transactional
+	public ModerationReportResponse hidePostFromReport(
+			UUID reportId,
+			HideModerationReportRequest request,
+			String userIdSubject) {
+		UserAccount moderator = requireModerator(userIdSubject);
+		ForumPostReport report = forumPostReportRepository.findById(reportId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post report not found"));
+
+		report.getPost().hide();
+		report.close(
+				ForumReportStatus.RESOLVED,
+				moderator,
+				cleanOptionalSingleLine(request.resolutionNote()));
+
+		return toResponse(report);
+	}
+
+	@Transactional
+	public ModerationReportResponse hideCommentFromReport(
+			UUID reportId,
+			HideModerationReportRequest request,
+			String userIdSubject) {
+		UserAccount moderator = requireModerator(userIdSubject);
+		ForumCommentReport report = forumCommentReportRepository.findById(reportId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment report not found"));
+
+		report.getComment().hide();
+		report.close(
+				ForumReportStatus.RESOLVED,
+				moderator,
+				cleanOptionalSingleLine(request.resolutionNote()));
 
 		return toResponse(report);
 	}
