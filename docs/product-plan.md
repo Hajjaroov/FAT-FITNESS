@@ -46,8 +46,8 @@ Current structure:
 - `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
 - `/community` is the static forum index for the future forum-style community.
 - `/community/guidelines` is a static community guidelines page for safety and behavior rules.
-- Community category routes are static empty board pages for planned forum boards.
-- Community post detail routes are still placeholders until real forum mechanics are approved.
+- Community category routes show board-level thread lists and create-thread entry points.
+- Community post detail routes read published top-level posts from the backend API.
 - `/login` and `/register` are styled account pages connected to the local backend auth flow.
 - `/dashboard` is a frontend account/session dashboard for the current signed-in user.
 - Public pages now use a shared frontend shell with light/dark mode and a language switch foundation.
@@ -136,13 +136,13 @@ Current state:
 
 - `/community` is a static forum index page.
 - `/community/guidelines` is a static guidelines page.
-- `/community/categories/[slug]` generates static empty board pages for the planned forum categories.
+- `/community/categories/[slug]` generates category pages for the planned forum boards and loads published threads from the API.
 - It shows forum boards with topics/replies/latest columns.
 - Backend forum categories are persisted and exposed through public read-only API endpoints.
 - Backend can create and read top-level posts and accept post reports for active authenticated users.
-- The frontend does not expose posting or reporting UI yet.
+- The frontend can list/read published posts and lets signed-in verified users create top-level threads.
+- The frontend does not expose reporting UI yet.
 - It does not allow comments, likes/bookmarks, report resolution, moderation actions, or other forum write actions yet.
-- Post routes remain placeholders until implementation is intentionally approved.
 
 ### User Accounts
 
@@ -170,7 +170,7 @@ Current state:
 - Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
 - Local development can seed one active `OWNER` account from environment variables without committing credentials.
 - The local owner seed is only for development. It must be removed or disabled before public launch, and any seeded dev owner must not be copied into production data.
-- No real email delivery, protected forum actions, or complete account settings UI exists yet.
+- No real email delivery, forum report UI, comments, or complete account settings UI exists yet.
 
 Approved auth direction:
 
@@ -215,7 +215,7 @@ Planned minimal registration information:
 - Email: login and account communication.
 - Country / region: searchable picker for coarse location, future admin/community insight, and localization.
 - Password and confirm password: confirmation is UI validation only and should never be stored separately.
-- Agreement to community rules and privacy terms before posting opens.
+- Agreement to community rules and privacy terms before posting.
 
 Country / region UX:
 
@@ -387,9 +387,10 @@ Completed-enough checkpoints for now:
 - Learn has static overview and detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
 - `/community` has been reworked into a static forum index with planned boards and zero-state forum metadata.
 - `/community/guidelines` exists as the static behavior/safety page.
-- `/community/categories/[slug]` generates static empty board pages.
+- `/community/categories/[slug]` generates category pages and loads published threads from the API.
 - Backend forum category persistence exists with seeded MVP boards and public read-only endpoints.
 - Backend forum post persistence exists for top-level posts and post reports.
+- Frontend community pages can list/read published posts and let signed-in verified users create top-level threads.
 - `/login` and `/register` exist as working frontend account pages for the local backend auth flow.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
 - `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
@@ -432,10 +433,11 @@ Content direction:
 - `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
 - Current Community page: static forum index with planned boards and zero-state forum metadata.
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
-- Current Community Category pages: static empty board pages for each planned forum category.
+- Current Community Category pages: category thread-list pages for each planned forum category.
 - Current Community API: `GET /api/community/categories` and `GET /api/community/categories/{slug}` return the seeded board metadata.
 - Current Forum Post API: active authenticated users can create top-level posts and report published posts; public users can list/read published posts.
-- Current Community UI gap: frontend posting, post lists, post detail rendering from the API, and report UI are not connected yet.
+- Current Community UI: frontend post lists, category thread lists, post detail rendering, and signed-in create-thread form are connected to the API.
+- Current Community UI gap: report UI, comments/replies, likes/bookmarks, moderation actions, and report resolution are not connected yet.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.

@@ -95,7 +95,7 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Connect the frontend to the post/read/report APIs or add comments after the next product decision.
+- Connect the frontend to the report API or add comments after the next product decision.
 - Keep comments, likes/bookmarks, report resolution, and moderation actions out until the next explicit forum slice.
 
 Future user/auth model direction:

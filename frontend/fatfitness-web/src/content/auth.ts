@@ -90,7 +90,7 @@ export const authCopy = {
       submitPendingLabel: "Signing in...",
       successTitle: "You are signed in.",
       successText:
-        "The session is active for this browser. Forum posting is still not implemented yet.",
+        "The session is active for this browser. Verified accounts can start forum threads now.",
       fields: [
         {
           id: "login-email",
@@ -214,7 +214,7 @@ export const authCopy = {
       submitPendingLabel: "Wird eingeloggt...",
       successTitle: "Du bist eingeloggt.",
       successText:
-        "Die Sitzung ist für diesen Browser aktiv. Forum-Beiträge sind aber noch nicht implementiert.",
+        "Die Sitzung ist für diesen Browser aktiv. Verifizierte Accounts können jetzt Forum-Threads starten.",
       fields: [
         {
           id: "login-email",

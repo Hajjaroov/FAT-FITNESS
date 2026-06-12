@@ -1,12 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import {
+  CommunityPostComposer,
+  CommunityPostList,
+  formatForumPostDate,
+  useCommunityPosts,
+} from "@/app/_components/CommunityForumPosts";
 import { PageShell } from "@/app/_components/PageShell";
-import { useLocalizedContent } from "@/app/_components/LocaleProvider";
+import {
+  useLocale,
+  useLocalizedContent,
+} from "@/app/_components/LocaleProvider";
 import { communityCopy } from "@/content/community";
 
 export function CommunityView() {
   const copy = useLocalizedContent(communityCopy);
+  const { locale } = useLocale();
+  const { posts, status, error, setPosts, refresh } = useCommunityPosts();
+  const categories = copy.categories.items;
 
   return (
     <PageShell className="gap-8">
@@ -34,6 +46,26 @@ export function CommunityView() {
             </Link>
           </aside>
         </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-[1fr_24rem]">
+        <CommunityPostList
+          posts={posts}
+          status={status}
+          error={error}
+          categories={categories}
+          title={copy.posts.latestTitle}
+          intro={copy.posts.latestIntro}
+          emptyTitle={copy.posts.emptyTitle}
+          emptyText={copy.posts.emptyText}
+          onRetry={refresh}
+        />
+        <CommunityPostComposer
+          categories={categories}
+          onCreated={(post) => {
+            setPosts((currentPosts) => [post, ...currentPosts]);
+          }}
+        />
       </section>
 
       <section className="site-card overflow-hidden">
@@ -74,6 +106,13 @@ export function CommunityView() {
                   return null;
                 }
 
+                const boardPosts = posts.filter(
+                  (post) => post.categorySlug === board.slug,
+                );
+                const latestPost = boardPosts[0];
+                const topicCount =
+                  status === "loading" ? "..." : String(boardPosts.length);
+
                 return (
                   <Link
                     key={board.slug}
@@ -92,7 +131,9 @@ export function CommunityView() {
                         <dt className="site-subtle md:hidden">
                           {copy.forumIndex.headers.topics}
                         </dt>
-                        <dd className="mt-1 font-semibold md:mt-0">0</dd>
+                        <dd className="mt-1 font-semibold md:mt-0">
+                          {topicCount}
+                        </dd>
                       </div>
                       <div>
                         <dt className="site-subtle md:hidden">
@@ -105,7 +146,24 @@ export function CommunityView() {
                           {copy.forumIndex.headers.latest}
                         </dt>
                         <dd className="site-muted mt-1 md:mt-0">
-                          {copy.forumIndex.latestEmpty}
+                          {latestPost ? (
+                            <span>
+                              <span className="block font-semibold text-foreground">
+                                {latestPost.title}
+                              </span>
+                              <time
+                                dateTime={latestPost.createdAt}
+                                className="mt-1 block text-xs"
+                              >
+                                {formatForumPostDate(
+                                  latestPost.createdAt,
+                                  locale,
+                                )}
+                              </time>
+                            </span>
+                          ) : (
+                            copy.forumIndex.latestEmpty
+                          )}
                         </dd>
                       </div>
                     </dl>

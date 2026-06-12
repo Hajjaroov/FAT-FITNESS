@@ -11,7 +11,7 @@ export const communityCopy = {
     categories: {
       eyebrow: "Forum index",
       title: "Boards",
-      intro: "Choose a board to read or post in when the forum opens.",
+      intro: "Choose a board to read threads or start one with a verified account.",
       openCategoryLabel: "Open board",
       items: [
         {
@@ -67,7 +67,7 @@ export const communityCopy = {
     forumIndex: {
       statusLabel: "Forum status",
       statusText:
-        "Posting opens later after accounts, reporting, and moderation are ready.",
+        "Verified accounts can start threads. Replies and moderation tools are still being built carefully.",
       guidelinesLabel: "Community guidelines",
       headers: {
         board: "Board",
@@ -100,15 +100,63 @@ export const communityCopy = {
       statusLabel: "Board status",
       statusText: "No threads yet",
       threadsTitle: "Threads",
+      threadsIntro:
+        "Top-level threads from this board. Replies are not built yet.",
       emptyTitle: "No threads yet",
       emptyText:
-        "This board will open after accounts, reporting, and moderation are ready.",
+        "Verified members can start the first thread in this board.",
       pinnedTitle: "Pinned",
       pinnedGuidelinesTitle: "Community guidelines",
-      pinnedGuidelinesText: "Read the rules before posting later.",
+      pinnedGuidelinesText: "Read the rules before posting.",
       topicsLabel: "Topics",
       repliesLabel: "Replies",
       latestLabel: "Latest",
+    },
+    posts: {
+      eyebrow: "Forum threads",
+      latestTitle: "Latest threads",
+      latestIntro:
+        "New top-level posts from the community boards. Replies are not built yet.",
+      loading: "Loading threads...",
+      errorTitle: "Could not load threads",
+      retryLabel: "Try again",
+      retryPendingLabel: "Trying again...",
+      emptyTitle: "No threads yet",
+      emptyText:
+        "When verified members start posting, the latest threads will appear here.",
+      readPostLabel: "Read thread",
+      postedByLabel: "Posted by",
+      inLabel: "in",
+      createTitle: "Start a thread",
+      createIntro:
+        "Share personal experience or a beginner-friendly question. Keep it specific, kind, and non-prescriptive.",
+      checkingSession: "Checking your session before showing posting options.",
+      signInTitle: "Sign in to start a thread",
+      signInText:
+        "Reading stays public. Posting is only for verified accounts so the forum can stay safer.",
+      signInLabel: "Sign in",
+      registerLabel: "Create account",
+      signInRequiredError: "Sign in with a verified account before posting.",
+      categoryRequiredError: "Choose a board before posting.",
+      guidelinesRequiredError:
+        "Accept the community guidelines before posting.",
+      categoryLabel: "Board",
+      titleLabel: "Thread title",
+      titlePlaceholder: "What do you want to discuss?",
+      bodyLabel: "Post",
+      bodyPlaceholder:
+        "Share context, what happened, or the question you want support with.",
+      guidelinesLabel:
+        "I understand this is peer support. I will share personal experience, not medical instructions or coaching.",
+      submitLabel: "Post thread",
+      submitPendingLabel: "Posting...",
+      createSuccessTitle: "Thread posted",
+      createSuccessText: "Your thread is now visible in the forum.",
+      formErrorFallback:
+        "Something went wrong. Please check the post and try again.",
+      detailBackLabel: "Community",
+      detailLoading: "Loading thread...",
+      detailErrorTitle: "Thread not available",
     },
     guidelines: {
       backLinkLabel: "Community",
@@ -210,7 +258,8 @@ export const communityCopy = {
     categories: {
       eyebrow: "Forum-Index",
       title: "Boards",
-      intro: "Wähle ein Board, um später darin zu lesen oder zu posten.",
+      intro:
+        "Wähle ein Board, um Threads zu lesen oder mit einem verifizierten Account einen zu starten.",
       openCategoryLabel: "Board öffnen",
       items: [
         {
@@ -265,7 +314,7 @@ export const communityCopy = {
     forumIndex: {
       statusLabel: "Forum-Status",
       statusText:
-        "Posten startet später, wenn Accounts, Meldungen und Moderation bereit sind.",
+        "Verifizierte Accounts können Threads starten. Antworten und Moderationswerkzeuge werden noch sorgfältig gebaut.",
       guidelinesLabel: "Community-Regeln",
       headers: {
         board: "Board",
@@ -298,15 +347,65 @@ export const communityCopy = {
       statusLabel: "Board-Status",
       statusText: "Noch keine Threads",
       threadsTitle: "Threads",
+      threadsIntro:
+        "Top-Level-Threads aus diesem Board. Antworten sind noch nicht gebaut.",
       emptyTitle: "Noch keine Threads",
       emptyText:
-        "Dieses Board öffnet später, wenn Accounts, Meldungen und Moderation bereit sind.",
+        "Verifizierte Mitglieder können den ersten Thread in diesem Board starten.",
       pinnedTitle: "Angepinnt",
       pinnedGuidelinesTitle: "Community-Regeln",
-      pinnedGuidelinesText: "Lies die Regeln, bevor später gepostet wird.",
+      pinnedGuidelinesText: "Lies die Regeln, bevor du postest.",
       topicsLabel: "Themen",
       repliesLabel: "Antworten",
       latestLabel: "Letztes",
+    },
+    posts: {
+      eyebrow: "Forum-Threads",
+      latestTitle: "Neueste Threads",
+      latestIntro:
+        "Neue Top-Level-Beiträge aus den Community-Boards. Antworten sind noch nicht gebaut.",
+      loading: "Threads werden geladen...",
+      errorTitle: "Threads konnten nicht geladen werden",
+      retryLabel: "Erneut versuchen",
+      retryPendingLabel: "Wird erneut versucht...",
+      emptyTitle: "Noch keine Threads",
+      emptyText:
+        "Sobald verifizierte Mitglieder posten, erscheinen die neuesten Threads hier.",
+      readPostLabel: "Thread lesen",
+      postedByLabel: "Gepostet von",
+      inLabel: "in",
+      createTitle: "Thread starten",
+      createIntro:
+        "Teile persönliche Erfahrung oder eine anfängerfreundliche Frage. Bleib konkret, freundlich und nicht vorschreibend.",
+      checkingSession:
+        "Sitzung wird geprüft, bevor Posting-Optionen angezeigt werden.",
+      signInTitle: "Einloggen, um einen Thread zu starten",
+      signInText:
+        "Lesen bleibt öffentlich. Posten ist nur für verifizierte Accounts, damit das Forum sicherer bleiben kann.",
+      signInLabel: "Einloggen",
+      registerLabel: "Account erstellen",
+      signInRequiredError:
+        "Logge dich mit einem verifizierten Account ein, bevor du postest.",
+      categoryRequiredError: "Wähle ein Board, bevor du postest.",
+      guidelinesRequiredError:
+        "Akzeptiere die Community-Regeln, bevor du postest.",
+      categoryLabel: "Board",
+      titleLabel: "Thread-Titel",
+      titlePlaceholder: "Worüber möchtest du sprechen?",
+      bodyLabel: "Beitrag",
+      bodyPlaceholder:
+        "Teile Kontext, was passiert ist, oder die Frage, bei der du Support möchtest.",
+      guidelinesLabel:
+        "Ich verstehe, dass das Peer-Support ist. Ich teile persönliche Erfahrung, keine medizinischen Anweisungen oder Coaching.",
+      submitLabel: "Thread posten",
+      submitPendingLabel: "Wird gepostet...",
+      createSuccessTitle: "Thread gepostet",
+      createSuccessText: "Dein Thread ist jetzt im Forum sichtbar.",
+      formErrorFallback:
+        "Etwas ist schiefgelaufen. Bitte prüfe den Beitrag und versuche es erneut.",
+      detailBackLabel: "Community",
+      detailLoading: "Thread wird geladen...",
+      detailErrorTitle: "Thread nicht verfügbar",
     },
     guidelines: {
       backLinkLabel: "Community",

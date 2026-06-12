@@ -386,7 +386,7 @@ Response shape:
 }
 ```
 
-Community write APIs now include a first reporting hook. Comment creation, report resolution, moderator actions, likes/bookmarks, and frontend posting/reporting UI are not implemented yet.
+Community write APIs now include a first reporting hook. The frontend can list/read published posts and create top-level threads for signed-in verified users. Comment creation, report UI, report resolution, moderator actions, and likes/bookmarks are not implemented yet.
 
 Likely next MVP endpoints later:
 
@@ -492,7 +492,7 @@ Current frontend auth state:
 - Registration currently shows the development-only email verification token and can submit it to `POST /api/auth/verify-email` for local testing.
 - `/dashboard` uses the frontend auth provider and `GET /api/auth/me` state to show the current account summary; it does not add new API endpoints.
 - Frontend auth forms do not use `localStorage`.
-- No real email delivery, protected forum actions, or production-ready account settings UI exists yet.
+- No real email delivery, forum report UI, comments/replies, or production-ready account settings UI exists yet.
 
 Current backend auth state:
 

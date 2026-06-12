@@ -10,6 +10,7 @@ import type {
   VerifyEmailResponse,
 } from "@/types/auth";
 import type { BackendStatus } from "@/types/api";
+import type { CreateForumPostRequest, ForumPost } from "@/types/community";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST";
@@ -141,6 +142,45 @@ export function logoutUser() {
 
 export function getCurrentUser(accessToken: string) {
   return apiRequest<CurrentUser>("/api/auth/me", {
+    accessToken,
+  });
+}
+
+export function getForumPosts({
+  categorySlug,
+  limit,
+}: {
+  categorySlug?: string;
+  limit?: number;
+} = {}) {
+  const params = new URLSearchParams();
+
+  if (categorySlug) {
+    params.set("categorySlug", categorySlug);
+  }
+
+  if (limit) {
+    params.set("limit", String(limit));
+  }
+
+  const query = params.toString();
+
+  return apiRequest<ForumPost[]>(
+    `/api/community/posts${query ? `?${query}` : ""}`,
+  );
+}
+
+export function getForumPost(postId: string) {
+  return apiRequest<ForumPost>(`/api/community/posts/${postId}`);
+}
+
+export function createForumPost(
+  request: CreateForumPostRequest,
+  accessToken: string,
+) {
+  return apiRequest<ForumPost>("/api/community/posts", {
+    method: "POST",
+    body: request,
     accessToken,
   });
 }

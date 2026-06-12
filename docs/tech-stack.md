@@ -42,6 +42,7 @@ Frontend rules:
 - Do not store access or refresh tokens in browser `localStorage`.
 - Shared header session controls read from the frontend auth provider.
 - `/dashboard` uses the existing frontend auth provider for account/session visibility and stays frontend-only for now.
+- Community pages consume the forum post API for published post lists, category thread lists, post detail reads, and signed-in create-thread forms.
 
 ## Backend
 

@@ -60,14 +60,14 @@ export const accountCopy = {
     },
     signedOut: {
       title: "You are not signed in.",
-      body: "Sign in with a verified account, or create a new one to test the account flow before community posting opens.",
+      body: "Sign in with a verified account, or create a new one before starting community threads.",
       loginLabel: "Sign in",
       registerLabel: "Create account",
     },
     summary: {
       title: "Account summary",
       intro:
-        "Your account is ready to be used by future community features once posting and replies are built.",
+        "Your account can start forum threads now. Replies and deeper community features are still being built carefully.",
       activeBadge: "Signed in",
       logoutLabel: "Log out",
       logoutPendingLabel: "Logging out...",
@@ -121,14 +121,14 @@ export const accountCopy = {
     signedOut: {
       title: "Du bist nicht eingeloggt.",
       body:
-        "Logge dich mit einem verifizierten Account ein oder erstelle einen neuen Account, um den Account-Ablauf zu testen, bevor Community-Beiträge geöffnet werden.",
+        "Logge dich mit einem verifizierten Account ein oder erstelle einen neuen Account, bevor du Community-Threads startest.",
       loginLabel: "Einloggen",
       registerLabel: "Account erstellen",
     },
     summary: {
       title: "Account-Übersicht",
       intro:
-        "Dein Account kann später von Community-Funktionen genutzt werden, sobald Beiträge und Antworten gebaut sind.",
+        "Dein Account kann jetzt Forum-Threads starten. Antworten und tiefere Community-Funktionen werden noch sorgfältig gebaut.",
       activeBadge: "Eingeloggt",
       logoutLabel: "Ausloggen",
       logoutPendingLabel: "Wird ausgeloggt...",
