@@ -43,6 +43,7 @@ Frontend rules:
 - Shared header session controls read from the frontend auth provider.
 - `/dashboard` uses the existing frontend auth provider for account/session visibility and stays frontend-only for now.
 - Community pages consume the forum APIs for published post lists, category thread lists, post detail reads, signed-in create-thread forms, signed-in post reports, reply lists, signed-in reply forms, and signed-in reply reports.
+- `/admin` consumes moderation APIs for role-gated report list/filter/resolve/dismiss workflows.
 
 ## Backend
 

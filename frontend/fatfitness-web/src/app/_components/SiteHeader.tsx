@@ -7,9 +7,16 @@ import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { useTheme } from "@/app/_components/ThemeProvider";
 import { isLocale, localeOptions, siteCopy, siteNavigation } from "@/content/site";
+import type { UserRole } from "@/types/auth";
+
+const moderationRoles = new Set<UserRole>(["OWNER", "ADMIN", "MODERATOR"]);
 
 function isActiveRoute(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
+
+function hasModeratorAccess(roles: UserRole[]) {
+  return roles.some((role) => moderationRoles.has(role));
 }
 
 export function SiteHeader() {
@@ -21,6 +28,7 @@ export function SiteHeader() {
   const copy = useLocalizedContent(siteCopy);
   const nextTheme = theme === "dark" ? "light" : "dark";
   const themeIcon = theme === "dark" ? "☾" : "☀";
+  const canOpenAdmin = user ? hasModeratorAccess(user.roles) : false;
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -107,6 +115,11 @@ export function SiteHeader() {
             </span>
           ) : user ? (
             <div className="flex flex-wrap items-center gap-2">
+              {canOpenAdmin ? (
+                <Link href="/admin" className="site-control">
+                  {copy.account.admin}
+                </Link>
+              ) : null}
               <Link
                 href="/dashboard"
                 className="site-control"

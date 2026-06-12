@@ -456,7 +456,7 @@ Response shape:
 }
 ```
 
-Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, and report replies. Backend report review/resolution exists for moderator roles. Frontend moderation dashboard, content hide/lock/ban actions, and likes/bookmarks are not implemented yet.
+Community write APIs now include top-level posts, flat comments, and reporting hooks for both posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, and report replies. `/admin` can list and resolve/dismiss reports for moderator roles. Content hide/lock/ban actions and likes/bookmarks are not implemented yet.
 
 Likely next MVP endpoints later:
 
@@ -619,7 +619,8 @@ Current frontend auth state:
 - `/dashboard` uses the frontend auth provider and `GET /api/auth/me` state to show the current account summary; it does not add new API endpoints.
 - Frontend auth forms do not use `localStorage`.
 - Community post detail pages can list published replies, let signed-in verified users post replies, and let signed-in verified users report replies.
-- No real email delivery, moderation dashboard, or production-ready account settings UI exists yet.
+- `/admin` uses the frontend auth provider and moderation APIs to list, filter, resolve, and dismiss reports for users with `OWNER`, `ADMIN`, or `MODERATOR` roles.
+- No real email delivery, content hide/lock/ban UI, or production-ready account settings UI exists yet.
 
 Current backend auth state:
 

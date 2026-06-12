@@ -20,6 +20,12 @@ import type {
   ReportForumCommentRequest,
   ReportForumPostRequest,
 } from "@/types/community";
+import type {
+  ModerationReport,
+  ModerationReportStatusFilter,
+  ModerationReportTargetType,
+  ResolveModerationReportRequest,
+} from "@/types/moderation";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST";
@@ -245,6 +251,72 @@ export function reportForumComment(
 ) {
   return apiRequest<ForumCommentReport>(
     `/api/community/comments/${commentId}/reports`,
+    {
+      method: "POST",
+      body: request,
+      accessToken,
+    },
+  );
+}
+
+export function getModerationReports(
+  {
+    status,
+    targetType,
+    limit,
+  }: {
+    status?: ModerationReportStatusFilter;
+    targetType?: ModerationReportTargetType | "ALL";
+    limit?: number;
+  },
+  accessToken: string,
+) {
+  const params = new URLSearchParams();
+
+  if (status) {
+    params.set("status", status);
+  }
+
+  if (targetType && targetType !== "ALL") {
+    params.set("targetType", targetType);
+  }
+
+  if (limit) {
+    params.set("limit", String(limit));
+  }
+
+  const query = params.toString();
+
+  return apiRequest<ModerationReport[]>(
+    `/api/moderation/reports${query ? `?${query}` : ""}`,
+    {
+      accessToken,
+    },
+  );
+}
+
+export function resolveModerationPostReport(
+  reportId: string,
+  request: ResolveModerationReportRequest,
+  accessToken: string,
+) {
+  return apiRequest<ModerationReport>(
+    `/api/moderation/reports/posts/${reportId}/resolve`,
+    {
+      method: "POST",
+      body: request,
+      accessToken,
+    },
+  );
+}
+
+export function resolveModerationCommentReport(
+  reportId: string,
+  request: ResolveModerationReportRequest,
+  accessToken: string,
+) {
+  return apiRequest<ModerationReport>(
+    `/api/moderation/reports/comments/${reportId}/resolve`,
     {
       method: "POST",
       body: request,
