@@ -72,6 +72,7 @@ Backend rules:
 - Do not add entities until a feature needs persistence.
 - Add tests for endpoint behavior and security/CORS expectations.
 - Forum category metadata is now persisted with Flyway and exposed through public read-only REST endpoints.
+- Forum top-level posts and post reports are persisted with Flyway; authenticated write endpoints use bearer-token validation.
 - Current email verification is development-only: registration returns a raw dev token while the database stores only the token hash.
 - `POST /api/auth/verify-email` consumes valid verification tokens and activates pending accounts.
 - `POST /api/auth/resend-verification` creates fresh development verification tokens for pending accounts without revealing unknown emails.

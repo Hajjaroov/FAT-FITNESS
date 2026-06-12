@@ -139,7 +139,9 @@ Current state:
 - `/community/categories/[slug]` generates static empty board pages for the planned forum categories.
 - It shows forum boards with topics/replies/latest columns.
 - Backend forum categories are persisted and exposed through public read-only API endpoints.
-- It does not allow posting, comments, reports, moderation actions, or other forum write actions yet.
+- Backend can create and read top-level posts and accept post reports for active authenticated users.
+- The frontend does not expose posting or reporting UI yet.
+- It does not allow comments, likes/bookmarks, report resolution, moderation actions, or other forum write actions yet.
 - Post routes remain placeholders until implementation is intentionally approved.
 
 ### User Accounts
@@ -377,7 +379,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Continue the user accounts foundation from the approved auth plan before implementing forum posting, comments, reports, or moderation mechanics.
+Continue the community/forum foundation in small slices now that the basic account flow and first post/report APIs exist.
 
 Completed-enough checkpoints for now:
 
@@ -387,6 +389,7 @@ Completed-enough checkpoints for now:
 - `/community/guidelines` exists as the static behavior/safety page.
 - `/community/categories/[slug]` generates static empty board pages.
 - Backend forum category persistence exists with seeded MVP boards and public read-only endpoints.
+- Backend forum post persistence exists for top-level posts and post reports.
 - `/login` and `/register` exist as working frontend account pages for the local backend auth flow.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
 - `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
@@ -417,7 +420,7 @@ Approved auth implementation goals:
 - Define privacy/GDPR expectations before collecting real account data: deletion/export, visibility, moderation access, and country/region handling.
 - Keep planned registration minimal: display name, email, country/region code from the picker, password confirmation validation, and rules/privacy agreement.
 - Keep health-sensitive data out of initial registration.
-- Do not add forum posts, comments, likes/bookmarks, reporting, moderation actions, tracking tools, or sensitive health data until accounts and privacy rules are intentionally designed.
+- Do not add comments, likes/bookmarks, report resolution, moderation actions, tracking tools, or sensitive health data until each next slice is intentionally approved.
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods.
 
 Content direction:
@@ -431,6 +434,8 @@ Content direction:
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Current Community Category pages: static empty board pages for each planned forum category.
 - Current Community API: `GET /api/community/categories` and `GET /api/community/categories/{slug}` return the seeded board metadata.
+- Current Forum Post API: active authenticated users can create top-level posts and report published posts; public users can list/read published posts.
+- Current Community UI gap: frontend posting, post lists, post detail rendering from the API, and report UI are not connected yet.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.

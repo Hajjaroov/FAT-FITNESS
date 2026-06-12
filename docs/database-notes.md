@@ -81,7 +81,11 @@ Current community/forum state:
 - The second Flyway migration creates `forum_categories`.
 - The MVP board list is seeded as active forum categories with stable slugs and display order.
 - `GET /api/community/categories` and `GET /api/community/categories/{slug}` read this category metadata.
-- Forum posts, comments, likes/bookmarks, reports, and moderation actions do not have tables yet.
+- The third Flyway migration creates `forum_posts` and `forum_post_reports`.
+- Active authenticated users can create top-level `PUBLISHED` forum posts.
+- Public reads can list/read published posts.
+- Active authenticated users can report published posts; duplicate reports from the same reporter/post pair are not duplicated.
+- Comments, likes/bookmarks, report resolution, and moderation actions do not have tables yet.
 
 Next user/auth step:
 
@@ -91,8 +95,8 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Start the first approved forum write-flow planning step only after category API review.
-- Keep forum posts/comments out of the first auth migration.
+- Connect the frontend to the post/read/report APIs or add comments after the next product decision.
+- Keep comments, likes/bookmarks, report resolution, and moderation actions out until the next explicit forum slice.
 
 Future user/auth model direction:
 

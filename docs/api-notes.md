@@ -308,8 +308,10 @@ Current implemented read-only endpoints:
 
 - `GET /api/community/categories`
 - `GET /api/community/categories/{slug}`
+- `GET /api/community/posts`
+- `GET /api/community/posts/{id}`
 
-These return the seeded MVP forum board metadata. They are public and do not require authentication.
+These return the seeded MVP forum board metadata and published top-level posts. They are public and do not require authentication.
 
 `GET /api/community/categories` response shape:
 
@@ -325,15 +327,73 @@ These return the seeded MVP forum board metadata. They are public and do not req
 ]
 ```
 
-Likely MVP endpoints later:
+Current implemented authenticated write endpoints:
 
-- `GET /api/community/posts`
 - `POST /api/community/posts`
-- `GET /api/community/posts/{id}`
-- `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
 
-Community write APIs must include moderation/reporting from the first write milestone.
+`POST /api/community/posts` requires a valid bearer token for an active account. The account must already be email-verified because only `ACTIVE` accounts pass the write check.
+
+Request shape:
+
+```json
+{
+  "categorySlug": "introductions",
+  "title": "Starting here",
+  "body": "This is my first forum post.",
+  "acceptedCommunityGuidelines": true
+}
+```
+
+Response shape:
+
+```json
+{
+  "id": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
+  "categorySlug": "introductions",
+  "categoryName": "Introductions",
+  "title": "Starting here",
+  "body": "This is my first forum post.",
+  "authorDisplayName": "Forum Member",
+  "status": "PUBLISHED",
+  "locked": false,
+  "createdAt": "2026-06-12T15:00:00Z",
+  "updatedAt": "2026-06-12T15:00:00Z"
+}
+```
+
+`POST /api/community/posts/{id}/reports` requires a valid bearer token for an active account. Reports are idempotent per post/reporter pair and start with status `OPEN`.
+
+Request shape:
+
+```json
+{
+  "reason": "medical_misinformation",
+  "details": "This needs a moderator look."
+}
+```
+
+Response shape:
+
+```json
+{
+  "id": "d91c70ca-f85b-4cd2-8fbb-b03715f26290",
+  "postId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
+  "reason": "medical_misinformation",
+  "details": "This needs a moderator look.",
+  "status": "OPEN",
+  "createdAt": "2026-06-12T15:05:00Z"
+}
+```
+
+Community write APIs now include a first reporting hook. Comment creation, report resolution, moderator actions, likes/bookmarks, and frontend posting/reporting UI are not implemented yet.
+
+Likely next MVP endpoints later:
+
+- `POST /api/community/posts/{id}/comments`
+- `POST /api/moderation/reports/{id}/resolve`
+- `POST /api/moderation/posts/{id}/hide`
+- `POST /api/moderation/posts/{id}/lock`
 
 ### Moderation
 
@@ -377,6 +437,10 @@ Current implemented auth endpoint:
 - `GET /api/auth/me`
 - `GET /api/community/categories`
 - `GET /api/community/categories/{slug}`
+- `GET /api/community/posts`
+- `GET /api/community/posts/{id}`
+- `POST /api/community/posts`
+- `POST /api/community/posts/{id}/reports`
 
 Next auth slices:
 
