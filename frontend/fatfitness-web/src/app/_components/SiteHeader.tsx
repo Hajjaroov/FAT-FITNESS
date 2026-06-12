@@ -107,12 +107,13 @@ export function SiteHeader() {
             </span>
           ) : user ? (
             <div className="flex flex-wrap items-center gap-2">
-              <span
+              <Link
+                href="/dashboard"
                 className="site-control"
                 title={`${copy.account.signedInAs} ${user.email}`}
               >
                 {copy.account.signedInAs} {user.displayName}
-              </span>
+              </Link>
               <button
                 type="button"
                 className="site-control"

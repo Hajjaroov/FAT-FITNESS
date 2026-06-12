@@ -401,8 +401,10 @@ Current frontend auth state:
 - The frontend keeps the JWT access token in React memory only and restores sessions through the web refresh cookie.
 - `/login` can show the active browser session and call logout.
 - The shared site header shows session-checking, sign-in, signed-in, and logout controls.
+- The signed-in header name links to `/dashboard`.
 - `/register` submits to `POST /api/auth/register` with display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - Registration currently shows the development-only email verification token and can submit it to `POST /api/auth/verify-email` for local testing.
+- `/dashboard` uses the frontend auth provider and `GET /api/auth/me` state to show the current account summary; it does not add new API endpoints.
 - Frontend auth forms do not use `localStorage`.
 - No real email delivery, protected forum actions, or production-ready account settings UI exists yet.
 

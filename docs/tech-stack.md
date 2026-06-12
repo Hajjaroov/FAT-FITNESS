@@ -41,6 +41,7 @@ Frontend rules:
 - Frontend auth keeps JWT access tokens in React memory only and restores web sessions through the backend `HttpOnly` refresh cookie.
 - Do not store access or refresh tokens in browser `localStorage`.
 - Shared header session controls read from the frontend auth provider.
+- `/dashboard` uses the existing frontend auth provider for account/session visibility and stays frontend-only for now.
 
 ## Backend
 

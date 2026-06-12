@@ -1,0 +1,218 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { PageShell } from "@/app/_components/PageShell";
+import { useAuth } from "@/app/_components/AuthProvider";
+import {
+  useLocale,
+  useLocalizedContent,
+} from "@/app/_components/LocaleProvider";
+import { accountCopy } from "@/content/account";
+import { getCountryOptions } from "@/content/countries";
+import type { Locale } from "@/content/site";
+import type { CurrentUser } from "@/types/auth";
+
+function formatDateTime(value: string | null, locale: Locale, fallback: string) {
+  if (!value) {
+    return fallback;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return fallback;
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function getCountryLabel(user: CurrentUser, locale: Locale, fallback: string) {
+  const country = getCountryOptions(locale).find(
+    (option) => option.code === user.countryRegionCode,
+  );
+
+  return country?.label ?? user.countryRegionCode ?? fallback;
+}
+
+export function AccountDashboardView() {
+  const copy = useLocalizedContent(accountCopy);
+  const { locale } = useLocale();
+  const { status, user, logout } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+
+  async function handleLogout() {
+    setIsLoggingOut(true);
+    setLogoutError(null);
+
+    try {
+      await logout();
+    } catch {
+      setLogoutError(copy.summary.logoutError);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
+
+  return (
+    <PageShell className="gap-8">
+      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <article className="site-panel p-8 sm:p-10">
+          <p className="site-kicker">{copy.eyebrow}</p>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+            {copy.title}
+          </h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 opacity-85">
+            {copy.intro}
+          </p>
+        </article>
+
+        {status === "checking" ? (
+          <article className="site-card p-8 sm:p-10" aria-live="polite">
+            <p className="site-kicker">{copy.loading.title}</p>
+            <p className="site-muted mt-4 text-base leading-8">
+              {copy.loading.body}
+            </p>
+          </article>
+        ) : null}
+
+        {status !== "checking" && !user ? (
+          <article className="site-card p-8 sm:p-10">
+            <p className="site-kicker">{copy.signedOut.title}</p>
+            <p className="site-muted mt-4 text-base leading-8">
+              {copy.signedOut.body}
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                href="/login"
+                className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+              >
+                {copy.signedOut.loginLabel}
+              </Link>
+              <Link
+                href="/register"
+                className="min-h-12 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+              >
+                {copy.signedOut.registerLabel}
+              </Link>
+            </div>
+          </article>
+        ) : null}
+
+        {user ? (
+          <article className="site-card p-8 sm:p-10">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="site-kicker">{copy.summary.title}</p>
+                <p className="site-muted mt-4 max-w-2xl text-base leading-8">
+                  {copy.summary.intro}
+                </p>
+              </div>
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
+                {copy.summary.activeBadge}
+              </span>
+            </div>
+
+            <dl className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.displayName}
+                </dt>
+                <dd className="mt-2 text-base font-semibold">
+                  {user.displayName}
+                </dd>
+              </div>
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.email}
+                </dt>
+                <dd className="mt-2 break-words text-base font-semibold">
+                  {user.email}
+                </dd>
+              </div>
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.countryRegion}
+                </dt>
+                <dd className="mt-2 text-base font-semibold">
+                  {getCountryLabel(user, locale, copy.empty.country)}
+                </dd>
+              </div>
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.status}
+                </dt>
+                <dd className="mt-2 text-base font-semibold">
+                  {copy.statuses[user.status]}
+                </dd>
+              </div>
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.roles}
+                </dt>
+                <dd className="mt-2 text-base font-semibold">
+                  {user.roles.map((role) => copy.roles[role]).join(", ")}
+                </dd>
+              </div>
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.emailVerifiedAt}
+                </dt>
+                <dd className="mt-2 text-base font-semibold">
+                  {formatDateTime(user.emailVerifiedAt, locale, copy.empty.date)}
+                </dd>
+              </div>
+              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4 sm:col-span-2">
+                <dt className="site-subtle text-xs font-bold uppercase">
+                  {copy.labels.lastLoginAt}
+                </dt>
+                <dd className="mt-2 text-base font-semibold">
+                  {formatDateTime(user.lastLoginAt, locale, copy.empty.date)}
+                </dd>
+              </div>
+            </dl>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                disabled={isLoggingOut}
+                onClick={handleLogout}
+                className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+              >
+                {isLoggingOut
+                  ? copy.summary.logoutPendingLabel
+                  : copy.summary.logoutLabel}
+              </button>
+              {logoutError ? (
+                <p role="alert" className="text-sm text-red-700 dark:text-red-200">
+                  {logoutError}
+                </p>
+              ) : null}
+            </div>
+          </article>
+        ) : null}
+      </section>
+
+      {user ? (
+        <section className="grid gap-6 md:grid-cols-2">
+          <article className="site-card p-6 sm:p-7">
+            <h2 className="text-xl font-semibold">{copy.community.title}</h2>
+            <p className="site-muted mt-3 text-sm leading-7">
+              {copy.community.body}
+            </p>
+          </article>
+          <article className="site-card p-6 sm:p-7">
+            <h2 className="text-xl font-semibold">{copy.privacy.title}</h2>
+            <p className="site-muted mt-3 text-sm leading-7">
+              {copy.privacy.body}
+            </p>
+          </article>
+        </section>
+      ) : null}
+    </PageShell>
+  );
+}

@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/app/_components/PlaceholderPage";
+import { AccountDashboardView } from "@/app/_components/AccountDashboardView";
 
 export default function DashboardPage() {
-  return <PlaceholderPage title="Dashboard" />;
+  return <AccountDashboardView />;
 }
