@@ -165,6 +165,8 @@ Current state:
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active account for a valid bearer token.
 - Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
+- Local development can seed one active `OWNER` account from environment variables without committing credentials.
+- The local owner seed is only for development. It must be removed or disabled before public launch, and any seeded dev owner must not be copied into production data.
 - No real email delivery, protected forum actions, or complete account settings UI exists yet.
 
 Approved auth direction:
@@ -393,6 +395,7 @@ Completed-enough checkpoints for now:
 - `POST /api/auth/logout` exists and revokes refresh-session records.
 - `GET /api/auth/me` exists and is protected by bearer-token validation.
 - Web refresh-token cookie handling exists for login, refresh, and logout.
+- Backend startup can seed an active owner account for local development when all owner seed variables are configured.
 - Frontend login/register form submission and in-memory access-token session restore exist.
 - Shared header account session visibility and logout exist.
 - `/dashboard` shows loading, signed-out, and signed-in account states using the existing auth provider.
@@ -403,7 +406,10 @@ Approved auth implementation goals:
 - Implement API-first auth endpoints with short-lived JWT access tokens, bearer-token validation, and refresh-token session records.
 - Support web, mobile, and future desktop clients through the shared Spring Boot API.
 - Require email verification before posting or other account-only community actions.
+- Add auth hardening before launch: stronger password guidance, rate limiting for login/verification attempts, and forgot-password/reset-password flow.
 - Define roles before persistence: `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.
+- Keep owner creation local and credential-safe during development by using environment variables, not committed passwords.
+- Replace the development owner seed with a deliberate secure owner/admin setup before launch.
 - Define password hashing, email uniqueness, account status, and basic validation.
 - Define soft-delete and banned-user display behavior before forum posts rely on authors.
 - Define privacy/GDPR expectations before collecting real account data: deletion/export, visibility, moderation access, and country/region handling.
@@ -425,4 +431,6 @@ Content direction:
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.
+- Current Owner seed: backend startup can create or ensure a local `OWNER` account from `FATFITNESS_OWNER_EMAIL`, `FATFITNESS_OWNER_DISPLAY_NAME`, `FATFITNESS_OWNER_COUNTRY_REGION_CODE`, and `FATFITNESS_OWNER_PASSWORD`.
+- Launch cleanup: remove or disable the owner seed and delete any seeded development owner from non-local databases before the site is public.
 - Photos and deeper tools can be added later after the static content is reviewed.

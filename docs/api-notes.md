@@ -360,6 +360,7 @@ Current implemented auth endpoint:
 Next auth slices:
 
 - Add real email delivery before production launch.
+- Add auth hardening before production launch: stronger password guidance, rate limiting for login/verification attempts, and forgot-password/reset-password endpoints.
 - Add protected account UI/session polish only where it supports the next community milestone.
 
 Planned registration shape when auth is approved:
@@ -420,6 +421,7 @@ Current backend auth state:
 - `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking the old session and creating a replacement session, including cookie rotation for web clients.
 - `POST /api/auth/logout` exists and revokes refresh sessions while keeping unknown/already-revoked tokens non-revealing, and clears the web refresh cookie.
 - `GET /api/auth/me` exists as the first protected endpoint and returns the current active user for a valid bearer token.
+- Backend startup can seed one local `OWNER` account from environment variables; this is not exposed as an API endpoint.
 - Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and email sending do not exist yet.
 
 JWT configuration:
@@ -431,6 +433,19 @@ JWT configuration:
 - Access-token TTL is configured by `fatfitness.auth.jwt.access-token-ttl`.
 - Refresh-token TTL is configured by `fatfitness.auth.refresh-token-ttl`.
 - Web refresh-cookie name/path/security/SameSite behavior is configured by `fatfitness.auth.refresh-cookie`.
+
+Owner seed configuration:
+
+- `FATFITNESS_OWNER_EMAIL`
+- `FATFITNESS_OWNER_DISPLAY_NAME`
+- `FATFITNESS_OWNER_COUNTRY_REGION_CODE`
+- `FATFITNESS_OWNER_PASSWORD`
+
+All four values must be present for the backend to seed an owner. If the account is missing, startup creates it as `ACTIVE` with `USER` and `OWNER` roles. If the account already exists and is pending or active, startup ensures the `OWNER` role. Banned or deleted accounts are not silently restored.
+
+For local development, Gradle `bootRun` loads these values from `backend/fatfitness-api/.env` if that file exists. The real `.env` file is ignored by Git; `backend/fatfitness-api/.env.example` is the tracked template.
+
+This owner seed is development-only. Before public launch, remove or disable the seed path and delete any seeded development owner from databases that are not strictly local. Production owner/admin setup should be handled through a deliberate secure process later.
 
 Email provider direction:
 

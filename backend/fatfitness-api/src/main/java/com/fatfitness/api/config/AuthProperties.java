@@ -22,7 +22,10 @@ public record AuthProperties(
 
 		@Valid
 		@NotNull
-		RefreshCookie refreshCookie
+		RefreshCookie refreshCookie,
+
+		@Valid
+		OwnerSeed ownerSeed
 ) {
 
 	public record Jwt(
@@ -50,5 +53,34 @@ public record AuthProperties(
 			@NotBlank
 			String sameSite
 	) {
+	}
+
+	public record OwnerSeed(
+			String email,
+
+			String displayName,
+
+			String countryRegionCode,
+
+			String password
+	) {
+
+		public boolean hasAnyValue() {
+			return hasText(email)
+					|| hasText(displayName)
+					|| hasText(countryRegionCode)
+					|| hasText(password);
+		}
+
+		public boolean hasAllValues() {
+			return hasText(email)
+					&& hasText(displayName)
+					&& hasText(countryRegionCode)
+					&& hasText(password);
+		}
+
+		private static boolean hasText(String value) {
+			return value != null && !value.isBlank();
+		}
 	}
 }

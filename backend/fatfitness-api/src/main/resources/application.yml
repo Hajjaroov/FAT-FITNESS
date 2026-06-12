@@ -33,3 +33,8 @@ fatfitness:
       path: /api/auth
       secure: false
       same-site: Lax
+    owner-seed:
+      email: ${FATFITNESS_OWNER_EMAIL:}
+      display-name: ${FATFITNESS_OWNER_DISPLAY_NAME:}
+      country-region-code: ${FATFITNESS_OWNER_COUNTRY_REGION_CODE:}
+      password: ${FATFITNESS_OWNER_PASSWORD:}

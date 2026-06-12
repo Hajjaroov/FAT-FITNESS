@@ -72,18 +72,26 @@ Current user/auth state:
 - `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
 - `GET /api/auth/me` exists as the first protected endpoint and reads the current active user from the bearer-token subject.
 - Web auth can now keep refresh tokens in an `HttpOnly` cookie while the database still stores only hashed refresh tokens.
+- Backend startup can create or ensure a local owner user from environment variables without storing plaintext passwords.
+- The local owner seed is development-only and must be removed or disabled before production/public launch.
 - Bearer-token validation is wired for `/api/auth/me`; broader protected feature endpoints and real email delivery are not implemented yet.
 
 Next user/auth step:
 
 - Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
+- Add password reset data model and rate-limiting strategy before public launch.
 - Add bearer-token validation to future protected feature endpoints before connecting account-only frontend features.
+- Keep local owner seed credentials outside Git; use environment variables for local development.
+- `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
+- Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
 - Start the next approved community/forum foundation step after the account dashboard shell.
 - Keep forum posts/comments out of the first auth migration.
 
 Future user/auth model direction:
 
 - Store password hashes only, never plaintext passwords or password confirmations.
+- Owner seed uses the same password hashing and role storage as normal accounts.
+- Production owner/admin creation should be designed as a separate secure process before launch.
 - Use a structured country/region code when possible for admin reporting and localization, not exact location.
 - Support an `Other` country/region value instead of forcing an inaccurate choice.
 - Keep country/region separate from sensitive health profile data.

@@ -80,6 +80,9 @@ Backend rules:
 - Web login/refresh/logout can use an `HttpOnly` refresh cookie and CORS credentials from the local frontend origin.
 - `GET /api/auth/me` is protected by Spring Security bearer-token validation and returns the current active user.
 - JWT signing uses `spring-security-oauth2-jose`; bearer-token validation uses `spring-security-oauth2-resource-server`; production must provide `FATFITNESS_JWT_SECRET`.
+- Local owner seeding is available through `FATFITNESS_OWNER_EMAIL`, `FATFITNESS_OWNER_DISPLAY_NAME`, `FATFITNESS_OWNER_COUNTRY_REGION_CODE`, and `FATFITNESS_OWNER_PASSWORD`; do not commit real owner credentials.
+- `backend/fatfitness-api/.env` is loaded by Gradle `bootRun` for local backend development; `.env.example` documents the available local values.
+- The owner seed is development-only. Remove or disable it before production launch and do not migrate seeded dev owner rows into production.
 - Add real transactional email later through a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.
 - Remove dev-only raw verification token responses before production launch.
 
