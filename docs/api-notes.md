@@ -629,7 +629,7 @@ Current frontend auth state:
 - Frontend auth forms do not use `localStorage`.
 - Community post detail pages can list published replies, let signed-in verified users post replies, and let signed-in verified users report replies.
 - `/admin` uses the frontend auth provider and moderation APIs to list, filter, hide reported content, resolve, and dismiss reports for users with `OWNER`, `ADMIN`, or `MODERATOR` roles.
-- No real email delivery, lock/ban moderation UI, or production-ready account settings UI exists yet.
+- No real email delivery or production-ready account settings UI exists yet.
 
 Current backend auth state:
 

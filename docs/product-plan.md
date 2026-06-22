@@ -172,7 +172,7 @@ Current state:
 - Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
 - Local development can seed one active `OWNER` account from environment variables without committing credentials.
 - The local owner seed is only for development. It must be removed or disabled before public launch, and any seeded dev owner must not be copied into production data.
-- No real email delivery, lock/ban moderation UI, or complete account settings UI exists yet.
+- No real email delivery or complete account settings UI exists yet.
 
 Approved auth direction:
 
@@ -389,7 +389,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Continue the community/forum foundation in small slices now that the basic account flow and first post/comment/report APIs exist.
+The community/forum foundation through post lock and user ban moderation is complete. The next slice is likes/bookmarks.
 
 Completed-enough checkpoints for now:
 
@@ -433,7 +433,7 @@ Approved auth implementation goals:
 - Define privacy/GDPR expectations before collecting real account data: deletion/export, visibility, moderation access, and country/region handling.
 - Keep planned registration minimal: display name, email, country/region code from the picker, password confirmation validation, and rules/privacy agreement.
 - Keep health-sensitive data out of initial registration.
-- Do not add likes/bookmarks, lock/ban moderation actions, tracking tools, or sensitive health data until each next slice is intentionally approved.
+- Do not add likes/bookmarks, tracking tools, or sensitive health data until each next slice is intentionally approved.
 - Do not frame diet, training, supplements, GLP-1, or OP/surgery topics as advice or guaranteed methods.
 
 Content direction:
@@ -451,7 +451,7 @@ Content direction:
 - Current Forum Comment API: active authenticated users can create flat comments and report published comments; public users can list published comments for published posts.
 - Current Moderation API: active `OWNER`, `ADMIN`, or `MODERATOR` users can list open/all reports and resolve or dismiss post/comment reports.
 - Current Community UI: frontend post lists, category thread lists, post detail rendering, signed-in create-thread form, signed-in report form, reply list, signed-in reply form, signed-in reply report form, and `/admin` report dashboard with hide/resolve/dismiss actions are connected to the API.
-- Current Community UI gap: likes/bookmarks and lock/ban actions are not connected yet.
+- Current Community UI gap: likes/bookmarks are not implemented yet.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.
