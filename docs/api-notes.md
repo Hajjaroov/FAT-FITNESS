@@ -456,12 +456,7 @@ Response shape:
 }
 ```
 
-Community write APIs now include top-level posts, flat comments, reporting hooks, and report-scoped hide actions for posts and comments. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, report replies, and use `/admin` to hide reported content or resolve/dismiss reports. Lock/ban actions and likes/bookmarks are not implemented yet.
-
-Likely next MVP endpoints later:
-
-- `POST /api/moderation/posts/{id}/lock`
-- `POST /api/moderation/users/{id}/ban`
+Community write APIs now include top-level posts, flat comments, reporting hooks, and report-scoped hide, lock, and ban actions for posts and users. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, report replies, and use `/admin` to hide reported content, lock threads, ban users, resolve, or dismiss reports. Likes/bookmarks are not implemented yet.
 
 ### Moderation
 
@@ -472,6 +467,8 @@ Current implemented moderator endpoints:
 - `POST /api/moderation/reports/posts/{id}/hide`
 - `POST /api/moderation/reports/comments/{id}/resolve`
 - `POST /api/moderation/reports/comments/{id}/hide`
+- `POST /api/moderation/posts/{id}/lock` — locks a forum post so new comments are rejected; records a `LOCK` row in `moderation_actions`
+- `POST /api/moderation/users/{id}/ban` — sets account status to `BANNED`, revokes all refresh sessions, and records a `BAN` row in `moderation_actions`
 
 These require a valid bearer token for an active account with role `OWNER`, `ADMIN`, or `MODERATOR`. Role checks are performed against the persisted user record, not only the JWT claim.
 
@@ -531,10 +528,7 @@ Hiding a reported post or comment uses the report-scoped hide endpoints:
 
 The backend marks the target post/comment as `HIDDEN`, which removes it from public reads, and marks the related report as `RESOLVED`. `resolutionNote` is optional.
 
-Likely moderation endpoints later:
-
-- `POST /api/moderation/posts/{id}/lock`
-- `POST /api/moderation/users/{id}/ban`
+Lock and ban endpoints accept no request body and return `200` on success. Banning a user revokes all their refresh sessions; subsequent `POST /api/auth/refresh` calls return `403 Forbidden` for that account. Both actions write an audit row to `moderation_actions`.
 
 ### Users And Auth
 
@@ -580,6 +574,8 @@ Current implemented auth endpoint:
 - `POST /api/moderation/reports/posts/{id}/hide`
 - `POST /api/moderation/reports/comments/{id}/resolve`
 - `POST /api/moderation/reports/comments/{id}/hide`
+- `POST /api/moderation/posts/{id}/lock`
+- `POST /api/moderation/users/{id}/ban`
 
 Next auth slices:
 

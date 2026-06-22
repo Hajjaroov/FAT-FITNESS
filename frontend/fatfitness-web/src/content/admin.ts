@@ -69,12 +69,16 @@ export const adminCopy = {
       dismissLabel: "Dismiss",
       submitPendingLabel: "Saving...",
       successHidden: "Content hidden and report marked resolved.",
+      successLocked: "Thread locked.",
+      successBanned: "User banned and sessions revoked.",
       successResolved: "Report marked resolved.",
       successDismissed: "Report dismissed.",
       closedTitle: "Already reviewed",
       closedBody:
         "This report has already been reviewed. Change actions can be added later if needed.",
       errorFallback: "Could not update this report. Please try again.",
+      lockLabel: "Lock thread",
+      banLabel: "Ban user",
     },
     statusBadges: {
       OPEN: "Open",
@@ -150,6 +154,8 @@ export const adminCopy = {
       resolveLabel: "Als gelöst markieren",
       dismissLabel: "Ablehnen",
       submitPendingLabel: "Wird gespeichert...",
+      successLocked: "Thread gesperrt.",
+      successBanned: "Benutzer gesperrt und Sitzungen widerrufen.",
       successHidden: "Inhalt versteckt und Meldung als gelöst markiert.",
       successResolved: "Meldung als gelöst markiert.",
       successDismissed: "Meldung abgelehnt.",
@@ -158,6 +164,8 @@ export const adminCopy = {
         "Diese Meldung wurde bereits geprüft. Änderungsaktionen können später ergänzt werden, falls nötig.",
       errorFallback:
         "Diese Meldung konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+      lockLabel: "Thread sperren",
+      banLabel: "Benutzer sperren",
     },
     statusBadges: {
       OPEN: "Offen",

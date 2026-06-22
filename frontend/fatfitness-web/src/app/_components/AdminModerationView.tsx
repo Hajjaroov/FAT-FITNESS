@@ -16,6 +16,8 @@ import {
   hideModerationPostReport,
   resolveModerationCommentReport,
   resolveModerationPostReport,
+  lockModerationPost,
+  banUser,
 } from "@/lib/api";
 import type { UserRole } from "@/types/auth";
 import type {
@@ -539,7 +541,7 @@ function ModerationResolutionForm({
   const { accessToken } = useAuth();
   const [resolutionNote, setResolutionNote] = useState("");
   const [pendingAction, setPendingAction] = useState<
-    "HIDDEN" | "RESOLVED" | "DISMISSED" | null
+    "HIDDEN" | "RESOLVED" | "DISMISSED" | "LOCKED" | "BANNED" | null
   >(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -610,6 +612,46 @@ function ModerationResolutionForm({
 
       onResolved(updatedReport);
       setSuccessMessage(copy.actions.successHidden);
+    } catch (caughtError) {
+      setFormError(errorMessage(caughtError, copy.actions.errorFallback));
+    } finally {
+      setPendingAction(null);
+    }
+  }
+
+  async function handleLock() {
+    if (!accessToken) {
+      setFormError(copy.actions.errorFallback);
+      return;
+    }
+
+    setPendingAction("LOCKED");
+    setFormError(null);
+    setSuccessMessage(null);
+
+    try {
+      await lockModerationPost(report.postId, accessToken);
+      setSuccessMessage(copy.actions.successLocked);
+    } catch (caughtError) {
+      setFormError(errorMessage(caughtError, copy.actions.errorFallback));
+    } finally {
+      setPendingAction(null);
+    }
+  }
+
+  async function handleBan() {
+    if (!accessToken) {
+      setFormError(copy.actions.errorFallback);
+      return;
+    }
+
+    setPendingAction("BANNED");
+    setFormError(null);
+    setSuccessMessage(null);
+
+    try {
+      await banUser(report.contentAuthorUserId, accessToken);
+      setSuccessMessage(copy.actions.successBanned);
     } catch (caughtError) {
       setFormError(errorMessage(caughtError, copy.actions.errorFallback));
     } finally {
@@ -693,6 +735,32 @@ function ModerationResolutionForm({
           {pendingAction === "DISMISSED"
             ? copy.actions.submitPendingLabel
             : copy.actions.dismissLabel}
+        </button>
+        {report.targetType === "POST" && (
+          <button
+            type="button"
+            disabled={pendingAction !== null}
+            onClick={() => {
+              void handleLock();
+            }}
+            className="min-h-12 rounded-full border border-yellow-500/30 bg-yellow-600 px-5 text-sm font-semibold text-white transition hover:bg-yellow-700 disabled:cursor-wait disabled:opacity-60"
+          >
+            {pendingAction === "LOCKED"
+              ? copy.actions.submitPendingLabel
+              : copy.actions.lockLabel}
+          </button>
+        )}
+        <button
+          type="button"
+          disabled={pendingAction !== null}
+          onClick={() => {
+            void handleBan();
+          }}
+          className="min-h-12 rounded-full border border-red-600/30 bg-red-700 px-5 text-sm font-semibold text-white transition hover:bg-red-800 disabled:cursor-wait disabled:opacity-60"
+        >
+          {pendingAction === "BANNED"
+            ? copy.actions.submitPendingLabel
+            : copy.actions.banLabel}
         </button>
       </div>
     </form>

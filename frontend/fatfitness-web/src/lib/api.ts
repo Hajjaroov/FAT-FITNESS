@@ -355,3 +355,17 @@ export function hideModerationCommentReport(
     },
   );
 }
+
+export function lockModerationPost(postId: string, accessToken: string) {
+  return apiRequest<void>(`/api/moderation/posts/${postId}/lock`, {
+    method: "POST",
+    accessToken,
+  });
+}
+
+export function banUser(userId: string, accessToken: string) {
+  return apiRequest<void>(`/api/moderation/users/${userId}/ban`, {
+    method: "POST",
+    accessToken,
+  });
+}

@@ -174,6 +174,12 @@ public class AuthRegistrationService {
 				.findByRefreshTokenHash(secureTokenService.hashToken(cleanedRefreshToken))
 				.orElseThrow(AuthRegistrationService::invalidRefreshToken);
 
+		UserAccount user = currentSession.getUser();
+		if (user.getStatus() != UserStatus.ACTIVE) {
+			currentSession.revoke();
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not active");
+		}
+
 		if (currentSession.getRevokedAt() != null) {
 			throw invalidRefreshToken();
 		}
@@ -181,12 +187,6 @@ public class AuthRegistrationService {
 		if (!currentSession.getExpiresAt().isAfter(Instant.now())) {
 			currentSession.revoke();
 			throw invalidRefreshToken();
-		}
-
-		UserAccount user = currentSession.getUser();
-		if (user.getStatus() != UserStatus.ACTIVE) {
-			currentSession.revoke();
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not active");
 		}
 
 		currentSession.recordUse();

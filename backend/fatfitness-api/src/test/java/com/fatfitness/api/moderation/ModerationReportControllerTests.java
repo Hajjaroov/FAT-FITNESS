@@ -30,6 +30,11 @@ import com.fatfitness.api.community.repository.ForumPostRepository;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserRole;
 import com.fatfitness.api.user.repository.UserAccountRepository;
+import com.fatfitness.api.auth.repository.RefreshSessionRepository;
+import com.fatfitness.api.auth.model.RefreshSession;
+import com.fatfitness.api.auth.service.SecureTokenService;
+import com.fatfitness.api.moderation.repository.ModerationActionRepository;
+import com.fatfitness.api.user.entity.UserStatus;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,6 +58,15 @@ class ModerationReportControllerTests {
 
 	@Autowired
 	private UserAccountRepository userAccountRepository;
+
+	@Autowired
+	private RefreshSessionRepository refreshSessionRepository;
+
+	@Autowired
+	private SecureTokenService secureTokenService;
+
+	@Autowired
+	private ModerationActionRepository moderationActionRepository;
 
 	@Test
 	void listReportsRequiresAuthentication() throws Exception {
@@ -438,4 +452,116 @@ class ModerationReportControllerTests {
 
 		return JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
 	}
+
+    @Test
+    void lockRequiresAuthentication() throws Exception {
+	mockMvc.perform(post("/api/moderation/posts/{postId}/lock", java.util.UUID.randomUUID().toString()))
+		.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void lockRejectsNormalUsers() throws Exception {
+	String accessToken = registerVerifyAndLogin("normal-lock@example.com");
+	String postId = createPostAndReadId(accessToken, "introductions");
+
+	mockMvc.perform(post("/api/moderation/posts/{postId}/lock", postId)
+			.header("Authorization", "Bearer " + accessToken))
+		.andExpect(status().isForbidden());
+    }
+
+    @Test
+    void moderatorCanLockPostAndPreventComments() throws Exception {
+	String moderatorAccessToken = registerVerifyAddRoleAndLogin("moderator-lock@example.com", UserRole.MODERATOR);
+	String postAuthorAccessToken = registerVerifyAndLogin("post-lock-author@example.com");
+	String commenterAccessToken = registerVerifyAndLogin("post-lock-commenter@example.com");
+	String postId = createPostAndReadId(postAuthorAccessToken, "questions-and-support");
+
+	mockMvc.perform(post("/api/moderation/posts/{postId}/lock", postId)
+			.header("Authorization", "Bearer " + moderatorAccessToken))
+		.andExpect(status().isOk());
+
+	var post = forumPostRepository.findById(java.util.UUID.fromString(postId)).orElseThrow();
+	assertThat(post.isLocked()).isTrue();
+	assertThat(post.getLockedAt()).isNotNull();
+
+	var lockAudit = moderationActionRepository.findAll();
+	assertThat(lockAudit).anyMatch(a ->
+		"LOCK".equals(a.getAction()) && java.util.UUID.fromString(postId).equals(a.getTargetId()));
+
+	// Creating a comment on a locked post should be forbidden
+	mockMvc.perform(post("/api/community/posts/{postId}/comments", postId)
+			.header("Authorization", "Bearer " + commenterAccessToken)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("""
+				{
+				  "body": "Trying to comment after lock",
+				  "acceptedCommunityGuidelines": true
+				}
+				"""))
+		.andExpect(status().isForbidden());
+    }
+
+    @Test
+    void banRequiresAuthentication() throws Exception {
+	mockMvc.perform(post("/api/moderation/users/{userId}/ban", java.util.UUID.randomUUID().toString()))
+		.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void banRejectsNormalUsers() throws Exception {
+	String accessToken = registerVerifyAndLogin("normal-ban@example.com");
+	registerVerifyAndLogin("ban-target-normal@example.com");
+	com.fatfitness.api.user.entity.UserAccount targetUser = userAccountRepository.findByEmail("ban-target-normal@example.com").orElseThrow();
+
+	mockMvc.perform(post("/api/moderation/users/{userId}/ban", targetUser.getId().toString())
+			.header("Authorization", "Bearer " + accessToken))
+		.andExpect(status().isForbidden());
+    }
+
+    @Test
+    void moderatorCanBanUserAndRevokeSessions() throws Exception {
+	String moderatorAccessToken = registerVerifyAddRoleAndLogin("moderator-ban@example.com", UserRole.MODERATOR);
+	registerAndVerify("ban-target@example.com");
+	UserAccount targetUser = userAccountRepository.findByEmail("ban-target@example.com").orElseThrow();
+
+	// Create a real refresh session via the login endpoint so it is committed
+	MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("""
+				{
+				  "email": "ban-target@example.com",
+				  "password": "very-secret-password",
+				  "clientType": "MOBILE",
+				  "deviceLabel": "Test client"
+				}
+				"""))
+		.andExpect(status().isOk())
+		.andReturn();
+
+	String rawRefreshToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.refreshToken");
+
+	mockMvc.perform(post("/api/moderation/users/{userId}/ban", targetUser.getId().toString())
+			.header("Authorization", "Bearer " + moderatorAccessToken))
+		.andExpect(status().isOk());
+
+	UserAccount updated = userAccountRepository.findById(targetUser.getId()).orElseThrow();
+	assertThat(updated.getStatus()).isEqualTo(UserStatus.BANNED);
+
+	var banAudit = moderationActionRepository.findAll();
+	assertThat(banAudit).anyMatch(a ->
+		"BAN".equals(a.getAction()) && targetUser.getId().equals(a.getTargetId()));
+
+	RefreshSession after = refreshSessionRepository.findByRefreshTokenHash(secureTokenService.hashToken(rawRefreshToken)).orElseThrow();
+	assertThat(after.getRevokedAt()).isNotNull();
+
+	// Attempt to refresh with the raw token should be forbidden after ban
+	mockMvc.perform(post("/api/auth/refresh")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("""
+				{
+				  "refreshToken": "%s"
+				}
+				""".formatted(rawRefreshToken)))
+		.andExpect(status().isForbidden());
+    }
 }

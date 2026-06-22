@@ -92,7 +92,24 @@ Current community/forum state:
 - The fifth Flyway migration adds report resolution metadata to post and comment reports: `resolved_by_user_id` and `resolution_note`.
 - Moderator report resolution uses existing report rows with `status`, `resolved_at`, `resolved_by_user_id`, and `resolution_note`.
 - Report-scoped moderation hide actions now use the existing `HIDDEN` post/comment statuses and `hidden_at` timestamps; no new migration was needed for this slice.
-- Likes/bookmarks and separate moderation action history tables do not exist yet.
+- The sixth Flyway migration (`V6__moderation_lock_and_ban.sql`) creates `moderation_actions` for lock and ban audit logging.
+- `POST /api/moderation/posts/{id}/lock` sets `is_locked = true` on the forum post and writes a `LOCK` row to `moderation_actions`.
+- `POST /api/moderation/users/{id}/ban` sets the user status to `BANNED`, revokes all their refresh sessions, and writes a `BAN` row to `moderation_actions`.
+- Likes/bookmarks do not exist yet.
+
+### Moderation audit table
+
+The `V6__moderation_lock_and_ban.sql` migration creates `moderation_actions` with:
+
+- `id` UUID primary key
+- `moderator_user_id` UUID FK → `users` (who performed the action)
+- `target_type` varchar(20) — `POST` or `USER`
+- `target_id` UUID — the affected record
+- `action` varchar(40) — `LOCK` or `BAN`
+- `note` varchar(1000) nullable — optional moderator note
+- `created_at` timestamp with time zone
+
+This table is intentionally lightweight; it is a simple audit trail and does not replace any report or resolution rows already present for forum reports. Recording moderation actions centrally helps with review, appeals, and compliance.
 
 Next user/auth step:
 

@@ -141,10 +141,10 @@ Current state:
 - Backend forum categories are persisted and exposed through public read-only API endpoints.
 - Backend can create and read top-level posts and accept post reports for active authenticated users.
 - Backend can create and read flat comments and accept comment reports for active authenticated users.
-- Backend can list, resolve/dismiss, and hide reported post/comment content for active `OWNER`, `ADMIN`, or `MODERATOR` accounts.
+- Backend can list, resolve/dismiss, hide reported post/comment content, lock posts, and ban users for active `OWNER`, `ADMIN`, or `MODERATOR` accounts.
 - The frontend can list/read published posts, create top-level threads for signed-in verified users, report published threads, list replies, create replies, and report replies.
-- The frontend `/admin` page can list, filter, hide reported content, resolve, and dismiss post/comment reports for moderator roles.
-- Likes/bookmarks, lock/ban actions, and other forum write actions are not implemented yet.
+- The frontend `/admin` page can list, filter, hide reported content, lock threads, ban users, resolve, and dismiss post/comment reports for moderator roles.
+- Likes/bookmarks are not implemented yet.
 
 ### User Accounts
 
@@ -350,6 +350,14 @@ Community rules should include:
 - Encourage doctor consultation for medication topics
 
 For GLP-1 content, personal experience is okay. Do not tell people whether they should use it, how to dose it, or how to get it.
+
+### Moderation Acceptance Criteria (lock/ban) — implemented
+
+- `POST /api/moderation/posts/{postId}/lock` sets the post to `LOCKED`; locked posts reject new comments.
+- `POST /api/moderation/users/{userId}/ban` sets account status to `BANNED`.
+- Banning a user revokes all refresh sessions (`revokedAt` set via bulk update) and `POST /api/auth/refresh` returns `403 Forbidden` for that user.
+- Both endpoints require `OWNER`, `ADMIN`, or `MODERATOR` role (verified against the persisted user record).
+- Both endpoints write an audit row to `moderation_actions` with the action, target, and moderator ID.
 
 ## Legal And Trust Pages
 

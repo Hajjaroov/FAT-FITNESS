@@ -1,5 +1,6 @@
 package com.fatfitness.api.moderation.service;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,10 @@ import com.fatfitness.api.community.entity.ForumPostReport;
 import com.fatfitness.api.community.entity.ForumReportStatus;
 import com.fatfitness.api.community.repository.ForumCommentReportRepository;
 import com.fatfitness.api.community.repository.ForumPostReportRepository;
+import com.fatfitness.api.community.repository.ForumPostRepository;
+import com.fatfitness.api.auth.repository.RefreshSessionRepository;
+import com.fatfitness.api.moderation.entity.ModerationAction;
+import com.fatfitness.api.moderation.repository.ModerationActionRepository;
 import com.fatfitness.api.moderation.dto.HideModerationReportRequest;
 import com.fatfitness.api.moderation.dto.ModerationReportResolutionStatus;
 import com.fatfitness.api.moderation.dto.ModerationReportResponse;
@@ -43,18 +48,54 @@ public class ModerationReportService {
 
 	private final ForumPostReportRepository forumPostReportRepository;
 	private final ForumCommentReportRepository forumCommentReportRepository;
+	private final ForumPostRepository forumPostRepository;
 	private final UserAccountRepository userAccountRepository;
 	private final UserPublicDisplayNameService userPublicDisplayNameService;
+	private final RefreshSessionRepository refreshSessionRepository;
+	private final ModerationActionRepository moderationActionRepository;
 
 	public ModerationReportService(
 			ForumPostReportRepository forumPostReportRepository,
 			ForumCommentReportRepository forumCommentReportRepository,
+			ForumPostRepository forumPostRepository,
 			UserAccountRepository userAccountRepository,
-			UserPublicDisplayNameService userPublicDisplayNameService) {
+			UserPublicDisplayNameService userPublicDisplayNameService,
+			RefreshSessionRepository refreshSessionRepository,
+			ModerationActionRepository moderationActionRepository) {
 		this.forumPostReportRepository = forumPostReportRepository;
 		this.forumCommentReportRepository = forumCommentReportRepository;
+		this.forumPostRepository = forumPostRepository;
 		this.userAccountRepository = userAccountRepository;
 		this.userPublicDisplayNameService = userPublicDisplayNameService;
+		this.refreshSessionRepository = refreshSessionRepository;
+		this.moderationActionRepository = moderationActionRepository;
+	}
+
+	@Transactional
+	public void lockPost(UUID postId, String userIdSubject) {
+		UserAccount moderator = requireModerator(userIdSubject);
+		ForumPost post = forumPostRepository.findById(postId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
+
+		post.lock();
+		forumPostRepository.save(post);
+		moderationActionRepository.save(ModerationAction.lock(moderator, postId, null));
+	}
+
+	@Transactional
+	public void banUser(UUID targetUserId, String userIdSubject) {
+		UserAccount moderator = requireModerator(userIdSubject);
+		UserAccount targetUser = userAccountRepository.findById(targetUserId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+		if (targetUser.getStatus() == UserStatus.BANNED) {
+			return;
+		}
+
+		targetUser.ban();
+		userAccountRepository.save(targetUser);
+		refreshSessionRepository.revokeAllByUserId(targetUserId, Instant.now());
+		moderationActionRepository.save(ModerationAction.ban(moderator, targetUserId, null));
 	}
 
 	@Transactional(readOnly = true)
