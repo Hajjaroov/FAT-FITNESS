@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fatfitness.api.auth.service.EmailVerificationTokenService;
 import com.fatfitness.api.community.repository.ForumPostReportRepository;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.repository.UserAccountRepository;
@@ -36,6 +37,9 @@ class ForumPostControllerTests {
 
 	@Autowired
 	private UserAccountRepository userAccountRepository;
+
+	@Autowired
+	private EmailVerificationTokenService emailVerificationTokenService;
 
 	@Test
 	void listPostsStartsEmpty() throws Exception {
@@ -252,10 +256,9 @@ class ForumPostControllerTests {
 	}
 
 	private String registerVerifyAndLogin(String email) throws Exception {
-		MvcResult registrationResult = registerNewMember(email);
-		String rawToken = JsonPath.read(
-				registrationResult.getResponse().getContentAsString(),
-				"$.devEmailVerificationToken");
+		registerNewMember(email);
+		UserAccount user = userAccountRepository.findByEmail(email.toLowerCase()).orElseThrow();
+		var created = emailVerificationTokenService.createFor(user);
 
 		mockMvc.perform(post("/api/auth/verify-email")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -263,7 +266,7 @@ class ForumPostControllerTests {
 								{
 								  "token": "%s"
 								}
-								""".formatted(rawToken)))
+								""".formatted(created.rawToken())))
 				.andExpect(status().isOk());
 
 		return loginActiveMember(email);

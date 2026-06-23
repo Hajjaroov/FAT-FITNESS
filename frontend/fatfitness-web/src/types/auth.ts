@@ -32,8 +32,6 @@ export type RegisterResponse = {
   email: string;
   status: UserStatus;
   message: string;
-  devEmailVerificationToken: string | null;
-  verificationExpiresAt: string | null;
 };
 
 export type VerifyEmailResponse = {

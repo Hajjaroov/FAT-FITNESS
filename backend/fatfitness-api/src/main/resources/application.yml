@@ -38,3 +38,7 @@ fatfitness:
       display-name: ${FATFITNESS_OWNER_DISPLAY_NAME:}
       country-region-code: ${FATFITNESS_OWNER_COUNTRY_REGION_CODE:}
       password: ${FATFITNESS_OWNER_PASSWORD:}
+  email:
+    resend-api-key: ${RESEND_API_KEY:}
+    from: ${MAIL_FROM:}
+    app-base-url: ${APP_BASE_URL:http://localhost:3000}

@@ -7,8 +7,7 @@ import { PageShell } from "@/app/_components/PageShell";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { authCopy } from "@/content/auth";
-import { ApiError, registerUser, verifyEmail } from "@/lib/api";
-import type { RegisterResponse } from "@/types/auth";
+import { ApiError, registerUser } from "@/lib/api";
 
 type AuthAccountViewProps = {
   mode: "login" | "register";
@@ -18,12 +17,6 @@ type FormState =
   | { kind: "idle" }
   | { kind: "submitting" }
   | { kind: "success"; message: string }
-  | { kind: "error"; message: string };
-
-type VerificationState =
-  | { kind: "idle" }
-  | { kind: "submitting" }
-  | { kind: "success" }
   | { kind: "error"; message: string };
 
 function formValue(formData: FormData, key: string) {
@@ -65,21 +58,15 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
   const noteId = `${mode}-account-note`;
   const { status, user, login, logout } = useAuth();
   const [formState, setFormState] = useState<FormState>({ kind: "idle" });
-  const [registration, setRegistration] = useState<RegisterResponse | null>(null);
-  const [verificationState, setVerificationState] = useState<VerificationState>({
-    kind: "idle",
-  });
   const agreementLabel =
     "agreementLabel" in page ? page.agreementLabel : undefined;
   const isSubmitting = formState.kind === "submitting";
-  const isVerifying = verificationState.kind === "submitting";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
     setFormState({ kind: "submitting" });
-    setVerificationState({ kind: "idle" });
 
     try {
       if (mode === "login") {
@@ -123,7 +110,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
         return;
       }
 
-      const response = await registerUser({
+      await registerUser({
         displayName: formValue(formData, "register-name"),
         email: formValue(formData, "register-email"),
         countryRegionCode,
@@ -133,28 +120,9 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
         acceptedPrivacyPolicy: acceptedTerms,
       });
 
-      setRegistration(response);
       setFormState({ kind: "success", message: page.successText });
     } catch (error) {
       setFormState({
-        kind: "error",
-        message: errorMessage(error, copy.shared.formErrorFallback),
-      });
-    }
-  }
-
-  async function handleVerifyDevelopmentToken() {
-    if (!registration?.devEmailVerificationToken) {
-      return;
-    }
-
-    setVerificationState({ kind: "submitting" });
-
-    try {
-      await verifyEmail(registration.devEmailVerificationToken);
-      setVerificationState({ kind: "success" });
-    } catch (error) {
-      setVerificationState({
         kind: "error",
         message: errorMessage(error, copy.shared.formErrorFallback),
       });
@@ -304,45 +272,6 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
                 >
                   <p className="font-semibold">{page.successTitle}</p>
                   <p className="mt-1">{formState.message}</p>
-                </div>
-              ) : null}
-
-              {registration?.devEmailVerificationToken ? (
-                <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
-                  <p className="text-sm font-semibold text-foreground">
-                    {copy.shared.devVerificationLabel}
-                  </p>
-                  <code className="mt-3 block overflow-x-auto rounded-xl bg-(--color-surface-raised) p-3 text-xs text-(--color-muted)">
-                    {registration.devEmailVerificationToken}
-                  </code>
-                  <button
-                    type="button"
-                    disabled={isVerifying}
-                    onClick={handleVerifyDevelopmentToken}
-                    className="mt-4 min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    {isVerifying
-                      ? copy.shared.verifyPendingLabel
-                      : copy.shared.verifyDevTokenLabel}
-                  </button>
-
-                  {verificationState.kind === "success" ? (
-                    <p className="mt-4 text-sm leading-6 text-emerald-800 dark:text-emerald-300">
-                      <span className="font-semibold">
-                        {copy.shared.verifySuccessTitle}.
-                      </span>{" "}
-                      {copy.shared.verifySuccessText}
-                    </p>
-                  ) : null}
-
-                  {verificationState.kind === "error" ? (
-                    <p
-                      role="alert"
-                      className="mt-4 text-sm leading-6 text-red-800 dark:text-red-300"
-                    >
-                      {verificationState.message}
-                    </p>
-                  ) : null}
                 </div>
               ) : null}
 

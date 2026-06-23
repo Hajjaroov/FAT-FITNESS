@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fatfitness.api.config.AuthProperties;
+import com.fatfitness.api.email.EmailService;
 import com.fatfitness.api.auth.dto.CurrentUserResponse;
 import com.fatfitness.api.auth.dto.LoginRequest;
 import com.fatfitness.api.auth.dto.LoginResponse;
@@ -41,6 +42,7 @@ public class AuthRegistrationService {
 	private final RefreshSessionRepository refreshSessionRepository;
 	private final JwtAccessTokenService jwtAccessTokenService;
 	private final SecureTokenService secureTokenService;
+	private final EmailService emailService;
 	private final Duration refreshTokenTtl;
 
 	public AuthRegistrationService(
@@ -50,6 +52,7 @@ public class AuthRegistrationService {
 			RefreshSessionRepository refreshSessionRepository,
 			JwtAccessTokenService jwtAccessTokenService,
 			SecureTokenService secureTokenService,
+			EmailService emailService,
 			AuthProperties authProperties) {
 		this.userAccountRepository = userAccountRepository;
 		this.passwordHashingService = passwordHashingService;
@@ -57,6 +60,7 @@ public class AuthRegistrationService {
 		this.refreshSessionRepository = refreshSessionRepository;
 		this.jwtAccessTokenService = jwtAccessTokenService;
 		this.secureTokenService = secureTokenService;
+		this.emailService = emailService;
 		this.refreshTokenTtl = authProperties.refreshTokenTtl();
 	}
 
@@ -78,14 +82,13 @@ public class AuthRegistrationService {
 				normalizeCountryRegionCode(request.countryRegionCode()),
 				passwordHashingService.hash(request.password())));
 		CreatedEmailVerificationToken verificationToken = emailVerificationTokenService.createFor(user);
+		emailService.sendVerificationEmail(user.getEmail(), user.getDisplayName(), verificationToken.rawToken());
 
 		return new RegisterResponse(
 				user.getId(),
 				user.getEmail(),
 				user.getStatus(),
-				"Account created. Verify email before posting or using account-only community features.",
-				verificationToken.rawToken(),
-				verificationToken.expiresAt());
+				"Account created. Check your email to verify before signing in.");
 	}
 
 	@Transactional
@@ -107,17 +110,14 @@ public class AuthRegistrationService {
 
 		if (user == null || user.getStatus() != UserStatus.PENDING_EMAIL_VERIFICATION) {
 			return new ResendVerificationResponse(
-					"If an unverified account exists for this email, a verification link will be sent.",
-					null,
-					null);
+					"If an unverified account exists for this email, a verification link will be sent.");
 		}
 
 		CreatedEmailVerificationToken verificationToken = emailVerificationTokenService.createFor(user);
+		emailService.sendVerificationEmail(user.getEmail(), user.getDisplayName(), verificationToken.rawToken());
 
 		return new ResendVerificationResponse(
-				"Verification token created. Real email delivery is not enabled yet.",
-				verificationToken.rawToken(),
-				verificationToken.expiresAt());
+				"If an unverified account exists for this email, a verification link will be sent.");
 	}
 
 	@Transactional

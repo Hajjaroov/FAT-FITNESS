@@ -42,11 +42,6 @@ type AuthCopy = {
     signedInAs: string;
     logoutLabel: string;
     logoutPendingLabel: string;
-    devVerificationLabel: string;
-    verifyDevTokenLabel: string;
-    verifyPendingLabel: string;
-    verifySuccessTitle: string;
-    verifySuccessText: string;
   };
   login: AuthPageCopy;
   register: AuthPageCopy;
@@ -68,12 +63,6 @@ export const authCopy = {
       signedInAs: "Signed in as",
       logoutLabel: "Log out",
       logoutPendingLabel: "Logging out...",
-      devVerificationLabel: "Development verification token",
-      verifyDevTokenLabel: "Verify this local account",
-      verifyPendingLabel: "Verifying...",
-      verifySuccessTitle: "Email verified",
-      verifySuccessText:
-        "The account is active now. You can sign in with the email and password you used.",
     },
     login: {
       eyebrow: "Sign in",
@@ -118,15 +107,15 @@ export const authCopy = {
         "Registration stays small and clear: a public display name, email, country or region, and password. Personal health details can wait until optional profile or tool features exist.",
       formTitle: "Register",
       formIntro:
-        "Create a local account, then verify it before signing in. Real email delivery is still a later step.",
+        "Create an account with a display name, email, country or region, and password.",
       statusLabel: "Email verification",
       statusNote:
-        "For development, the backend returns a temporary verification token on this page. Before launch this must become a real email link.",
+        "After registering you will receive a verification email. Click the link in that email to activate your account before signing in.",
       submitLabel: "Create account",
       submitPendingLabel: "Creating account...",
       successTitle: "Account created.",
       successText:
-        "The account is pending email verification. Use the local development token below to activate it for testing.",
+        "Check your email for a verification link. Click it to activate your account, then sign in.",
       fields: [
         {
           id: "register-name",
@@ -192,12 +181,6 @@ export const authCopy = {
       signedInAs: "Eingeloggt als",
       logoutLabel: "Ausloggen",
       logoutPendingLabel: "Wird ausgeloggt...",
-      devVerificationLabel: "Entwicklungs-Token zur Verifizierung",
-      verifyDevTokenLabel: "Diesen lokalen Account verifizieren",
-      verifyPendingLabel: "Wird verifiziert...",
-      verifySuccessTitle: "E-Mail verifiziert",
-      verifySuccessText:
-        "Der Account ist jetzt aktiv. Du kannst dich mit der verwendeten E-Mail und dem Passwort einloggen.",
     },
     login: {
       eyebrow: "Einloggen",
@@ -242,15 +225,15 @@ export const authCopy = {
         "Die Registrierung bleibt klein und klar: ein öffentlicher Anzeigename, E-Mail, Land oder Region und Passwort. Persönliche Gesundheitsdaten können warten, bis optionale Profile oder Tools existieren.",
       formTitle: "Registrieren",
       formIntro:
-        "Erstelle einen lokalen Account und verifiziere ihn danach vor dem Login. Echte E-Mail-Zustellung kommt später.",
+        "Erstelle einen Account mit Anzeigename, E-Mail, Land oder Region und Passwort.",
       statusLabel: "E-Mail-Verifizierung",
       statusNote:
-        "Für die Entwicklung gibt das Backend auf dieser Seite einen temporären Verifizierungs-Token zurück. Vor dem Launch muss daraus ein echter E-Mail-Link werden.",
+        "Nach der Registrierung erhältst du eine Bestätigungs-E-Mail. Klicke auf den Link in der E-Mail, um deinen Account zu aktivieren, bevor du dich einloggst.",
       submitLabel: "Account erstellen",
       submitPendingLabel: "Account wird erstellt...",
       successTitle: "Account erstellt.",
       successText:
-        "Der Account wartet auf E-Mail-Verifizierung. Nutze den lokalen Entwicklungs-Token unten, um ihn zum Testen zu aktivieren.",
+        "Schau in deine E-Mails und klicke auf den Bestätigungslink. Danach kannst du dich einloggen.",
       fields: [
         {
           id: "register-name",

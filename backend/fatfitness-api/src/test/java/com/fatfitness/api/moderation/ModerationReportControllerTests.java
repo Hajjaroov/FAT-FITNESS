@@ -27,6 +27,7 @@ import com.fatfitness.api.community.repository.ForumCommentReportRepository;
 import com.fatfitness.api.community.repository.ForumCommentRepository;
 import com.fatfitness.api.community.repository.ForumPostReportRepository;
 import com.fatfitness.api.community.repository.ForumPostRepository;
+import com.fatfitness.api.auth.service.EmailVerificationTokenService;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserRole;
 import com.fatfitness.api.user.repository.UserAccountRepository;
@@ -67,6 +68,9 @@ class ModerationReportControllerTests {
 
 	@Autowired
 	private ModerationActionRepository moderationActionRepository;
+
+	@Autowired
+	private EmailVerificationTokenService emailVerificationTokenService;
 
 	@Test
 	void listReportsRequiresAuthentication() throws Exception {
@@ -403,10 +407,9 @@ class ModerationReportControllerTests {
 	}
 
 	private void registerAndVerify(String email) throws Exception {
-		MvcResult registrationResult = registerNewMember(email);
-		String rawToken = JsonPath.read(
-				registrationResult.getResponse().getContentAsString(),
-				"$.devEmailVerificationToken");
+		registerNewMember(email);
+		UserAccount user = userAccountRepository.findByEmail(email.toLowerCase()).orElseThrow();
+		var created = emailVerificationTokenService.createFor(user);
 
 		mockMvc.perform(post("/api/auth/verify-email")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -414,7 +417,7 @@ class ModerationReportControllerTests {
 								{
 								  "token": "%s"
 								}
-								""".formatted(rawToken)))
+								""".formatted(created.rawToken())))
 				.andExpect(status().isOk());
 	}
 

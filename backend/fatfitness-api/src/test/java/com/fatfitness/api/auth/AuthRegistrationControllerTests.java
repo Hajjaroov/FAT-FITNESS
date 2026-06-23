@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +69,8 @@ class AuthRegistrationControllerTests {
 	private AuthProperties authProperties;
 
 	@Test
-	void registerCreatesPendingUserAndReturnsDevVerificationToken() throws Exception {
-		MvcResult result = mockMvc.perform(post("/api/auth/register")
+	void registerCreatesPendingUserAndSendsVerificationEmail() throws Exception {
+		mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{
@@ -88,9 +87,8 @@ class AuthRegistrationControllerTests {
 				.andExpect(jsonPath("$.userId", notNullValue()))
 				.andExpect(jsonPath("$.email").value("new@example.com"))
 				.andExpect(jsonPath("$.status").value("PENDING_EMAIL_VERIFICATION"))
-				.andExpect(jsonPath("$.devEmailVerificationToken", notNullValue()))
-				.andExpect(jsonPath("$.verificationExpiresAt", notNullValue()))
-				.andReturn();
+				.andExpect(jsonPath("$.devEmailVerificationToken").doesNotExist())
+				.andExpect(jsonPath("$.verificationExpiresAt").doesNotExist());
 
 		UserAccount savedUser = userAccountRepository.findByEmail("new@example.com").orElseThrow();
 		assertThat(savedUser.getDisplayName()).isEqualTo("New Member");
@@ -98,11 +96,7 @@ class AuthRegistrationControllerTests {
 		assertThat(savedUser.getStatus()).isEqualTo(UserStatus.PENDING_EMAIL_VERIFICATION);
 		assertThat(passwordHashingService.matches("very-secret-password", savedUser.getPasswordHash())).isTrue();
 
-		String rawToken = JsonPath.read(result.getResponse().getContentAsString(), "$.devEmailVerificationToken");
-		String tokenHash = emailVerificationTokenService.hashToken(rawToken);
-
-		assertThat(emailVerificationTokenRepository.findByTokenHash(tokenHash)).isPresent();
-		assertThat(emailVerificationTokenRepository.findByTokenHash(rawToken)).isNotPresent();
+		assertThat(emailVerificationTokenRepository.findAll()).isNotEmpty();
 	}
 
 	@Test
@@ -163,10 +157,9 @@ class AuthRegistrationControllerTests {
 
 	@Test
 	void verifyEmailActivatesUserAndConsumesToken() throws Exception {
-		MvcResult registrationResult = registerNewMember("verify@example.com");
-		String rawToken = JsonPath.read(
-				registrationResult.getResponse().getContentAsString(),
-				"$.devEmailVerificationToken");
+		registerNewMember("verify@example.com");
+		UserAccount user = userAccountRepository.findByEmail("verify@example.com").orElseThrow();
+		var created = emailVerificationTokenService.createFor(user);
 
 		mockMvc.perform(post("/api/auth/verify-email")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -174,7 +167,7 @@ class AuthRegistrationControllerTests {
 								{
 								  "token": "%s"
 								}
-								""".formatted(rawToken)))
+								""".formatted(created.rawToken())))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.email").value("verify@example.com"))
 				.andExpect(jsonPath("$.status").value("ACTIVE"))
@@ -184,7 +177,7 @@ class AuthRegistrationControllerTests {
 		assertThat(savedUser.getStatus()).isEqualTo(UserStatus.ACTIVE);
 		assertThat(savedUser.getEmailVerifiedAt()).isNotNull();
 
-		String tokenHash = emailVerificationTokenService.hashToken(rawToken);
+		String tokenHash = emailVerificationTokenService.hashToken(created.rawToken());
 		EmailVerificationToken token = emailVerificationTokenRepository.findByTokenHash(tokenHash).orElseThrow();
 		assertThat(token.getConsumedAt()).isNotNull();
 	}
@@ -243,15 +236,16 @@ class AuthRegistrationControllerTests {
 								{
 								  "token": "%s"
 								}
-								""".formatted(rawToken)))
+								"""))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
-	void resendVerificationCreatesNewDevTokenForPendingAccount() throws Exception {
+	void resendVerificationCreatesNewTokenForPendingAccount() throws Exception {
 		registerNewMember("resend@example.com");
+		long tokenCountBefore = emailVerificationTokenRepository.count();
 
-		MvcResult result = mockMvc.perform(post("/api/auth/resend-verification")
+		mockMvc.perform(post("/api/auth/resend-verification")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{
@@ -259,14 +253,10 @@ class AuthRegistrationControllerTests {
 								}
 								"""))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.devEmailVerificationToken", notNullValue()))
-				.andExpect(jsonPath("$.verificationExpiresAt", notNullValue()))
-				.andReturn();
+				.andExpect(jsonPath("$.devEmailVerificationToken").doesNotExist())
+				.andExpect(jsonPath("$.verificationExpiresAt").doesNotExist());
 
-		String rawToken = JsonPath.read(result.getResponse().getContentAsString(), "$.devEmailVerificationToken");
-		String tokenHash = emailVerificationTokenService.hashToken(rawToken);
-
-		assertThat(emailVerificationTokenRepository.findByTokenHash(tokenHash)).isPresent();
+		assertThat(emailVerificationTokenRepository.count()).isGreaterThan(tokenCountBefore);
 	}
 
 	@Test
@@ -726,6 +716,8 @@ class AuthRegistrationControllerTests {
 				.andExpect(status().isForbidden());
 	}
 
+	// --- helpers ---
+
 	private MvcResult registerNewMember(String email) throws Exception {
 		return mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -745,10 +737,10 @@ class AuthRegistrationControllerTests {
 	}
 
 	private void registerAndVerifyMember(String email) throws Exception {
-		MvcResult registrationResult = registerNewMember(email);
-		String rawToken = JsonPath.read(
-				registrationResult.getResponse().getContentAsString(),
-				"$.devEmailVerificationToken");
+		registerNewMember(email);
+		UserAccount user = userAccountRepository.findByEmail(email.toLowerCase()).orElseThrow();
+		// Create a fresh token we know, then verify with it directly
+		var created = emailVerificationTokenService.createFor(user);
 
 		mockMvc.perform(post("/api/auth/verify-email")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -756,7 +748,7 @@ class AuthRegistrationControllerTests {
 								{
 								  "token": "%s"
 								}
-								""".formatted(rawToken)))
+								""".formatted(created.rawToken())))
 				.andExpect(status().isOk());
 	}
 

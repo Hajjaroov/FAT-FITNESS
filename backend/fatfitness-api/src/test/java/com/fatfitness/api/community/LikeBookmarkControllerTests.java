@@ -16,6 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fatfitness.api.auth.service.EmailVerificationTokenService;
+import com.fatfitness.api.user.entity.UserAccount;
+import com.fatfitness.api.user.repository.UserAccountRepository;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -23,6 +27,12 @@ class LikeBookmarkControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private UserAccountRepository userAccountRepository;
+
+	@Autowired
+	private EmailVerificationTokenService emailVerificationTokenService;
 
 	@Test
 	void unauthenticatedPostListHasNullPersonalizedFields() throws Exception {
@@ -241,7 +251,7 @@ class LikeBookmarkControllerTests {
 	}
 
 	private String registerVerifyAndLogin(String email) throws Exception {
-		MvcResult registrationResult = mockMvc.perform(post("/api/auth/register")
+		mockMvc.perform(post("/api/auth/register")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{
@@ -254,11 +264,10 @@ class LikeBookmarkControllerTests {
 								  "acceptedPrivacyPolicy": true
 								}
 								""".formatted(email)))
-				.andExpect(status().isCreated())
-				.andReturn();
+				.andExpect(status().isCreated());
 
-		String rawToken = JsonPath.read(registrationResult.getResponse().getContentAsString(),
-				"$.devEmailVerificationToken");
+		UserAccount user = userAccountRepository.findByEmail(email.toLowerCase()).orElseThrow();
+		var created = emailVerificationTokenService.createFor(user);
 
 		mockMvc.perform(post("/api/auth/verify-email")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -266,7 +275,7 @@ class LikeBookmarkControllerTests {
 								{
 								  "token": "%s"
 								}
-								""".formatted(rawToken)))
+								""".formatted(created.rawToken())))
 				.andExpect(status().isOk());
 
 		MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
