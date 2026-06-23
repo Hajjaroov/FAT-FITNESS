@@ -43,7 +43,28 @@ Frontend rules:
 - Shared header session controls read from the frontend auth provider.
 - `/dashboard` uses the existing frontend auth provider for account/session visibility and stays frontend-only for now.
 - Community pages consume the forum APIs for published post lists, category thread lists, post detail reads, signed-in create-thread forms, signed-in post reports, reply lists, signed-in reply forms, and signed-in reply reports.
-- `/admin` consumes moderation APIs for role-gated report list/filter/hide/resolve/dismiss workflows.
+- `/admin` consumes moderation APIs for role-gated report list/filter/hide/resolve/dismiss/lock/ban workflows.
+- Pass `accessToken` to API calls that return user-specific fields such as `likedByCurrentUser` and `bookmarkedByCurrentUser`; wait for `authStatus !== "checking"` before fetching so the backend can identify the current user.
+
+## Dark Mode Architecture
+
+Tailwind CSS v4 uses `@custom-variant dark (&:where(.dark, .dark *))` in `globals.css`. This requires the `.dark` CSS class on `<html>` — **not** a `data-theme` attribute. The attribute approach does not override `@media (prefers-color-scheme: dark)`, causing dark utilities to bleed into light mode when the OS is dark.
+
+Implementation:
+
+- `globals.css`: `@custom-variant dark (&:where(.dark, .dark *))` and `:root.dark { … }` for dark CSS variable overrides.
+- `layout.tsx`: Blocking `<script>` in `<head>` reads `localStorage` and calls `document.documentElement.classList.add('dark')` before React hydrates, preventing a flash of unstyled content.
+- `ThemeProvider.tsx`: Reads the class back from the DOM on first rAF tick (`classList.contains("dark")`), sets `hasHydrated`, then on subsequent changes calls `classList.toggle("dark")` and writes to `localStorage`. The `hasHydrated` guard prevents the `useState("light")` default from overwriting the stored value on first render.
+- `LocaleProvider.tsx`: Same `hasHydrated` pattern applied to locale persistence so navigating to the landing page does not reset the chosen language.
+
+Rules:
+
+- Do not use `data-theme` or `dataset.theme` for the app theme — use `.dark` class on `<html>` exclusively.
+- Any new provider that reads a persisted user preference on mount must use the `hasHydrated` pattern to avoid overwriting stored state before the async read fires.
+
+## Light Mode Contrast
+
+The app's warm cream surface (`#fffaf1` / `--color-surface`) makes Tailwind `*-100` background shades nearly invisible. Use `*-200` or stronger for badge/pill backgrounds in light mode. In `AdminModerationView.tsx`, status badge classes use explicit `bg-amber-200`, `bg-emerald-100`, `bg-slate-200` for light mode with `dark:bg-*-500/15` overrides for dark mode.
 
 ## Backend
 

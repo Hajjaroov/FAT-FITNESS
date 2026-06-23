@@ -144,7 +144,9 @@ Current state:
 - Backend can list, resolve/dismiss, hide reported post/comment content, lock posts, and ban users for active `OWNER`, `ADMIN`, or `MODERATOR` accounts.
 - The frontend can list/read published posts, create top-level threads for signed-in verified users, report published threads, list replies, create replies, and report replies.
 - The frontend `/admin` page can list, filter, hide reported content, lock threads, ban users, resolve, and dismiss post/comment reports for moderator roles.
-- Likes/bookmarks are not implemented yet.
+- Post detail pages use SVG icon buttons (thumbs-up for like, bookmark for save) with counts; like/bookmark state restores correctly after page refresh when auth resolves.
+- Thread report uses a modal overlay instead of a sidebar form; comment report uses an inline modal per comment.
+- Likes/bookmarks UI is wired; backend endpoints exist.
 
 ### User Accounts
 
@@ -389,7 +391,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-The community/forum foundation through post lock and user ban moderation is complete. The next slice is likes/bookmarks.
+The community/forum foundation through post lock, user ban, likes/bookmarks, and UX polish is complete.
 
 Completed-enough checkpoints for now:
 
@@ -451,7 +453,8 @@ Content direction:
 - Current Forum Comment API: active authenticated users can create flat comments and report published comments; public users can list published comments for published posts.
 - Current Moderation API: active `OWNER`, `ADMIN`, or `MODERATOR` users can list open/all reports and resolve or dismiss post/comment reports.
 - Current Community UI: frontend post lists, category thread lists, post detail rendering, signed-in create-thread form, signed-in report form, reply list, signed-in reply form, signed-in reply report form, and `/admin` report dashboard with hide/resolve/dismiss actions are connected to the API.
-- Current Community UI gap: likes/bookmarks are not implemented yet.
+- Current Community UI: likes and bookmarks are wired with SVG icon buttons; like/bookmark state restores on refresh via auth-aware fetch; report is a modal on threads and an inline modal on comments; comment report button is right-aligned.
+- Current theme system: dark mode uses `.dark` class on `<html>` (not `data-theme` attribute), applied by a blocking `<script>` in `layout.tsx` before hydration; `ThemeProvider` and `LocaleProvider` both use a `hasHydrated` guard to prevent stored preferences from being overwritten on mount.
 - Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
 - Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.

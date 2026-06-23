@@ -456,7 +456,9 @@ Response shape:
 }
 ```
 
-Community write APIs now include top-level posts, flat comments, reporting hooks, and report-scoped hide, lock, and ban actions for posts and users. The frontend can list/read published posts, create top-level threads for signed-in verified users, submit reports for published threads, list published replies, create replies, report replies, and use `/admin` to hide reported content, lock threads, ban users, resolve, or dismiss reports. Likes/bookmarks are not implemented yet.
+Community write APIs include top-level posts, flat comments, reporting hooks, likes, bookmarks, report-scoped hide, lock, and ban actions. The frontend can list/read published posts, create top-level threads for signed-in verified users, like/bookmark posts, submit reports, list/create/report replies, and use `/admin` to hide reported content, lock threads, ban users, resolve, or dismiss reports.
+
+`GET /api/community/posts/{id}` accepts an optional `Authorization: Bearer` header. When a valid token is provided, the response includes `likedByCurrentUser` and `bookmarkedByCurrentUser` boolean fields. The frontend must wait for auth state to resolve and pass the access token before fetching so these fields are returned correctly (otherwise the backend sees an anonymous request and always returns `false`).
 
 ### Moderation
 

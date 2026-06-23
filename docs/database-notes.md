@@ -95,7 +95,7 @@ Current community/forum state:
 - The sixth Flyway migration (`V6__moderation_lock_and_ban.sql`) creates `moderation_actions` for lock and ban audit logging.
 - `POST /api/moderation/posts/{id}/lock` sets `is_locked = true` on the forum post and writes a `LOCK` row to `moderation_actions`.
 - `POST /api/moderation/users/{id}/ban` sets the user status to `BANNED`, revokes all their refresh sessions, and writes a `BAN` row to `moderation_actions`.
-- Likes/bookmarks do not exist yet.
+- Likes/bookmarks backend endpoints exist; the data model is in place.
 
 ### Moderation audit table
 
@@ -119,7 +119,7 @@ Next user/auth step:
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.
 - Do not migrate seeded development owner rows into production data; delete them from any database that is not strictly local.
-- Keep likes/bookmarks tables out until the likes/bookmarks slice is planned and approved.
+- Likes/bookmarks tables exist. Keep health tracking, progress photo metadata, and other unapproved persisted features out until explicitly planned.
 
 Future user/auth model direction:
 
