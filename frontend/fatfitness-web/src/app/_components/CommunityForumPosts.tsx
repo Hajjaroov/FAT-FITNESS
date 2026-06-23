@@ -230,9 +230,9 @@ export function CommunityPostList({
             <Link
               key={post.id}
               href={`/community/posts/${post.id}`}
-              className="site-divider block border-b p-5 transition hover:bg-[var(--color-surface)] sm:p-6"
+              className="site-divider block border-b p-5 transition hover:bg-(--color-surface) sm:p-6"
             >
-              <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-subtle)]">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
                 <span>
                   {copy.posts.postedByLabel} {post.authorDisplayName}
                 </span>

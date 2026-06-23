@@ -11,12 +11,14 @@ import type {
 } from "@/types/auth";
 import type { BackendStatus } from "@/types/api";
 import type {
+  BookmarkToggleResponse,
   CreateForumCommentRequest,
   CreateForumPostRequest,
   ForumComment,
   ForumCommentReport,
   ForumPost,
   ForumPostReport,
+  LikeToggleResponse,
   ReportForumCommentRequest,
   ReportForumPostRequest,
 } from "@/types/community";
@@ -186,8 +188,8 @@ export function getForumPosts({
   );
 }
 
-export function getForumPost(postId: string) {
-  return apiRequest<ForumPost>(`/api/community/posts/${postId}`);
+export function getForumPost(postId: string, accessToken?: string) {
+  return apiRequest<ForumPost>(`/api/community/posts/${postId}`, { accessToken });
 }
 
 export function createForumPost(
@@ -213,13 +215,16 @@ export function reportForumPost(
   });
 }
 
-export function getForumComments({
-  postId,
-  limit,
-}: {
-  postId: string;
-  limit?: number;
-}) {
+export function getForumComments(
+  {
+    postId,
+    limit,
+  }: {
+    postId: string;
+    limit?: number;
+  },
+  accessToken?: string,
+) {
   const params = new URLSearchParams();
 
   if (limit) {
@@ -230,6 +235,7 @@ export function getForumComments({
 
   return apiRequest<ForumComment[]>(
     `/api/community/posts/${postId}/comments${query ? `?${query}` : ""}`,
+    { accessToken },
   );
 }
 
@@ -368,4 +374,35 @@ export function banUser(userId: string, accessToken: string) {
     method: "POST",
     accessToken,
   });
+}
+
+export function likeForumPost(postId: string, accessToken: string) {
+  return apiRequest<LikeToggleResponse>(`/api/community/posts/${postId}/like`, {
+    method: "POST",
+    accessToken,
+  });
+}
+
+export function likeForumComment(commentId: string, accessToken: string) {
+  return apiRequest<LikeToggleResponse>(
+    `/api/community/comments/${commentId}/like`,
+    {
+      method: "POST",
+      accessToken,
+    },
+  );
+}
+
+export function bookmarkForumPost(postId: string, accessToken: string) {
+  return apiRequest<BookmarkToggleResponse>(
+    `/api/community/posts/${postId}/bookmark`,
+    {
+      method: "POST",
+      accessToken,
+    },
+  );
+}
+
+export function getBookmarkedPosts(accessToken: string) {
+  return apiRequest<ForumPost[]>("/api/community/bookmarks", { accessToken });
 }

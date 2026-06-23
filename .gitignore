@@ -38,6 +38,7 @@ postgres-data/
 .aider*
 .claude/settings.local.json
 .claude/.credentials.json
+**/.claude/skills/
 
 # Local agent handoff notes
 docs/dev-agent-plan.md

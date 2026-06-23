@@ -18,6 +18,7 @@ import {
   ApiError,
   createForumComment,
   getForumComments,
+  likeForumComment,
   reportForumComment,
 } from "@/lib/api";
 import type { ForumComment } from "@/types/community";
@@ -69,6 +70,7 @@ function formChecked(formData: FormData, key: string) {
 export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
   const copy = useLocalizedContent(communityCopy);
   const { locale } = useLocale();
+  const { accessToken } = useAuth();
   const [comments, setComments] = useState<ForumComment[]>([]);
   const [status, setStatus] = useState<LoadState>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +81,10 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
     setError(null);
 
     try {
-      const nextComments = await getForumComments({ postId, limit: 100 });
+      const nextComments = await getForumComments(
+        { postId, limit: 100 },
+        accessToken ?? undefined,
+      );
       setComments(nextComments);
       setStatus("success");
     } catch (caughtError) {
@@ -96,7 +101,10 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
       setError(null);
 
       try {
-        const nextComments = await getForumComments({ postId, limit: 100 });
+        const nextComments = await getForumComments(
+          { postId, limit: 100 },
+          accessToken ?? undefined,
+        );
 
         if (!isActive) {
           return;
@@ -119,7 +127,7 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
     return () => {
       isActive = false;
     };
-  }, [copy.comments.formErrorFallback, postId]);
+  }, [accessToken, copy.comments.formErrorFallback, postId]);
 
   return (
     <section className="site-card overflow-hidden">
@@ -211,7 +219,25 @@ function CommunityCommentItem({
   locale,
 }: CommunityCommentItemProps) {
   const copy = useLocalizedContent(communityCopy);
+  const { accessToken } = useAuth();
   const [isReporting, setIsReporting] = useState(false);
+  const [localLikeCount, setLocalLikeCount] = useState(comment.likeCount);
+  const [localLiked, setLocalLiked] = useState(comment.likedByCurrentUser);
+  const [isLiking, setIsLiking] = useState(false);
+
+  async function handleLike() {
+    if (!accessToken || isLiking) return;
+    setIsLiking(true);
+    try {
+      const result = await likeForumComment(comment.id, accessToken);
+      setLocalLiked(result.liked);
+      setLocalLikeCount(result.likeCount);
+    } catch {
+      // keep current state on failure
+    } finally {
+      setIsLiking(false);
+    }
+  }
 
   return (
     <article className="p-5 sm:p-6">
@@ -225,18 +251,35 @@ function CommunityCommentItem({
             {formatForumPostDate(comment.createdAt, locale)}
           </time>
         </div>
-        <button
-          type="button"
-          aria-expanded={isReporting}
-          onClick={() => {
-            setIsReporting((currentValue) => !currentValue);
-          }}
-          className="min-h-10 rounded-full border border-(--color-border) bg-(--color-surface) px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
-        >
-          {isReporting
-            ? copy.comments.cancelReportLabel
-            : copy.comments.reportLabel}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            disabled={isLiking || !accessToken}
+            onClick={() => void handleLike()}
+            className={
+              localLiked
+                ? "min-h-10 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 text-xs font-semibold text-blue-700 transition dark:text-blue-200"
+                : "min-h-10 rounded-full border border-(--color-border) bg-(--color-surface) px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-default"
+            }
+          >
+            {localLiked
+              ? copy.interactions.likedLabel
+              : copy.interactions.likeLabel}
+            {localLikeCount > 0 ? ` · ${localLikeCount}` : null}
+          </button>
+          <button
+            type="button"
+            aria-expanded={isReporting}
+            onClick={() => {
+              setIsReporting((currentValue) => !currentValue);
+            }}
+            className="min-h-10 rounded-full border border-(--color-border) bg-(--color-surface) px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+          >
+            {isReporting
+              ? copy.comments.cancelReportLabel
+              : copy.comments.reportLabel}
+          </button>
+        </div>
       </div>
 
       <p className="mt-4 whitespace-pre-wrap text-base leading-8">

@@ -32,8 +32,12 @@ public class SecurityConfig {
 								"/api/community/posts",
 								"/api/community/posts/*/comments",
 								"/api/community/posts/*/reports",
-								"/api/community/comments/*/reports")
+								"/api/community/comments/*/reports",
+								"/api/community/posts/*/like",
+								"/api/community/posts/*/bookmark",
+								"/api/community/comments/*/like")
 						.authenticated()
+						.requestMatchers(HttpMethod.GET, "/api/community/bookmarks").authenticated()
 						.requestMatchers("/api/moderation/**").authenticated()
 						.anyRequest().permitAll())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

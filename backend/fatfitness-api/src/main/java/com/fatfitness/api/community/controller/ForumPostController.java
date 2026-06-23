@@ -36,13 +36,18 @@ public class ForumPostController {
 	@GetMapping
 	public List<ForumPostResponse> listPosts(
 			@RequestParam(required = false) String categorySlug,
-			@RequestParam(required = false) Integer limit) {
-		return forumPostService.listPosts(categorySlug, limit);
+			@RequestParam(required = false) Integer limit,
+			@AuthenticationPrincipal Jwt jwt) {
+		UUID currentUserId = jwt != null ? parseSubject(jwt.getSubject()) : null;
+		return forumPostService.listPosts(categorySlug, limit, currentUserId);
 	}
 
 	@GetMapping("/{postId}")
-	public ForumPostResponse getPost(@PathVariable UUID postId) {
-		return forumPostService.getPost(postId);
+	public ForumPostResponse getPost(
+			@PathVariable UUID postId,
+			@AuthenticationPrincipal Jwt jwt) {
+		UUID currentUserId = jwt != null ? parseSubject(jwt.getSubject()) : null;
+		return forumPostService.getPost(postId, currentUserId);
 	}
 
 	@PostMapping
@@ -60,5 +65,14 @@ public class ForumPostController {
 			@Valid @RequestBody ReportForumPostRequest request,
 			@AuthenticationPrincipal Jwt jwt) {
 		return forumPostService.reportPost(postId, request, jwt.getSubject());
+	}
+
+	private static UUID parseSubject(String subject) {
+		try {
+			return UUID.fromString(subject);
+		}
+		catch (RuntimeException ex) {
+			return null;
+		}
 	}
 }

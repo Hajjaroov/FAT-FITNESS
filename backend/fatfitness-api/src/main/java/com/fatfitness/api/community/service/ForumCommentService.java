@@ -1,7 +1,11 @@
 package com.fatfitness.api.community.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -18,6 +22,7 @@ import com.fatfitness.api.community.entity.ForumCommentReport;
 import com.fatfitness.api.community.entity.ForumCommentStatus;
 import com.fatfitness.api.community.entity.ForumPost;
 import com.fatfitness.api.community.entity.ForumPostStatus;
+import com.fatfitness.api.community.repository.CommentLikeRepository;
 import com.fatfitness.api.community.repository.ForumCommentReportRepository;
 import com.fatfitness.api.community.repository.ForumCommentRepository;
 import com.fatfitness.api.community.repository.ForumPostRepository;
@@ -37,30 +42,47 @@ public class ForumCommentService {
 	private final ForumCommentReportRepository forumCommentReportRepository;
 	private final UserAccountRepository userAccountRepository;
 	private final UserPublicDisplayNameService userPublicDisplayNameService;
+	private final CommentLikeRepository commentLikeRepository;
 
 	public ForumCommentService(
 			ForumPostRepository forumPostRepository,
 			ForumCommentRepository forumCommentRepository,
 			ForumCommentReportRepository forumCommentReportRepository,
 			UserAccountRepository userAccountRepository,
-			UserPublicDisplayNameService userPublicDisplayNameService) {
+			UserPublicDisplayNameService userPublicDisplayNameService,
+			CommentLikeRepository commentLikeRepository) {
 		this.forumPostRepository = forumPostRepository;
 		this.forumCommentRepository = forumCommentRepository;
 		this.forumCommentReportRepository = forumCommentReportRepository;
 		this.userAccountRepository = userAccountRepository;
 		this.userPublicDisplayNameService = userPublicDisplayNameService;
+		this.commentLikeRepository = commentLikeRepository;
 	}
 
 	@Transactional(readOnly = true)
-	public List<ForumCommentResponse> listComments(UUID postId, Integer limit) {
+	public List<ForumCommentResponse> listComments(UUID postId, Integer limit, UUID currentUserId) {
 		ForumPost post = requirePublishedPost(postId);
-		return forumCommentRepository
+		List<ForumComment> comments = forumCommentRepository
 				.findByPostIdAndStatusOrderByCreatedAtAsc(
 						post.getId(),
 						ForumCommentStatus.PUBLISHED,
-						PageRequest.of(0, cleanLimit(limit)))
-				.stream()
-				.map(this::toResponse)
+						PageRequest.of(0, cleanLimit(limit)));
+
+		if (comments.isEmpty()) {
+			return List.of();
+		}
+
+		List<UUID> commentIds = comments.stream().map(ForumComment::getId).toList();
+		Map<UUID, Long> likeCounts = buildLikeCountMap(commentIds);
+		Set<UUID> likedIds = currentUserId != null
+				? commentLikeRepository.findLikedCommentIdsByUserAndCommentIds(currentUserId, commentIds)
+				: Set.of();
+
+		return comments.stream()
+				.map(c -> toResponse(
+						c,
+						likeCounts.getOrDefault(c.getId(), 0L),
+						currentUserId != null ? likedIds.contains(c.getId()) : null))
 				.toList();
 	}
 
@@ -79,7 +101,7 @@ public class ForumCommentService {
 		return toResponse(forumCommentRepository.save(new ForumComment(
 				post,
 				author,
-				cleanMultiline(request.body()))));
+				cleanMultiline(request.body()))), 0, false);
 	}
 
 	@Transactional
@@ -100,6 +122,12 @@ public class ForumCommentService {
 						cleanOptionalSingleLine(request.details())))));
 	}
 
+	private Map<UUID, Long> buildLikeCountMap(Collection<UUID> commentIds) {
+		return commentLikeRepository.countGroupedByCommentIds(commentIds)
+				.stream()
+				.collect(Collectors.toMap(row -> (UUID) row[0], row -> (Long) row[1]));
+	}
+
 	private ForumPost requirePublishedPost(UUID postId) {
 		return forumPostRepository.findByIdAndStatus(postId, ForumPostStatus.PUBLISHED)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
@@ -116,7 +144,7 @@ public class ForumCommentService {
 		return user;
 	}
 
-	private ForumCommentResponse toResponse(ForumComment comment) {
+	private ForumCommentResponse toResponse(ForumComment comment, long likeCount, Boolean liked) {
 		return new ForumCommentResponse(
 				comment.getId(),
 				comment.getPost().getId(),
@@ -124,7 +152,9 @@ public class ForumCommentService {
 				userPublicDisplayNameService.resolve(comment.getAuthor()),
 				comment.getStatus(),
 				comment.getCreatedAt(),
-				comment.getUpdatedAt());
+				comment.getUpdatedAt(),
+				likeCount,
+				liked);
 	}
 
 	private static ForumCommentReportResponse toReportResponse(ForumCommentReport report) {

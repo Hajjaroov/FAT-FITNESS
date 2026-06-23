@@ -112,6 +112,15 @@ export const communityCopy = {
       repliesLabel: "Replies",
       latestLabel: "Latest",
     },
+    interactions: {
+      likeLabel: "Like",
+      likedLabel: "Liked",
+      bookmarkLabel: "Save",
+      bookmarkedLabel: "Saved",
+      signInToInteract: "Sign in to like or save threads.",
+      likeError: "Could not update like. Please try again.",
+      bookmarkError: "Could not update bookmark. Please try again.",
+    },
     posts: {
       eyebrow: "Forum threads",
       latestTitle: "Latest threads",
@@ -477,6 +486,16 @@ export const communityCopy = {
       topicsLabel: "Themen",
       repliesLabel: "Antworten",
       latestLabel: "Letztes",
+    },
+    interactions: {
+      likeLabel: "Gefällt mir",
+      likedLabel: "Geliked",
+      bookmarkLabel: "Speichern",
+      bookmarkedLabel: "Gespeichert",
+      signInToInteract: "Einloggen, um Threads zu liken oder zu speichern.",
+      likeError: "Like konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+      bookmarkError:
+        "Lesezeichen konnte nicht aktualisiert werden. Bitte versuche es erneut.",
     },
     posts: {
       eyebrow: "Forum-Threads",

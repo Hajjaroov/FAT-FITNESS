@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageShell } from "@/app/_components/PageShell";
 import { useAuth } from "@/app/_components/AuthProvider";
 import {
@@ -10,8 +10,106 @@ import {
 } from "@/app/_components/LocaleProvider";
 import { accountCopy } from "@/content/account";
 import { getCountryOptions } from "@/content/countries";
+import { ApiError, getBookmarkedPosts } from "@/lib/api";
 import type { Locale } from "@/content/site";
 import type { CurrentUser } from "@/types/auth";
+import type { ForumPost } from "@/types/community";
+
+type SavedPostsSectionProps = {
+  accessToken: string;
+};
+
+function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
+  const copy = useLocalizedContent(accountCopy);
+  const { locale } = useLocale();
+  const [posts, setPosts] = useState<ForumPost[]>([]);
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+
+    getBookmarkedPosts(accessToken)
+      .then((result) => {
+        if (isActive) {
+          setPosts(result);
+          setStatus("success");
+        }
+      })
+      .catch((caughtError) => {
+        if (isActive) {
+          setError(
+            caughtError instanceof ApiError
+              ? caughtError.message
+              : copy.savedPosts.error,
+          );
+          setStatus("error");
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [accessToken, copy.savedPosts.error]);
+
+  return (
+    <section className="site-card overflow-hidden">
+      <header className="site-divider border-b p-6 sm:p-7">
+        <h2 className="text-xl font-semibold">{copy.savedPosts.title}</h2>
+      </header>
+
+      {status === "loading" ? (
+        <div className="p-6 sm:p-7" aria-live="polite">
+          <p className="site-muted text-sm font-semibold">
+            {copy.savedPosts.loading}
+          </p>
+        </div>
+      ) : null}
+
+      {status === "error" ? (
+        <div className="p-6 sm:p-7">
+          <p className="text-sm text-red-700 dark:text-red-200">
+            {error ?? copy.savedPosts.error}
+          </p>
+        </div>
+      ) : null}
+
+      {status === "success" && posts.length === 0 ? (
+        <div className="p-6 sm:p-7">
+          <p className="text-base font-semibold">{copy.savedPosts.emptyTitle}</p>
+          <p className="site-muted mt-2 text-sm leading-7">
+            {copy.savedPosts.emptyText}
+          </p>
+        </div>
+      ) : null}
+
+      {status === "success" && posts.length > 0 ? (
+        <ul className="divide-y divide-(--color-border)">
+          {posts.map((post) => (
+            <li key={post.id} className="flex items-start justify-between gap-4 p-5 sm:p-6">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">{post.title}</p>
+                <p className="site-subtle mt-1 text-xs">
+                  {new Intl.DateTimeFormat(locale, {
+                    dateStyle: "medium",
+                  }).format(new Date(post.createdAt))}
+                </p>
+              </div>
+              <Link
+                href={`/community/posts/${post.id}`}
+                className="shrink-0 min-h-9 rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+              >
+                {copy.savedPosts.openLabel}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
 
 function formatDateTime(value: string | null, locale: Locale, fallback: string) {
   if (!value) {
@@ -41,7 +139,7 @@ function getCountryLabel(user: CurrentUser, locale: Locale, fallback: string) {
 export function AccountDashboardView() {
   const copy = useLocalizedContent(accountCopy);
   const { locale } = useLocale();
-  const { status, user, logout } = useAuth();
+  const { status, user, accessToken, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
 
@@ -130,7 +228,7 @@ export function AccountDashboardView() {
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.email}
                 </dt>
-                <dd className="mt-2 break-words text-base font-semibold">
+                <dd className="mt-2 wrap-break-word text-base font-semibold">
                   {user.email}
                 </dd>
               </div>
@@ -213,6 +311,8 @@ export function AccountDashboardView() {
           </article>
         </section>
       ) : null}
+
+      {accessToken ? <SavedPostsSection accessToken={accessToken} /> : null}
     </PageShell>
   );
 }

@@ -36,8 +36,10 @@ public class ForumCommentController {
 	@GetMapping("/posts/{postId}/comments")
 	public List<ForumCommentResponse> listComments(
 			@PathVariable UUID postId,
-			@RequestParam(required = false) Integer limit) {
-		return forumCommentService.listComments(postId, limit);
+			@RequestParam(required = false) Integer limit,
+			@AuthenticationPrincipal Jwt jwt) {
+		UUID currentUserId = jwt != null ? parseSubject(jwt.getSubject()) : null;
+		return forumCommentService.listComments(postId, limit, currentUserId);
 	}
 
 	@PostMapping("/posts/{postId}/comments")
@@ -56,5 +58,14 @@ public class ForumCommentController {
 			@Valid @RequestBody ReportForumCommentRequest request,
 			@AuthenticationPrincipal Jwt jwt) {
 		return forumCommentService.reportComment(commentId, request, jwt.getSubject());
+	}
+
+	private static UUID parseSubject(String subject) {
+		try {
+			return UUID.fromString(subject);
+		}
+		catch (RuntimeException ex) {
+			return null;
+		}
 	}
 }

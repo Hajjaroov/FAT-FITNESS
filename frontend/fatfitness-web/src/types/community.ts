@@ -12,6 +12,18 @@ export type ForumPost = {
   locked: boolean;
   createdAt: string;
   updatedAt: string;
+  likeCount: number;
+  likedByCurrentUser: boolean | null;
+  bookmarkedByCurrentUser: boolean | null;
+};
+
+export type LikeToggleResponse = {
+  liked: boolean;
+  likeCount: number;
+};
+
+export type BookmarkToggleResponse = {
+  bookmarked: boolean;
 };
 
 export type CreateForumPostRequest = {
@@ -45,6 +57,8 @@ export type ForumComment = {
   status: ForumCommentStatus;
   createdAt: string;
   updatedAt: string;
+  likeCount: number;
+  likedByCurrentUser: boolean | null;
 };
 
 export type CreateForumCommentRequest = {

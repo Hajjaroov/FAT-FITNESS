@@ -15,6 +15,9 @@ public record ForumPostResponse(
 		ForumPostStatus status,
 		boolean locked,
 		Instant createdAt,
-		Instant updatedAt
+		Instant updatedAt,
+		long likeCount,
+		Boolean likedByCurrentUser,
+		Boolean bookmarkedByCurrentUser
 ) {
 }

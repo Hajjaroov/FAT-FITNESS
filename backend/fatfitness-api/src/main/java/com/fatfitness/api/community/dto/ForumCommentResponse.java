@@ -12,6 +12,8 @@ public record ForumCommentResponse(
 		String authorDisplayName,
 		ForumCommentStatus status,
 		Instant createdAt,
-		Instant updatedAt
+		Instant updatedAt,
+		long likeCount,
+		Boolean likedByCurrentUser
 ) {
 }

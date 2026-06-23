@@ -46,6 +46,14 @@ type AccountCopy = {
     title: string;
     body: string;
   };
+  savedPosts: {
+    title: string;
+    loading: string;
+    emptyTitle: string;
+    emptyText: string;
+    error: string;
+    openLabel: string;
+  };
 };
 
 export const accountCopy = {
@@ -108,6 +116,15 @@ export const accountCopy = {
       body:
         "Basic registration stays intentionally light: no weight history, GLP-1 status, photos, diet logs, or medical history are part of this account page.",
     },
+    savedPosts: {
+      title: "Saved threads",
+      loading: "Loading saved threads...",
+      emptyTitle: "No saved threads yet.",
+      emptyText:
+        "When you save a thread from the community, it will appear here.",
+      error: "Could not load saved threads. Please try again.",
+      openLabel: "Open thread",
+    },
   },
   de: {
     eyebrow: "Account",
@@ -168,6 +185,16 @@ export const accountCopy = {
       title: "Datenschutz-Grenze",
       body:
         "Die Basis-Registrierung bleibt bewusst schlank: Gewichtsverlauf, GLP-1-Status, Fotos, Ernährungslogs oder medizinische Geschichte gehören nicht zu dieser Account-Seite.",
+    },
+    savedPosts: {
+      title: "Gespeicherte Threads",
+      loading: "Gespeicherte Threads werden geladen...",
+      emptyTitle: "Noch keine gespeicherten Threads.",
+      emptyText:
+        "Wenn du einen Thread aus der Community speicherst, erscheint er hier.",
+      error:
+        "Gespeicherte Threads konnten nicht geladen werden. Bitte versuche es erneut.",
+      openLabel: "Thread öffnen",
     },
   },
 } satisfies Record<Locale, AccountCopy>;
