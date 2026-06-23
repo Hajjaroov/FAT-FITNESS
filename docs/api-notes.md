@@ -460,6 +460,34 @@ Community write APIs include top-level posts, flat comments, reporting hooks, li
 
 `GET /api/community/posts/{id}` accepts an optional `Authorization: Bearer` header. When a valid token is provided, the response includes `likedByCurrentUser` and `bookmarkedByCurrentUser` boolean fields. The frontend must wait for auth state to resolve and pass the access token before fetching so these fields are returned correctly (otherwise the backend sees an anonymous request and always returns `false`).
 
+### Likes and bookmarks
+
+Backed by the `V7__likes_and_bookmarks.sql` migration (`post_likes`, `comment_likes`, `post_bookmarks`). All four endpoints require a valid bearer token for an active account. Toggle endpoints are idempotent: calling them adds the reaction if absent and removes it if present, returning the resulting state.
+
+- `POST /api/community/posts/{id}/like`
+- `POST /api/community/comments/{id}/like`
+- `POST /api/community/posts/{id}/bookmark`
+- `GET /api/community/bookmarks`
+
+`POST /api/community/posts/{id}/like` and `POST /api/community/comments/{id}/like` accept no body and return the new like state plus the live count:
+
+```json
+{
+  "liked": true,
+  "likeCount": 4
+}
+```
+
+`POST /api/community/posts/{id}/bookmark` accepts no body and returns the new bookmark state:
+
+```json
+{
+  "bookmarked": true
+}
+```
+
+`GET /api/community/bookmarks` returns the current user's bookmarked posts as a list of post objects (same shape as `GET /api/community/posts`). This backs the saved-threads list on `/dashboard`.
+
 ### Moderation
 
 Current implemented moderator endpoints:
@@ -571,6 +599,10 @@ Current implemented auth endpoint:
 - `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
 - `POST /api/community/comments/{id}/reports`
+- `POST /api/community/posts/{id}/like`
+- `POST /api/community/comments/{id}/like`
+- `POST /api/community/posts/{id}/bookmark`
+- `GET /api/community/bookmarks`
 - `GET /api/moderation/reports`
 - `POST /api/moderation/reports/posts/{id}/resolve`
 - `POST /api/moderation/reports/posts/{id}/hide`

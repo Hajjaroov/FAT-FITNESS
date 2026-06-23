@@ -26,7 +26,7 @@ Foods:
 
 - 3 boiled medium eggs: 234 kcal, 21 g protein, 1.5 g carbs, 16.2 g fat
 - 1 tomato, 83 g: 16.6 kcal, 0.7 g protein, 3.2 g carbs, 0.2 g fat
-- 100 g koerniger Frischkaese: 98 kcal, 11.5 g protein, 2.8 g carbs, 4.5 g fat
+- 100 g körniger Frischkäse: 98 kcal, 11.5 g protein, 2.8 g carbs, 4.5 g fat
 
 ### Shake
 
@@ -60,7 +60,7 @@ Combined batch ingredients:
 - 330 g chicken breast: 400 kcal, 77 g protein, 0 g carbs, 5 g fat
 - Olive oil, mustard, tomato paste, and 3.5% yogurt sauce: 116 kcal, 1.4 g protein, 3.2 g carbs, 7.75 g fat
 - 250 g frozen vegetables, Italian style: 125 kcal, 4 g protein, 7.25 g carbs, 4.75 g fat
-- 110 g broccoli or Kaisergemuese: 45 kcal, 2.65 g protein, 5.5 g carbs, 0.5 g fat
+- 110 g broccoli or Kaisergemüse: 45 kcal, 2.65 g protein, 5.5 g carbs, 0.5 g fat
 - 133 g mushrooms: 29 kcal, 4.1 g protein, 4.4 g carbs, 0.45 g fat
 - 150 g potato: 116 kcal, 3 g protein, 25 g carbs, 0.2 g fat
 - 66 g bulgur: 225 kcal, 6.6 g protein, 46.2 g carbs, 0.7 g fat
