@@ -82,50 +82,34 @@ export function CommunityPostReportForm({
 
   if (status === "checking") {
     return (
-      <aside className="site-card p-6 sm:p-7" aria-live="polite">
-        <p className="site-kicker">{copy.reports.eyebrow}</p>
-        <p className="site-muted mt-4 text-sm leading-7">
-          {copy.reports.checkingSession}
-        </p>
-      </aside>
+      <div className="p-6 sm:p-7" aria-live="polite">
+        <p className="site-muted text-sm">{copy.reports.checkingSession}</p>
+      </div>
     );
   }
 
   if (!accessToken) {
     return (
-      <aside className="site-card p-6 sm:p-7">
-        <p className="site-kicker">{copy.reports.eyebrow}</p>
-        <h2 className="mt-3 text-2xl font-semibold">
-          {copy.reports.signInTitle}
-        </h2>
-        <p className="site-muted mt-3 text-sm leading-7">
+      <div className="p-6 sm:p-7">
+        <p className="text-base font-semibold">{copy.reports.signInTitle}</p>
+        <p className="site-muted mt-2 text-sm leading-7">
           {copy.reports.signInText}
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-5">
           <Link
             href="/login"
-            className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+            className="min-h-10 rounded-full border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
           >
             {copy.reports.signInLabel}
           </Link>
-          <Link
-            href="/register"
-            className="min-h-11 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
-          >
-            {copy.reports.registerLabel}
-          </Link>
         </div>
-      </aside>
+      </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="site-card p-6 sm:p-7">
-      <p className="site-kicker">{copy.reports.eyebrow}</p>
-      <h2 className="mt-3 text-2xl font-semibold">{copy.reports.title}</h2>
-      <p className="site-muted mt-3 text-sm leading-7">
-        {copy.reports.intro}
-      </p>
+    <form onSubmit={handleSubmit} className="p-6 sm:p-7">
+      <p className="site-muted text-sm leading-7">{copy.reports.intro}</p>
 
       <div className="mt-6 space-y-5">
         <div>
@@ -173,7 +157,7 @@ export function CommunityPostReportForm({
         {formError ? (
           <p
             role="alert"
-            className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm leading-6 text-red-700 dark:text-red-200"
+            className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           >
             {formError}
           </p>
@@ -182,7 +166,7 @@ export function CommunityPostReportForm({
         {successMessage ? (
           <div
             role="status"
-            className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-800 dark:text-emerald-200"
+            className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
           >
             <p className="font-semibold">{copy.reports.successTitle}</p>
             <p className="mt-1">{successMessage}</p>

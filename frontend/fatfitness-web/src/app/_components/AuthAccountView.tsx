@@ -291,7 +291,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
               {formState.kind === "error" ? (
                 <p
                   role="alert"
-                  className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm leading-6 text-red-700 dark:text-red-200"
+                  className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
                 >
                   {formState.message}
                 </p>
@@ -300,7 +300,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
               {formState.kind === "success" ? (
                 <div
                   role="status"
-                  className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-800 dark:text-emerald-200"
+                  className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
                 >
                   <p className="font-semibold">{page.successTitle}</p>
                   <p className="mt-1">{formState.message}</p>
@@ -327,7 +327,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
                   </button>
 
                   {verificationState.kind === "success" ? (
-                    <p className="mt-4 text-sm leading-6 text-emerald-800 dark:text-emerald-200">
+                    <p className="mt-4 text-sm leading-6 text-emerald-800 dark:text-emerald-300">
                       <span className="font-semibold">
                         {copy.shared.verifySuccessTitle}.
                       </span>{" "}
@@ -338,7 +338,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
                   {verificationState.kind === "error" ? (
                     <p
                       role="alert"
-                      className="mt-4 text-sm leading-6 text-red-700 dark:text-red-200"
+                      className="mt-4 text-sm leading-6 text-red-800 dark:text-red-300"
                     >
                       {verificationState.message}
                     </p>

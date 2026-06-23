@@ -70,7 +70,7 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
 
       {status === "error" ? (
         <div className="p-6 sm:p-7">
-          <p className="text-sm text-red-700 dark:text-red-200">
+          <p className="text-sm text-red-800 dark:text-red-300">
             {error ?? copy.savedPosts.error}
           </p>
         </div>
@@ -210,7 +210,7 @@ export function AccountDashboardView() {
                   {copy.summary.intro}
                 </p>
               </div>
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
+              <span className="rounded-full border border-emerald-200 bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300">
                 {copy.summary.activeBadge}
               </span>
             </div>
@@ -286,7 +286,7 @@ export function AccountDashboardView() {
                   : copy.summary.logoutLabel}
               </button>
               {logoutError ? (
-                <p role="alert" className="text-sm text-red-700 dark:text-red-200">
+                <p role="alert" className="text-sm text-red-800 dark:text-red-300">
                   {logoutError}
                 </p>
               ) : null}

@@ -29,6 +29,14 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Synchronous theme init — prevents light-mode flash when OS is dark */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('fat-fitness-theme');var t=s==='dark'||s==='light'?s:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         <SiteProviders>{children}</SiteProviders>
       </body>

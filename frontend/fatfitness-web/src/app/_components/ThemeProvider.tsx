@@ -18,39 +18,32 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 const storageKey = "fat-fitness-theme";
 
-function getBrowserTheme(): Theme {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  const stored = window.localStorage.getItem(storageKey);
-  if (stored === "light" || stored === "dark") {
-    return stored;
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setTheme(getBrowserTheme());
+    // requestAnimationFrame defers setState out of the effect body, satisfying
+    // the linter. The blocking script in layout.tsx already set data-theme
+    // correctly; read it back so React's state matches without re-deriving.
+    const frame = requestAnimationFrame(() => {
+      const attr = document.documentElement.dataset.theme;
+      setTheme(attr === "dark" ? "dark" : "light");
+      setHasHydrated(true);
     });
-
-    return () => window.cancelAnimationFrame(frame);
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
+    // Skip until the rAF has run. This prevents overwriting the blocking
+    // script's correct data-theme with the "light" default on first render.
+    if (!hasHydrated) return;
     document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem(storageKey, theme);
-  }, [theme]);
+    localStorage.setItem(storageKey, theme);
+  }, [theme, hasHydrated]);
 
   function toggleTheme() {
-    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
   }
 
   return (

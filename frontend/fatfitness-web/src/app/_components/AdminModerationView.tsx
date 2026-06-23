@@ -74,14 +74,14 @@ function formatDateTime(value: string | null, locale: string, fallback = "-") {
 
 function reportStatusClass(status: ModerationReportStatus) {
   if (status === "OPEN") {
-    return "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-100";
+    return "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200";
   }
 
   if (status === "RESOLVED") {
-    return "border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-100";
+    return "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300";
   }
 
-  return "border-slate-500/30 bg-slate-500/10 text-slate-700 dark:text-slate-200";
+  return "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-500/30 dark:bg-slate-500/15 dark:text-slate-300";
 }
 
 function reportReasonLabel(reason: string) {
@@ -684,7 +684,7 @@ function ModerationResolutionForm({
       {formError ? (
         <p
           role="alert"
-          className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm leading-6 text-red-700 dark:text-red-200"
+          className="mt-4 rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
         >
           {formError}
         </p>
@@ -693,7 +693,7 @@ function ModerationResolutionForm({
       {successMessage ? (
         <p
           role="status"
-          className="mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-800 dark:text-emerald-200"
+          className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
         >
           {successMessage}
         </p>

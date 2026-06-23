@@ -63,9 +63,6 @@ function formValue(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function formChecked(formData: FormData, key: string) {
-  return formData.get(key) === "on";
-}
 
 export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
   const copy = useLocalizedContent(communityCopy);
@@ -239,60 +236,79 @@ function CommunityCommentItem({
     }
   }
 
+  useEffect(() => {
+    if (!isReporting) return;
+    const saved = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = saved;
+    };
+  }, [isReporting]);
+
   return (
     <article className="p-5 sm:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
-          <span>
-            {copy.comments.postedByLabel} {comment.authorDisplayName}
-          </span>
-          <span aria-hidden="true">/</span>
-          <time dateTime={comment.createdAt}>
-            {formatForumPostDate(comment.createdAt, locale)}
-          </time>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            disabled={isLiking || !accessToken}
-            onClick={() => void handleLike()}
-            className={
-              localLiked
-                ? "min-h-10 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 text-xs font-semibold text-blue-700 transition dark:text-blue-200"
-                : "min-h-10 rounded-full border border-(--color-border) bg-(--color-surface) px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-default"
-            }
-          >
-            {localLiked
-              ? copy.interactions.likedLabel
-              : copy.interactions.likeLabel}
-            {localLikeCount > 0 ? ` · ${localLikeCount}` : null}
-          </button>
-          <button
-            type="button"
-            aria-expanded={isReporting}
-            onClick={() => {
-              setIsReporting((currentValue) => !currentValue);
-            }}
-            className="min-h-10 rounded-full border border-(--color-border) bg-(--color-surface) px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
-          >
-            {isReporting
-              ? copy.comments.cancelReportLabel
-              : copy.comments.reportLabel}
-          </button>
-        </div>
+      <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
+        <span>{copy.comments.postedByLabel} {comment.authorDisplayName}</span>
+        <span aria-hidden="true">/</span>
+        <time dateTime={comment.createdAt}>
+          {formatForumPostDate(comment.createdAt, locale)}
+        </time>
       </div>
 
-      <p className="mt-4 whitespace-pre-wrap text-base leading-8">
-        {comment.body}
-      </p>
+      <p className="mt-3 whitespace-pre-wrap text-base leading-8">{comment.body}</p>
+
+      <div className="mt-4 flex items-center justify-between">
+        <button
+          type="button"
+          disabled={isLiking || !accessToken}
+          onClick={() => void handleLike()}
+          aria-label={localLiked ? copy.interactions.likedLabel : copy.interactions.likeLabel}
+          className={
+            localLiked
+              ? "flex items-center gap-1.5 text-xs font-semibold text-blue-700 transition dark:text-blue-300"
+              : "flex items-center gap-1.5 text-xs text-(--color-muted) transition hover:text-foreground disabled:cursor-default"
+          }
+        >
+          {localLiked ? (
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+              <path d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 0 1 6 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75A.75.75 0 0 1 15 2a2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23h-.952ZM2.062 14.382a12.01 12.01 0 0 0-.18.432c-.057.147-.11.295-.158.444-.05.153-.093.306-.129.46-.038.157-.068.315-.09.474-.024.162-.04.325-.05.488H2.5A6.01 6.01 0 0 0 4 18.5h.493v-4.118Z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
+            </svg>
+          )}
+          {localLikeCount > 0 ? <span>{localLikeCount}</span> : null}
+        </button>
+        {accessToken ? (
+          <button
+            type="button"
+            onClick={() => setIsReporting(true)}
+            className="text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
+          >
+            {copy.comments.reportLabel}
+          </button>
+        ) : null}
+      </div>
 
       {isReporting ? (
-        <CommunityCommentReportForm
-          commentId={comment.id}
-          onCancel={() => {
-            setIsReporting(false);
-          }}
-        />
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
+        >
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsReporting(false)}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 w-full max-h-[90vh] overflow-y-auto sm:max-w-lg">
+            <CommunityCommentReportForm
+              commentId={comment.id}
+              onCancel={() => setIsReporting(false)}
+            />
+          </div>
+        </div>
       ) : null}
     </article>
   );
@@ -305,8 +321,8 @@ function CommunityCommentComposer({
 }: CommunityCommentComposerProps) {
   const copy = useLocalizedContent(communityCopy);
   const { status, accessToken } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const bodyId = `forum-comment-body-${postId}`;
 
@@ -314,38 +330,24 @@ function CommunityCommentComposer({
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const acceptedCommunityGuidelines = formChecked(
-      formData,
-      "forum-comment-guidelines",
-    );
+
+    if (!accessToken) return;
 
     setFormError(null);
-    setSuccessMessage(null);
-
-    if (!accessToken) {
-      setFormError(copy.comments.signInRequiredError);
-      return;
-    }
-
-    if (!acceptedCommunityGuidelines) {
-      setFormError(copy.comments.guidelinesRequiredError);
-      return;
-    }
-
     setIsSubmitting(true);
 
     void createForumComment(
       postId,
       {
         body: formValue(formData, "forum-comment-body"),
-        acceptedCommunityGuidelines,
+        acceptedCommunityGuidelines: true,
       },
       accessToken,
     )
       .then((comment) => {
         form.reset();
         onCreated(comment);
-        setSuccessMessage(copy.comments.createSuccessText);
+        setIsOpen(false);
       })
       .catch((caughtError) => {
         setFormError(errorMessage(caughtError, copy.comments.formErrorFallback));
@@ -355,131 +357,97 @@ function CommunityCommentComposer({
       });
   }
 
+  const footerClass = "site-divider border-t p-4 sm:p-5";
+
   if (locked) {
     return (
-      <aside className="site-divider border-t bg-(--color-surface) p-5 sm:p-6">
-        <p className="site-kicker">{copy.comments.createTitle}</p>
-        <h3 className="mt-3 text-2xl font-semibold">
-          {copy.comments.lockedTitle}
-        </h3>
-        <p className="site-muted mt-3 text-sm leading-7">
-          {copy.comments.lockedText}
+      <div className={footerClass}>
+        <p className="text-xs text-(--color-muted)">
+          {copy.comments.lockedTitle} — {copy.comments.lockedText}
         </p>
-      </aside>
+      </div>
     );
   }
 
   if (status === "checking") {
-    return (
-      <aside
-        className="site-divider border-t bg-(--color-surface) p-5 sm:p-6"
-        aria-live="polite"
-      >
-        <p className="site-kicker">{copy.comments.createTitle}</p>
-        <p className="site-muted mt-4 text-sm leading-7">
-          {copy.comments.checkingSession}
-        </p>
-      </aside>
-    );
+    return null;
   }
 
   if (!accessToken) {
     return (
-      <aside className="site-divider border-t bg-(--color-surface) p-5 sm:p-6">
-        <p className="site-kicker">{copy.comments.createTitle}</p>
-        <h3 className="mt-3 text-2xl font-semibold">
-          {copy.comments.signInTitle}
-        </h3>
-        <p className="site-muted mt-3 text-sm leading-7">
-          {copy.comments.signInText}
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/login"
-            className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
-          >
-            {copy.comments.signInLabel}
-          </Link>
-          <Link
-            href="/register"
-            className="min-h-11 rounded-full border border-(--color-border) bg-background px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
-          >
-            {copy.comments.registerLabel}
-          </Link>
-        </div>
-      </aside>
+      <div className={`${footerClass} flex flex-wrap items-center gap-4`}>
+        <p className="text-sm text-(--color-muted)">{copy.comments.signInTitle}</p>
+        <Link
+          href="/login"
+          className="min-h-10 rounded-full border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
+        >
+          {copy.comments.signInLabel}
+        </Link>
+      </div>
+    );
+  }
+
+  if (!isOpen) {
+    return (
+      <div className={footerClass}>
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="w-full cursor-text rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-left text-sm text-(--color-subtle) transition hover:border-(--color-border-strong)"
+        >
+          {copy.comments.createTitle}…
+        </button>
+      </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="site-divider border-t bg-(--color-surface) p-5 sm:p-6"
-    >
-      <p className="site-kicker">{copy.comments.createTitle}</p>
-      <p className="site-muted mt-3 text-sm leading-7">
-        {copy.comments.createIntro}
-      </p>
-
-      <div className="mt-6 space-y-5">
-        <div>
-          <label
-            htmlFor={bodyId}
-            className="text-sm font-semibold text-foreground"
-          >
-            {copy.comments.bodyLabel}
-          </label>
-          <textarea
-            id={bodyId}
-            name="forum-comment-body"
-            required
-            minLength={2}
-            maxLength={6000}
-            rows={5}
-            placeholder={copy.comments.bodyPlaceholder}
-            className="mt-2 w-full rounded-2xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
-          />
-        </div>
-
-        <label className="flex gap-3 rounded-2xl border border-(--color-border) bg-background p-4 text-sm leading-6 text-(--color-muted)">
-          <input
-            type="checkbox"
-            name="forum-comment-guidelines"
-            className="mt-1 h-4 w-4 rounded border-(--color-border) accent-(--color-accent)"
-          />
-          <span>{copy.comments.guidelinesLabel}</span>
-        </label>
+    <div className={footerClass}>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          id={bodyId}
+          name="forum-comment-body"
+          required
+          minLength={2}
+          maxLength={6000}
+          autoFocus
+          rows={4}
+          placeholder={copy.comments.bodyPlaceholder}
+          className="w-full rounded-2xl border border-(--color-border) bg-background px-4 py-3 text-sm leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+        />
 
         {formError ? (
           <p
             role="alert"
-            className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm leading-6 text-red-700 dark:text-red-200"
+            className="mt-3 rounded-xl border border-red-200 bg-red-100 p-3 text-xs text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           >
             {formError}
           </p>
         ) : null}
 
-        {successMessage ? (
-          <div
-            role="status"
-            className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-800 dark:text-emerald-200"
+        <div className="mt-3 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setIsOpen(false);
+              setFormError(null);
+            }}
+            className="text-xs text-(--color-muted) transition hover:text-foreground"
           >
-            <p className="font-semibold">{copy.comments.createSuccessTitle}</p>
-            <p className="mt-1">{successMessage}</p>
-          </div>
-        ) : null}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="min-h-12 w-full rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
-        >
-          {isSubmitting
-            ? copy.comments.submitPendingLabel
-            : copy.comments.submitLabel}
-        </button>
-      </div>
-    </form>
+            {copy.comments.cancelReportLabel}
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="min-h-9 rounded-full border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+          >
+            {isSubmitting
+              ? copy.comments.submitPendingLabel
+              : copy.comments.submitLabel}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -652,7 +620,7 @@ function CommunityCommentReportForm({
         {formError ? (
           <p
             role="alert"
-            className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm leading-6 text-red-700 dark:text-red-200"
+            className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           >
             {formError}
           </p>
@@ -661,7 +629,7 @@ function CommunityCommentReportForm({
         {successMessage ? (
           <div
             role="status"
-            className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-800 dark:text-emerald-200"
+            className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
           >
             <p className="font-semibold">{copy.commentReports.successTitle}</p>
             <p className="mt-1">{successMessage}</p>

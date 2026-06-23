@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  CommunityPostComposer,
+  CommunityPostComposerModal,
   CommunityPostList,
   formatForumPostDate,
   useCommunityPosts,
@@ -47,7 +47,7 @@ export function CommunityCategoryView({ slug }: CommunityCategoryViewProps) {
             </p>
           </div>
 
-          <dl className="grid grid-cols-3 gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-sm">
+          <dl className="grid grid-cols-3 gap-4 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5 text-sm">
             <div>
               <dt className="site-subtle">{copy.categoryDetail.topicsLabel}</dt>
               <dd className="mt-1 text-2xl font-semibold">
@@ -79,44 +79,25 @@ export function CommunityCategoryView({ slug }: CommunityCategoryViewProps) {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_24rem]">
-        <div className="flex flex-col gap-6">
-          <Link
-            href="/community/guidelines"
-            className="site-card grid gap-3 p-5 transition hover:bg-[var(--color-surface)] sm:p-6 md:grid-cols-[12rem_1fr]"
-          >
-            <p className="site-subtle text-sm font-semibold">
-              {copy.categoryDetail.pinnedTitle}
-            </p>
-            <div>
-              <h3 className="font-semibold">
-                {copy.categoryDetail.pinnedGuidelinesTitle}
-              </h3>
-              <p className="site-muted mt-2 text-sm leading-7">
-                {copy.categoryDetail.pinnedGuidelinesText}
-              </p>
-            </div>
-          </Link>
-
-          <CommunityPostList
-            posts={posts}
-            status={status}
-            error={error}
-            categories={copy.categories.items}
-            title={copy.categoryDetail.threadsTitle}
-            intro={copy.categoryDetail.threadsIntro}
-            emptyTitle={copy.categoryDetail.emptyTitle}
-            emptyText={copy.categoryDetail.emptyText}
-            onRetry={refresh}
-          />
-        </div>
-
-        <CommunityPostComposer
+      <section className="flex flex-col gap-6">
+        <CommunityPostComposerModal
           categories={copy.categories.items}
           fixedCategorySlug={slug}
           onCreated={(post) => {
             setPosts((currentPosts) => [post, ...currentPosts]);
           }}
+        />
+
+        <CommunityPostList
+          posts={posts}
+          status={status}
+          error={error}
+          categories={copy.categories.items}
+          title={copy.categoryDetail.threadsTitle}
+          intro={copy.categoryDetail.threadsIntro}
+          emptyTitle={copy.categoryDetail.emptyTitle}
+          emptyText={copy.categoryDetail.emptyText}
+          onRetry={refresh}
         />
       </section>
     </PageShell>

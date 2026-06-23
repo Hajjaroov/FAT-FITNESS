@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+
 import { defaultLocale, isLocale, type Locale } from "@/content/site";
 
 type LocaleContextValue = {
@@ -34,19 +35,24 @@ function getBrowserLocale(): Locale {
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(defaultLocale);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       setLocale(getBrowserLocale());
+      setHasHydrated(true);
     });
 
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
+    // Skip on the initial "en" default render so we don't overwrite the
+    // stored locale before the rAF has had a chance to read it.
+    if (!hasHydrated) return;
     document.documentElement.lang = locale;
     window.localStorage.setItem(storageKey, locale);
-  }, [locale]);
+  }, [locale, hasHydrated]);
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>

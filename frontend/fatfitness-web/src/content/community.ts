@@ -133,7 +133,6 @@ export const communityCopy = {
       emptyTitle: "No threads yet",
       emptyText:
         "When verified members start posting, the latest threads will appear here.",
-      readPostLabel: "Read thread",
       postedByLabel: "Posted by",
       inLabel: "in",
       createTitle: "Start a thread",
@@ -232,7 +231,7 @@ export const communityCopy = {
       emptyText:
         "Be the first to answer with a careful question, a useful reflection, or beginner-friendly support.",
       postedByLabel: "Reply from",
-      reportLabel: "Report reply",
+      reportLabel: "Report",
       cancelReportLabel: "Cancel",
       createTitle: "Write a reply",
       createIntro:
@@ -509,7 +508,6 @@ export const communityCopy = {
       emptyTitle: "Noch keine Threads",
       emptyText:
         "Sobald verifizierte Mitglieder posten, erscheinen die neuesten Threads hier.",
-      readPostLabel: "Thread lesen",
       postedByLabel: "Gepostet von",
       inLabel: "in",
       createTitle: "Thread starten",
@@ -613,7 +611,7 @@ export const communityCopy = {
       emptyText:
         "Sei die erste Person mit einer vorsichtigen Frage, einer hilfreichen Reflexion oder anfängerfreundlichem Support.",
       postedByLabel: "Antwort von",
-      reportLabel: "Antwort melden",
+      reportLabel: "Melden",
       cancelReportLabel: "Abbrechen",
       createTitle: "Antwort schreiben",
       createIntro:

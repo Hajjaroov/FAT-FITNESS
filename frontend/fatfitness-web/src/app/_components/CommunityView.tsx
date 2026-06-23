@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  CommunityPostComposer,
   CommunityPostList,
   formatForumPostDate,
   useCommunityPosts,
@@ -17,7 +16,7 @@ import { communityCopy } from "@/content/community";
 export function CommunityView() {
   const copy = useLocalizedContent(communityCopy);
   const { locale } = useLocale();
-  const { posts, status, error, setPosts, refresh } = useCommunityPosts();
+  const { posts, status, error, refresh } = useCommunityPosts();
   const categories = copy.categories.items;
 
   return (
@@ -34,7 +33,7 @@ export function CommunityView() {
             </p>
           </div>
 
-          <aside className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <aside className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
             <p className="site-subtle text-sm font-semibold">
               {copy.forumIndex.statusLabel}
             </p>
@@ -48,7 +47,7 @@ export function CommunityView() {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_24rem]">
+      <section className="flex flex-col gap-6">
         <CommunityPostList
           posts={posts}
           status={status}
@@ -59,12 +58,6 @@ export function CommunityView() {
           emptyTitle={copy.posts.emptyTitle}
           emptyText={copy.posts.emptyText}
           onRetry={refresh}
-        />
-        <CommunityPostComposer
-          categories={categories}
-          onCreated={(post) => {
-            setPosts((currentPosts) => [post, ...currentPosts]);
-          }}
         />
       </section>
 
@@ -91,8 +84,8 @@ export function CommunityView() {
         <div>
           {copy.forumIndex.groups.map((group) => (
             <section key={group.title}>
-              <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 sm:px-6">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+              <div className="border-b border-(--color-border) bg-(--color-surface) px-5 py-3 sm:px-6">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-(--color-muted)">
                   {group.title}
                 </h3>
               </div>
@@ -117,7 +110,7 @@ export function CommunityView() {
                   <Link
                     key={board.slug}
                     href={`/community/categories/${board.slug}`}
-                    className="site-divider grid gap-4 border-b p-5 transition hover:bg-[var(--color-surface)] sm:p-6 md:grid-cols-[1fr_20rem] md:items-center"
+                    className="site-divider grid gap-4 border-b p-5 transition hover:bg-(--color-surface) sm:p-6 md:grid-cols-[1fr_20rem] md:items-center"
                   >
                     <div>
                       <h4 className="text-xl font-semibold">{board.name}</h4>
