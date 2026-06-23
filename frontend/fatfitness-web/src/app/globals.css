@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   color-scheme: light;
@@ -22,7 +22,7 @@
   --shadow-card: 0 24px 70px rgb(52 39 24 / 0.12);
 }
 
-:root[data-theme="dark"] {
+:root.dark {
   color-scheme: dark;
   --color-page: #11100e;
   --color-page-rgb: 17 16 14;

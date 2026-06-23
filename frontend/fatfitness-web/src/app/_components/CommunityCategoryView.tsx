@@ -93,12 +93,9 @@ export function CommunityCategoryView({ slug }: CommunityCategoryViewProps) {
           status={status}
           error={error}
           categories={copy.categories.items}
-          title={copy.categoryDetail.threadsTitle}
-          intro={copy.categoryDetail.threadsIntro}
           emptyTitle={copy.categoryDetail.emptyTitle}
           emptyText={copy.categoryDetail.emptyText}
-          onRetry={refresh}
-        />
+          onRetry={refresh}/>
       </section>
     </PageShell>
   );

@@ -74,14 +74,15 @@ function formatDateTime(value: string | null, locale: string, fallback = "-") {
 
 function reportStatusClass(status: ModerationReportStatus) {
   if (status === "OPEN") {
-    return "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200";
+    
+    return "border-amber-200 bg-amber-200 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200";
   }
 
   if (status === "RESOLVED") {
     return "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300";
   }
 
-  return "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-500/30 dark:bg-slate-500/15 dark:text-slate-300";
+  return "border-slate-300 bg-slate-200 text-slate-700 dark:border-slate-500/30 dark:bg-slate-500/15 dark:text-slate-300";
 }
 
 function reportReasonLabel(reason: string) {

@@ -27,8 +27,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // the linter. The blocking script in layout.tsx already set data-theme
     // correctly; read it back so React's state matches without re-deriving.
     const frame = requestAnimationFrame(() => {
-      const attr = document.documentElement.dataset.theme;
-      setTheme(attr === "dark" ? "dark" : "light");
+      const isDark = document.documentElement.classList.contains("dark");
+      setTheme(isDark ? "dark" : "light");
       setHasHydrated(true);
     });
     return () => cancelAnimationFrame(frame);
@@ -38,7 +38,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Skip until the rAF has run. This prevents overwriting the blocking
     // script's correct data-theme with the "light" default on first render.
     if (!hasHydrated) return;
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem(storageKey, theme);
   }, [theme, hasHydrated]);
 

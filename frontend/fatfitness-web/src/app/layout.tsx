@@ -33,7 +33,7 @@ export default function RootLayout({
         {/* Synchronous theme init — prevents light-mode flash when OS is dark */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=localStorage.getItem('fat-fitness-theme');var t=s==='dark'||s==='light'?s:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}})();`,
+            __html: `(function(){try{var s=localStorage.getItem('fat-fitness-theme');var t=s==='dark'||s==='light'?s:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})();`,
           }}
         />
       </head>

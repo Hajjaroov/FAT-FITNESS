@@ -53,8 +53,6 @@ export function CommunityView() {
           status={status}
           error={error}
           categories={categories}
-          title={copy.posts.latestTitle}
-          intro={copy.posts.latestIntro}
           emptyTitle={copy.posts.emptyTitle}
           emptyText={copy.posts.emptyText}
           onRetry={refresh}

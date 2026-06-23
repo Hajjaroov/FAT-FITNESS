@@ -40,8 +40,6 @@ type CommunityPostListProps = {
   status: LoadState;
   error: string | null;
   categories: CommunityCategoryOption[];
-  title: string;
-  intro: string;
   emptyTitle: string;
   emptyText: string;
   onRetry: () => Promise<void>;
@@ -169,8 +167,6 @@ export function CommunityPostList({
   status,
   error,
   categories,
-  title,
-  intro,
   emptyTitle,
   emptyText,
   onRetry,
@@ -181,11 +177,6 @@ export function CommunityPostList({
 
   return (
     <section className="site-card overflow-hidden">
-      <div className="site-divider border-b p-5 sm:p-6">
-        <p className="site-kicker">{copy.posts.eyebrow}</p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight">{title}</h2>
-        <p className="site-muted mt-2 text-sm leading-7">{intro}</p>
-      </div>
 
       {status === "loading" ? (
         <div className="p-8 text-center sm:p-12" aria-live="polite">

@@ -78,7 +78,7 @@ export const communityCopy = {
       latestEmpty: "No threads yet",
       groups: [
         {
-          title: "Start here",
+          title: "General support and beginner questions",
           slugs: ["introductions", "journey-logs", "questions-and-support"],
         },
         {
@@ -99,9 +99,6 @@ export const communityCopy = {
       backLinkLabel: "Community",
       statusLabel: "Board status",
       statusText: "No threads yet",
-      threadsTitle: "Threads",
-      threadsIntro:
-        "Top-level threads from this board. Replies are not built yet.",
       emptyTitle: "No threads yet",
       emptyText:
         "Verified members can start the first thread in this board.",
@@ -122,10 +119,7 @@ export const communityCopy = {
       bookmarkError: "Could not update bookmark. Please try again.",
     },
     posts: {
-      eyebrow: "Forum threads",
       latestTitle: "Latest threads",
-      latestIntro:
-        "New top-level posts from the community boards. Replies are not built yet.",
       loading: "Loading threads...",
       errorTitle: "Could not load threads",
       retryLabel: "Try again",
@@ -473,9 +467,6 @@ export const communityCopy = {
       backLinkLabel: "Community",
       statusLabel: "Board-Status",
       statusText: "Noch keine Threads",
-      threadsTitle: "Threads",
-      threadsIntro:
-        "Top-Level-Threads aus diesem Board. Antworten sind noch nicht gebaut.",
       emptyTitle: "Noch keine Threads",
       emptyText:
         "Verifizierte Mitglieder können den ersten Thread in diesem Board starten.",
@@ -497,7 +488,6 @@ export const communityCopy = {
         "Lesezeichen konnte nicht aktualisiert werden. Bitte versuche es erneut.",
     },
     posts: {
-      eyebrow: "Forum-Threads",
       latestTitle: "Neueste Threads",
       latestIntro:
         "Neue Top-Level-Beiträge aus den Community-Boards. Antworten sind noch nicht gebaut.",
