@@ -28,6 +28,19 @@ type AuthPageCopy = {
   switchLabel: string;
 };
 
+type VerifyEmailCopy = {
+  eyebrow: string;
+  title: string;
+  verifyingText: string;
+  successTitle: string;
+  successText: string;
+  signInLabel: string;
+  errorTitle: string;
+  missingTokenText: string;
+  expiredText: string;
+  fallbackErrorText: string;
+};
+
 type AuthCopy = {
   shared: {
     privacyLine: string;
@@ -45,6 +58,7 @@ type AuthCopy = {
   };
   login: AuthPageCopy;
   register: AuthPageCopy;
+  verifyEmail: VerifyEmailCopy;
 };
 
 export const authCopy = {
@@ -159,6 +173,22 @@ export const authCopy = {
       switchPrompt: "Already have an account?",
       switchHref: "/login",
       switchLabel: "Sign in",
+    },
+    verifyEmail: {
+      eyebrow: "Email verification",
+      title: "Verifying your email.",
+      verifyingText: "Checking your verification link...",
+      successTitle: "Email verified.",
+      successText:
+        "Your account is active. You can now sign in and join the community.",
+      signInLabel: "Sign in",
+      errorTitle: "Verification failed.",
+      missingTokenText:
+        "No verification token found in the link. Make sure you clicked the full link from your email.",
+      expiredText:
+        "This verification link has expired or has already been used. Request a new one from the register page.",
+      fallbackErrorText:
+        "Something went wrong. Try clicking the link in your email again, or request a new verification email.",
     },
   },
   de: {
@@ -277,6 +307,22 @@ export const authCopy = {
       switchPrompt: "Schon einen Account?",
       switchHref: "/login",
       switchLabel: "Einloggen",
+    },
+    verifyEmail: {
+      eyebrow: "E-Mail-Verifizierung",
+      title: "Deine E-Mail wird verifiziert.",
+      verifyingText: "Verifizierungslink wird geprüft...",
+      successTitle: "E-Mail verifiziert.",
+      successText:
+        "Dein Account ist aktiv. Du kannst dich jetzt einloggen und der Community beitreten.",
+      signInLabel: "Einloggen",
+      errorTitle: "Verifizierung fehlgeschlagen.",
+      missingTokenText:
+        "Kein Verifizierungs-Token im Link gefunden. Stelle sicher, dass du den vollständigen Link aus deiner E-Mail angeklickt hast.",
+      expiredText:
+        "Dieser Verifizierungslink ist abgelaufen oder wurde bereits verwendet. Fordere einen neuen über die Registrierungsseite an.",
+      fallbackErrorText:
+        "Etwas ist schiefgelaufen. Klicke erneut auf den Link in deiner E-Mail oder fordere eine neue Bestätigungs-E-Mail an.",
     },
   },
 } satisfies Record<Locale, AuthCopy>;
