@@ -233,6 +233,62 @@ Response shape:
 
 This endpoint is public and intentionally returns success even when the refresh token is unknown or already revoked. Existing access tokens remain valid until their short expiry; logout revokes the ability to extend the session. Web logout also clears the refresh cookie.
 
+### `POST /api/auth/forgot-password`
+
+Purpose:
+
+- Accept an email address and send a password reset link via Resend if the account is active.
+- Always return the same safe response regardless of whether the email exists or the account status.
+- Rate-limited: 5 attempts per IP per hour.
+
+Request shape:
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+Response shape (always identical):
+
+```json
+{
+  "message": "If an active account exists for this email, a password reset link has been sent."
+}
+```
+
+This endpoint is public. The reset token is stored hashed in `password_reset_tokens` and expires in 30 minutes.
+
+### `POST /api/auth/reset-password`
+
+Purpose:
+
+- Accept a raw reset token plus a new password and update the account password hash.
+- Reject unknown, expired, or already-used tokens with `400`.
+- Reject non-active accounts with `403`.
+- Mark the token as used and revoke all existing refresh sessions on success.
+- Rate-limited: 10 attempts per IP per 15 minutes.
+
+Request shape:
+
+```json
+{
+  "token": "raw-reset-token-from-email-link",
+  "newPassword": "new-secret-password",
+  "confirmPassword": "new-secret-password"
+}
+```
+
+Response shape:
+
+```json
+{
+  "message": "Password updated. Please sign in with your new password."
+}
+```
+
+This endpoint is public. After a successful reset all existing refresh sessions are revoked, so all devices must re-login.
+
 ### `GET /api/auth/me`
 
 Purpose:
@@ -589,6 +645,8 @@ Current implemented auth endpoint:
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
 - `GET /api/auth/me`
 - `GET /api/community/categories`
 - `GET /api/community/categories/{slug}`
@@ -613,8 +671,7 @@ Current implemented auth endpoint:
 
 Next auth slices:
 
-- Add real email delivery before production launch.
-- Add auth hardening before production launch: stronger password guidance, rate limiting for login/verification attempts, and forgot-password/reset-password endpoints.
+- Add profile/account settings UI: view/edit display name, change password (reuses reset-password plumbing), country/region, sign-out-everywhere.
 - Add protected account UI/session polish only where it supports the next community milestone.
 
 Planned registration shape when auth is approved:

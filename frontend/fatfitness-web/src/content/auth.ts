@@ -41,6 +41,42 @@ type VerifyEmailCopy = {
   fallbackErrorText: string;
 };
 
+type ForgotPasswordCopy = {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  submitLabel: string;
+  submitPendingLabel: string;
+  successTitle: string;
+  successText: string;
+  backToLogin: string;
+  formErrorFallback: string;
+};
+
+type ResetPasswordCopy = {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  newPasswordLabel: string;
+  newPasswordPlaceholder: string;
+  confirmPasswordLabel: string;
+  confirmPasswordPlaceholder: string;
+  submitLabel: string;
+  submitPendingLabel: string;
+  successTitle: string;
+  successText: string;
+  signInLabel: string;
+  errorTitle: string;
+  missingTokenText: string;
+  expiredText: string;
+  alreadyUsedText: string;
+  fallbackErrorText: string;
+  passwordMismatchError: string;
+  passwordTooShortError: string;
+};
+
 type AuthCopy = {
   shared: {
     privacyLine: string;
@@ -59,6 +95,8 @@ type AuthCopy = {
   login: AuthPageCopy;
   register: AuthPageCopy;
   verifyEmail: VerifyEmailCopy;
+  forgotPassword: ForgotPasswordCopy;
+  resetPassword: ResetPasswordCopy;
 };
 
 export const authCopy = {
@@ -189,6 +227,48 @@ export const authCopy = {
         "This verification link has expired or has already been used. Request a new one from the register page.",
       fallbackErrorText:
         "Something went wrong. Try clicking the link in your email again, or request a new verification email.",
+    },
+    forgotPassword: {
+      eyebrow: "Forgot password",
+      title: "Reset your password.",
+      intro:
+        "Enter the email address for your account and we will send you a reset link. The link expires in 30 minutes.",
+      emailLabel: "Email",
+      emailPlaceholder: "name@example.com",
+      submitLabel: "Send reset link",
+      submitPendingLabel: "Sending...",
+      successTitle: "Check your email.",
+      successText:
+        "If an active account exists for that email address, a reset link has been sent. Check your inbox and follow the link within 30 minutes.",
+      backToLogin: "Back to sign in",
+      formErrorFallback:
+        "Something went wrong. Please try again.",
+    },
+    resetPassword: {
+      eyebrow: "Reset password",
+      title: "Set a new password.",
+      intro: "Choose a new password for your account. You will be signed out of all devices after the reset.",
+      newPasswordLabel: "New password",
+      newPasswordPlaceholder: "At least 8 characters",
+      confirmPasswordLabel: "Confirm new password",
+      confirmPasswordPlaceholder: "Repeat new password",
+      submitLabel: "Reset password",
+      submitPendingLabel: "Resetting...",
+      successTitle: "Password updated.",
+      successText:
+        "Your password has been reset. Sign in with your new password.",
+      signInLabel: "Sign in",
+      errorTitle: "Reset failed.",
+      missingTokenText:
+        "No reset token found in the link. Make sure you clicked the full link from your email.",
+      expiredText:
+        "This reset link has expired. Request a new one from the forgot password page.",
+      alreadyUsedText:
+        "This reset link has already been used. Request a new one if you still need to reset your password.",
+      fallbackErrorText:
+        "Something went wrong. Try requesting a new reset link.",
+      passwordMismatchError: "Passwords do not match.",
+      passwordTooShortError: "Password must be at least 8 characters.",
     },
   },
   de: {
@@ -323,6 +403,49 @@ export const authCopy = {
         "Dieser Verifizierungslink ist abgelaufen oder wurde bereits verwendet. Fordere einen neuen über die Registrierungsseite an.",
       fallbackErrorText:
         "Etwas ist schiefgelaufen. Klicke erneut auf den Link in deiner E-Mail oder fordere eine neue Bestätigungs-E-Mail an.",
+    },
+    forgotPassword: {
+      eyebrow: "Passwort vergessen",
+      title: "Passwort zurücksetzen.",
+      intro:
+        "Gib die E-Mail-Adresse deines Accounts ein und wir senden dir einen Reset-Link. Der Link läuft in 30 Minuten ab.",
+      emailLabel: "E-Mail",
+      emailPlaceholder: "name@example.com",
+      submitLabel: "Reset-Link senden",
+      submitPendingLabel: "Wird gesendet...",
+      successTitle: "Schau in deine E-Mails.",
+      successText:
+        "Falls ein aktiver Account für diese E-Mail-Adresse existiert, wurde ein Reset-Link gesendet. Prüfe deinen Posteingang und folge dem Link innerhalb von 30 Minuten.",
+      backToLogin: "Zurück zum Einloggen",
+      formErrorFallback:
+        "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    },
+    resetPassword: {
+      eyebrow: "Passwort zurücksetzen",
+      title: "Neues Passwort festlegen.",
+      intro:
+        "Wähle ein neues Passwort für deinen Account. Nach dem Reset wirst du auf allen Geräten ausgeloggt.",
+      newPasswordLabel: "Neues Passwort",
+      newPasswordPlaceholder: "Mindestens 8 Zeichen",
+      confirmPasswordLabel: "Neues Passwort bestätigen",
+      confirmPasswordPlaceholder: "Neues Passwort wiederholen",
+      submitLabel: "Passwort zurücksetzen",
+      submitPendingLabel: "Wird zurückgesetzt...",
+      successTitle: "Passwort aktualisiert.",
+      successText:
+        "Dein Passwort wurde zurückgesetzt. Logge dich mit deinem neuen Passwort ein.",
+      signInLabel: "Einloggen",
+      errorTitle: "Reset fehlgeschlagen.",
+      missingTokenText:
+        "Kein Reset-Token im Link gefunden. Stelle sicher, dass du den vollständigen Link aus deiner E-Mail angeklickt hast.",
+      expiredText:
+        "Dieser Reset-Link ist abgelaufen. Fordere einen neuen über die Passwort-vergessen-Seite an.",
+      alreadyUsedText:
+        "Dieser Reset-Link wurde bereits verwendet. Fordere einen neuen an, falls du dein Passwort noch zurücksetzen möchtest.",
+      fallbackErrorText:
+        "Etwas ist schiefgelaufen. Bitte fordere einen neuen Reset-Link an.",
+      passwordMismatchError: "Passwörter stimmen nicht überein.",
+      passwordTooShortError: "Das Passwort muss mindestens 8 Zeichen haben.",
     },
   },
 } satisfies Record<Locale, AuthCopy>;

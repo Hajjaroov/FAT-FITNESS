@@ -1,11 +1,15 @@
 import { apiBaseUrl } from "@/lib/config";
 import type {
   CurrentUser,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
   LoginRequest,
   LoginResponse,
   LogoutResponse,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   TokenResponse,
   VerifyEmailResponse,
 } from "@/types/auth";
@@ -405,4 +409,18 @@ export function bookmarkForumPost(postId: string, accessToken: string) {
 
 export function getBookmarkedPosts(accessToken: string) {
   return apiRequest<ForumPost[]>("/api/community/bookmarks", { accessToken });
+}
+
+export function forgotPassword(request: ForgotPasswordRequest) {
+  return apiRequest<ForgotPasswordResponse>("/api/auth/forgot-password", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export function resetPassword(request: ResetPasswordRequest) {
+  return apiRequest<ResetPasswordResponse>("/api/auth/reset-password", {
+    method: "POST",
+    body: request,
+  });
 }

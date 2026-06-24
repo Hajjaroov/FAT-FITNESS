@@ -96,7 +96,8 @@ Current community/forum state:
 - `POST /api/moderation/posts/{id}/lock` sets `is_locked = true` on the forum post and writes a `LOCK` row to `moderation_actions`.
 - `POST /api/moderation/users/{id}/ban` sets the user status to `BANNED`, revokes all their refresh sessions, and writes a `BAN` row to `moderation_actions`.
 - The seventh Flyway migration (`V7__likes_and_bookmarks.sql`) creates `post_likes`, `comment_likes`, and `post_bookmarks`. Each has a `(user_id, target_id)` unique constraint so a user can like/bookmark a given target at most once, plus FK constraints to `users` and the target table.
-- The latest applied migration is `V7`. The next new migration must be `V8`.
+- The eighth Flyway migration (`V8__password_reset_tokens.sql`) creates `password_reset_tokens` with a `token_hash` unique constraint and FK to `users`. Tokens expire in 30 minutes and are marked used after a successful reset.
+- The latest applied migration is `V8`. The next new migration must be `V9`.
 
 ### Moderation audit table
 
@@ -113,9 +114,6 @@ The `V6__moderation_lock_and_ban.sql` migration creates `moderation_actions` wit
 This table is intentionally lightweight; it is a simple audit trail and does not replace any report or resolution rows already present for forum reports. Recording moderation actions centrally helps with review, appeals, and compliance.
 
 Next user/auth step:
-
-- Add a real email provider later, likely Resend, with keys supplied through environment variables and no secrets committed to Git.
-- Add password reset data model and rate-limiting strategy before public launch.
 - Add bearer-token validation to future protected feature endpoints before connecting account-only frontend features.
 - Keep local owner seed credentials outside Git; use environment variables for local development.
 - `backend/fatfitness-api/.env` can hold local owner seed values for `bootRun`; it is ignored by Git and should stay local-only.

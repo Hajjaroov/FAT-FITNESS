@@ -110,6 +110,10 @@ public class UserAccount {
 		deletedAt = Instant.now();
 	}
 
+	public void updatePasswordHash(String newPasswordHash) {
+		this.passwordHash = newPasswordHash;
+	}
+
 	public void addRole(UserRole role) {
 		roles.add(role);
 	}

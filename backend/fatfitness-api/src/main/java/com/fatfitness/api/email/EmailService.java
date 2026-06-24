@@ -61,6 +61,29 @@ public class EmailService {
 		}
 	}
 
+	public void sendPasswordResetEmail(String toEmail, String displayName, String rawToken) {
+		String link = emailProperties.appBaseUrl() + "/reset-password?token=" + rawToken;
+		String apiKey = emailProperties.resendApiKey();
+		if (apiKey == null || apiKey.isBlank()) {
+			log.info("[EMAIL DEV] Password reset link for {}: {}", toEmail, link);
+			return;
+		}
+
+		String html = buildPasswordResetHtml(displayName, link);
+
+		try {
+			restClient.post()
+					.uri("/emails")
+					.header("Authorization", "Bearer " + apiKey)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(new ResendRequest(emailProperties.from(), toEmail, "Reset your Fat Fitness Community password", html))
+					.retrieve()
+					.toBodilessEntity();
+		} catch (RuntimeException ex) {
+			log.error("Failed to send password reset email to {}: {}", toEmail, ex.getMessage());
+		}
+	}
+
 	private static String buildVerificationHtml(String displayName, String link) {
 		return """
 				<!DOCTYPE html>
@@ -83,6 +106,36 @@ public class EmailService {
 				    </a>
 				    <p style="color:#999;font-size:12px;margin:24px 0 0;line-height:1.6;">
 				      If you did not create this account, you can ignore this email.<br>
+				      Fat Fitness Community — personal journey, beginner-friendly support.
+				    </p>
+				  </div>
+				</body>
+				</html>
+				""".formatted(displayName, link);
+	}
+
+	private static String buildPasswordResetHtml(String displayName, String link) {
+		return """
+				<!DOCTYPE html>
+				<html lang="en">
+				<head><meta charset="UTF-8"></head>
+				<body style="font-family:sans-serif;background:#fffaf1;margin:0;padding:32px;">
+				  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:40px;">
+				    <h1 style="font-size:22px;font-weight:700;color:#1a1a1a;margin:0 0 16px;">
+				      Reset your password
+				    </h1>
+				    <p style="color:#555;line-height:1.6;margin:0 0 24px;">
+				      Hi %s,<br><br>
+				      Click the button below to set a new password for your Fat Fitness Community account.
+				      This link expires in 30 minutes.
+				    </p>
+				    <a href="%s"
+				       style="display:inline-block;background:#1a1a1a;color:#fff;padding:14px 28px;
+				              border-radius:100px;text-decoration:none;font-weight:600;font-size:14px;">
+				      Reset password
+				    </a>
+				    <p style="color:#999;font-size:12px;margin:24px 0 0;line-height:1.6;">
+				      If you did not request a password reset, you can ignore this email.<br>
 				      Fat Fitness Community — personal journey, beginner-friendly support.
 				    </p>
 				  </div>

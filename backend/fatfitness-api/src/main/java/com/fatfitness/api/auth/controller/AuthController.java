@@ -1,5 +1,7 @@
 package com.fatfitness.api.auth.controller;
 
+import java.time.Duration;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fatfitness.api.auth.dto.CurrentUserResponse;
+import com.fatfitness.api.auth.dto.ForgotPasswordRequest;
+import com.fatfitness.api.auth.dto.ForgotPasswordResponse;
 import com.fatfitness.api.auth.dto.LoginRequest;
 import com.fatfitness.api.auth.dto.LoginResponse;
 import com.fatfitness.api.auth.dto.LogoutRequest;
@@ -21,10 +25,14 @@ import com.fatfitness.api.auth.dto.ResendVerificationRequest;
 import com.fatfitness.api.auth.dto.ResendVerificationResponse;
 import com.fatfitness.api.auth.dto.RegisterRequest;
 import com.fatfitness.api.auth.dto.RegisterResponse;
+import com.fatfitness.api.auth.dto.ResetPasswordRequest;
+import com.fatfitness.api.auth.dto.ResetPasswordResponse;
 import com.fatfitness.api.auth.dto.VerifyEmailRequest;
 import com.fatfitness.api.auth.dto.VerifyEmailResponse;
 import com.fatfitness.api.auth.model.ClientType;
 import com.fatfitness.api.auth.service.AuthRegistrationService;
+import com.fatfitness.api.auth.service.InMemoryRateLimiter;
+import com.fatfitness.api.auth.service.PasswordResetService;
 import com.fatfitness.api.auth.service.RefreshTokenCookieService;
 import com.fatfitness.api.auth.service.RefreshTokenCookieService.ResolvedRefreshToken;
 
@@ -36,14 +44,32 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+	private static final int LOGIN_MAX = 10;
+	private static final Duration LOGIN_WINDOW = Duration.ofMinutes(15);
+
+	private static final int RESEND_MAX = 5;
+	private static final Duration RESEND_WINDOW = Duration.ofHours(1);
+
+	private static final int FORGOT_MAX = 5;
+	private static final Duration FORGOT_WINDOW = Duration.ofHours(1);
+
+	private static final int RESET_MAX = 10;
+	private static final Duration RESET_WINDOW = Duration.ofMinutes(15);
+
 	private final AuthRegistrationService authRegistrationService;
+	private final PasswordResetService passwordResetService;
 	private final RefreshTokenCookieService refreshTokenCookieService;
+	private final InMemoryRateLimiter rateLimiter;
 
 	public AuthController(
 			AuthRegistrationService authRegistrationService,
-			RefreshTokenCookieService refreshTokenCookieService) {
+			PasswordResetService passwordResetService,
+			RefreshTokenCookieService refreshTokenCookieService,
+			InMemoryRateLimiter rateLimiter) {
 		this.authRegistrationService = authRegistrationService;
+		this.passwordResetService = passwordResetService;
 		this.refreshTokenCookieService = refreshTokenCookieService;
+		this.rateLimiter = rateLimiter;
 	}
 
 	@PostMapping("/register")
@@ -58,7 +84,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/resend-verification")
-	public ResendVerificationResponse resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
+	public ResendVerificationResponse resendVerification(
+			@Valid @RequestBody ResendVerificationRequest request,
+			HttpServletRequest servletRequest) {
+		rateLimiter.check("resend:" + servletRequest.getRemoteAddr(), RESEND_MAX, RESEND_WINDOW);
 		return authRegistrationService.resendVerification(request);
 	}
 
@@ -67,6 +96,8 @@ public class AuthController {
 			@Valid @RequestBody LoginRequest request,
 			HttpServletRequest servletRequest,
 			HttpServletResponse servletResponse) {
+		rateLimiter.check("login:" + servletRequest.getRemoteAddr(), LOGIN_MAX, LOGIN_WINDOW);
+
 		LoginResponse response = authRegistrationService.login(
 				request,
 				servletRequest.getHeader("User-Agent"),
@@ -119,6 +150,22 @@ public class AuthController {
 		refreshTokenCookieService.clearRefreshTokenCookie(servletResponse);
 
 		return response;
+	}
+
+	@PostMapping("/forgot-password")
+	public ForgotPasswordResponse forgotPassword(
+			@Valid @RequestBody ForgotPasswordRequest request,
+			HttpServletRequest servletRequest) {
+		rateLimiter.check("forgot:" + servletRequest.getRemoteAddr(), FORGOT_MAX, FORGOT_WINDOW);
+		return passwordResetService.forgotPassword(request);
+	}
+
+	@PostMapping("/reset-password")
+	public ResetPasswordResponse resetPassword(
+			@Valid @RequestBody ResetPasswordRequest request,
+			HttpServletRequest servletRequest) {
+		rateLimiter.check("reset:" + servletRequest.getRemoteAddr(), RESET_MAX, RESET_WINDOW);
+		return passwordResetService.resetPassword(request);
 	}
 
 	@GetMapping("/me")

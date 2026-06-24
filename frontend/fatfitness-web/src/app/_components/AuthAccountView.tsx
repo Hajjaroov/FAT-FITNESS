@@ -291,6 +291,14 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
               {page.switchLabel}
             </Link>
           </p>
+
+          {mode === "login" ? (
+            <p className="mt-3 text-center text-sm text-foreground/50">
+              <Link href="/forgot-password" className="hover:text-foreground transition">
+                Forgot password?
+              </Link>
+            </p>
+          ) : null}
         </form>
       </section>
     </PageShell>

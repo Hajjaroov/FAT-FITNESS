@@ -25,7 +25,11 @@ public record AuthProperties(
 		RefreshCookie refreshCookie,
 
 		@Valid
-		OwnerSeed ownerSeed
+		OwnerSeed ownerSeed,
+
+		@Valid
+		@NotNull
+		RateLimit rateLimit
 ) {
 
 	public record Jwt(
@@ -53,6 +57,9 @@ public record AuthProperties(
 			@NotBlank
 			String sameSite
 	) {
+	}
+
+	public record RateLimit(boolean enabled) {
 	}
 
 	public record OwnerSeed(
