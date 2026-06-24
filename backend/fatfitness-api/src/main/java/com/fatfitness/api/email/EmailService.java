@@ -1,8 +1,11 @@
 package com.fatfitness.api.email;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -13,16 +16,28 @@ public class EmailService {
 
 	private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
+	private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(5);
+	private static final Duration READ_TIMEOUT = Duration.ofSeconds(10);
+
 	private final EmailProperties emailProperties;
 	private final RestClient restClient;
 
 	public EmailService(EmailProperties emailProperties) {
 		this.emailProperties = emailProperties;
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
+		requestFactory.setReadTimeout(READ_TIMEOUT);
 		this.restClient = RestClient.builder()
 				.baseUrl("https://api.resend.com")
+				.requestFactory(requestFactory)
 				.build();
 	}
 
+	/**
+	 * Sends the verification email. Email delivery is best-effort and must never
+	 * roll back account creation: a Resend outage or timeout is logged, not thrown.
+	 * Users who miss the email can request a new one via resend-verification.
+	 */
 	public void sendVerificationEmail(String toEmail, String displayName, String rawToken) {
 		String link = emailProperties.appBaseUrl() + "/verify-email?token=" + rawToken;
 		String apiKey = emailProperties.resendApiKey();
@@ -33,13 +48,17 @@ public class EmailService {
 
 		String html = buildVerificationHtml(displayName, link);
 
-		restClient.post()
-				.uri("/emails")
-				.header("Authorization", "Bearer " + apiKey)
-				.contentType(MediaType.APPLICATION_JSON)
-				.body(new ResendRequest(emailProperties.from(), toEmail, "Verify your Fat Fitness Community email", html))
-				.retrieve()
-				.toBodilessEntity();
+		try {
+			restClient.post()
+					.uri("/emails")
+					.header("Authorization", "Bearer " + apiKey)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(new ResendRequest(emailProperties.from(), toEmail, "Verify your Fat Fitness Community email", html))
+					.retrieve()
+					.toBodilessEntity();
+		} catch (RuntimeException ex) {
+			log.error("Failed to send verification email to {}: {}", toEmail, ex.getMessage());
+		}
 	}
 
 	private static String buildVerificationHtml(String displayName, String link) {
