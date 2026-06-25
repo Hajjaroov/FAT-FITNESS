@@ -204,6 +204,7 @@ export const learnCopy = {
         "Practical notes from the journey, organized without pretending to be a course.",
       intro:
         "Personal notes from the journey — food, training, and medical context, documented honestly. Not coaching, not medical advice, and not a guaranteed method for anyone else.",
+      weightTitle: "Weight Progress",
       sections: [
         {
           href: "/journal/food-and-diet",
@@ -332,18 +333,16 @@ export const learnCopy = {
     },
     medical: {
       eyebrow: "Medical Journey",
-      title: "A personal GLP-1 log, documented carefully.",
+      title: "A personal GLP-1 log.",
       intro:
-        "A personal GLP-1 log, shared for transparency. Not medication advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional.",
+        "A personal Mounjaro log, shared for transparency. Not medication advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional.",
       summary: [
         { label: "Starting point", value: "203.0 kg", detail: "2025-11-16" },
         { label: "Latest logged point", value: "157.0 kg", detail: "2026-06-21" },
         { label: "Logged change", value: "-46.0 kg", detail: "Personal log" },
       ],
       entriesTitle: "Logged Entries",
-      entriesIntro:
-        "`MJ` is kept as the source log label. The table shows completed entries through 2026-06-21.",
-      tableHeaders: ["MJ", "Date", "Weight", "Change"],
+      tableHeaders: ["Dose (mg)", "Date", "Weight", "Change"],
       loggedEntries,
     },
   },
@@ -354,6 +353,7 @@ export const learnCopy = {
         "Praktische Notizen aus der Reise, geordnet ohne so zu tun, als wäre es ein Kurs.",
       intro:
         "Persönliche Notizen aus der Reise — Essen, Training und medizinischer Kontext, ehrlich dokumentiert. Kein Coaching, keine medizinische Beratung und keine garantierte Methode für andere.",
+      weightTitle: "Gewichtsverlauf",
       sections: [
         {
           href: "/journal/food-and-diet",
@@ -482,18 +482,16 @@ export const learnCopy = {
     },
     medical: {
       eyebrow: "Medizinische Reise",
-      title: "Ein persönlicher GLP-1 Log, vorsichtig dokumentiert.",
+      title: "Ein persönlicher GLP-1 Log.",
       intro:
-        "Ein persönlicher GLP-1 Log, für Transparenz geteilt. Keine Medikamentenberatung, keine Dosierungsanleitung und keine Methode für andere — medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
+        "Ein persönlicher Mounjaro Log, für Transparenz geteilt. Keine Medikamentenberatung, keine Dosierungsanleitung und keine Methode für andere — medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       summary: [
         { label: "Startpunkt", value: "203.0 kg", detail: "2025-11-16" },
         { label: "Letzter eingetragener Stand", value: "157.0 kg", detail: "2026-06-21" },
         { label: "Eingetragene Veränderung", value: "-46.0 kg", detail: "Persönlicher Log" },
       ],
       entriesTitle: "Eingetragene Werte",
-      entriesIntro:
-        "`MJ` bleibt als Quell-Label erhalten. Die Tabelle zeigt nur abgeschlossene Einträge bis 2026-06-07.",
-      tableHeaders: ["MJ", "Datum", "Gewicht", "Veränderung"],
+      tableHeaders: ["Dosis (mg)", "Datum", "Gewicht", "Veränderung"],
       loggedEntries,
     },
   },

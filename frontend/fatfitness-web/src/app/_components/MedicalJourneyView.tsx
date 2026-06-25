@@ -26,30 +26,20 @@ export function MedicalJourneyView() {
         </p>
       </section>
 
-      <section className="site-divider mt-12 border-y">
-        <div className="grid gap-0 sm:grid-cols-3">
-          {copy.medical.summary.map((item) => (
-            <div
-              key={item.label}
-              className="site-divider border-b py-5 sm:border-b-0 sm:border-r sm:last:border-r-0"
-            >
-              <p className="site-subtle text-sm">{item.label}</p>
-              <p className="mt-1 text-2xl font-semibold">{item.value}</p>
-              <p className="site-subtle mt-1 text-sm">{item.detail}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div className="site-divider mt-8 flex flex-wrap gap-6 border-t pt-6">
+        {copy.medical.summary.map((item) => (
+          <div key={item.label}>
+            <p className="site-subtle text-xs">{item.label}</p>
+            <p className="mt-0.5 text-lg font-semibold">{item.value}</p>
+            <p className="site-subtle text-xs">{item.detail}</p>
+          </div>
+        ))}
+      </div>
 
       <section className="mt-12">
-        <div className="grid gap-4 lg:grid-cols-[0.75fr_1.25fr]">
-          <h2 className="text-2xl font-semibold tracking-normal">
-            {copy.medical.entriesTitle}
-          </h2>
-          <p className="site-muted text-sm leading-7">
-            {copy.medical.entriesIntro}
-          </p>
-        </div>
+        <h2 className="text-2xl font-semibold tracking-normal">
+          {copy.medical.entriesTitle}
+        </h2>
 
         <div className="site-divider mt-6 overflow-x-auto border-y">
           <table className="w-full min-w-160 border-collapse text-left text-sm">

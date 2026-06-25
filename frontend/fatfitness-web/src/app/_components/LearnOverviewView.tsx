@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { PageShell } from "@/app/_components/PageShell";
+import { WeightChart } from "@/app/_components/WeightChart";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { learnCopy } from "@/content/journal";
 import { siteCopy } from "@/content/site";
@@ -20,6 +21,27 @@ export function LearnOverviewView() {
         <p className="site-muted mt-6 text-base leading-8">
           {copy.overview.intro}
         </p>
+      </section>
+
+      <section className="site-divider mt-10 border-t pt-8">
+        <h2 className="text-lg font-semibold tracking-normal">
+          {copy.overview.weightTitle}
+        </h2>
+        <div className="site-divider mt-4 grid gap-0 border-t sm:grid-cols-3">
+          {copy.medical.summary.map((item) => (
+            <div
+              key={item.label}
+              className="site-divider border-b py-4 sm:border-b-0 sm:border-r sm:last:border-r-0 sm:px-4 sm:first:pl-0"
+            >
+              <p className="site-subtle text-xs">{item.label}</p>
+              <p className="mt-1 text-2xl font-semibold">{item.value}</p>
+              <p className="site-subtle mt-0.5 text-xs">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6">
+          <WeightChart entries={copy.medical.loggedEntries} />
+        </div>
       </section>
 
       <section className="site-divider mt-12 border-y">
