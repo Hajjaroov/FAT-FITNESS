@@ -275,6 +275,12 @@ export function AccountDashboardView() {
             </dl>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link
+                href="/settings"
+                className="min-h-12 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+              >
+                {copy.summary.settingsLabel}
+              </Link>
               <button
                 type="button"
                 disabled={isLoggingOut}

@@ -1,5 +1,7 @@
 import { apiBaseUrl } from "@/lib/config";
 import type {
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   CurrentUser,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
@@ -10,7 +12,10 @@ import type {
   RegisterResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  RevokeAllSessionsResponse,
   TokenResponse,
+  UpdateProfileRequest,
+  UpdateProfileResponse,
   VerifyEmailResponse,
 } from "@/types/auth";
 import type { BackendStatus } from "@/types/api";
@@ -35,7 +40,7 @@ import type {
 } from "@/types/moderation";
 
 type ApiRequestOptions = {
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PATCH";
   body?: unknown;
   accessToken?: string;
   credentials?: RequestCredentials;
@@ -422,5 +427,28 @@ export function resetPassword(request: ResetPasswordRequest) {
   return apiRequest<ResetPasswordResponse>("/api/auth/reset-password", {
     method: "POST",
     body: request,
+  });
+}
+
+export function updateProfile(request: UpdateProfileRequest, accessToken: string) {
+  return apiRequest<UpdateProfileResponse>("/api/users/me/profile", {
+    method: "PATCH",
+    body: request,
+    accessToken,
+  });
+}
+
+export function changePassword(request: ChangePasswordRequest, accessToken: string) {
+  return apiRequest<ChangePasswordResponse>("/api/users/me/change-password", {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
+}
+
+export function revokeAllSessions(accessToken: string) {
+  return apiRequest<RevokeAllSessionsResponse>("/api/users/me/sessions/revoke-all", {
+    method: "POST",
+    accessToken,
   });
 }

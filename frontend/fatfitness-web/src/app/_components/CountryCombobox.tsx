@@ -14,6 +14,7 @@ type CountryComboboxProps = {
   placeholder: string;
   searchHint: string;
   noResultsLabel: string;
+  initialCode?: string;
 };
 
 const maxCountrySuggestions = 9;
@@ -32,11 +33,17 @@ export function CountryCombobox({
   placeholder,
   searchHint,
   noResultsLabel,
+  initialCode,
 }: CountryComboboxProps) {
   const { locale } = useLocale();
   const listboxId = useId();
-  const [query, setQuery] = useState("");
-  const [selectedCode, setSelectedCode] = useState("");
+
+  const initialOption = initialCode
+    ? getCountryOptions(locale).find((o) => o.code === initialCode)
+    : undefined;
+
+  const [query, setQuery] = useState(initialOption?.label ?? "");
+  const [selectedCode, setSelectedCode] = useState(initialCode ?? "");
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 

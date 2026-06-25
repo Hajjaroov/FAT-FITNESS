@@ -19,6 +19,7 @@ type AccountCopy = {
     title: string;
     intro: string;
     activeBadge: string;
+    settingsLabel: string;
     logoutLabel: string;
     logoutPendingLabel: string;
     logoutError: string;
@@ -77,6 +78,7 @@ export const accountCopy = {
       intro:
         "Your account can start forum threads now. Replies and deeper community features are still being built carefully.",
       activeBadge: "Signed in",
+      settingsLabel: "Account settings",
       logoutLabel: "Log out",
       logoutPendingLabel: "Logging out...",
       logoutError: "Logout failed. Please try again.",
@@ -147,6 +149,7 @@ export const accountCopy = {
       intro:
         "Dein Account kann jetzt Forum-Threads starten. Antworten und tiefere Community-Funktionen werden noch sorgfältig gebaut.",
       activeBadge: "Eingeloggt",
+      settingsLabel: "Kontoeinstellungen",
       logoutLabel: "Ausloggen",
       logoutPendingLabel: "Wird ausgeloggt...",
       logoutError: "Ausloggen fehlgeschlagen. Bitte versuche es erneut.",

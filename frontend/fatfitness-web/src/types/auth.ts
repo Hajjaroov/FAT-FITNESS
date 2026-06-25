@@ -85,3 +85,27 @@ export type ResetPasswordRequest = {
 export type ResetPasswordResponse = {
   message: string;
 };
+
+export type UpdateProfileRequest = {
+  displayName: string;
+  countryRegionCode: string;
+};
+
+export type UpdateProfileResponse = {
+  displayName: string;
+  countryRegionCode: string;
+};
+
+export type ChangePasswordRequest = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export type ChangePasswordResponse = {
+  message: string;
+};
+
+export type RevokeAllSessionsResponse = {
+  message: string;
+};

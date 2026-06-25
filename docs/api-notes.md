@@ -320,6 +320,76 @@ Response shape:
 
 This is the first protected auth endpoint. It uses Spring Security bearer-token validation and then checks the persisted user status so banned or deleted accounts cannot keep using old access tokens until expiry for current-user reads.
 
+### `PATCH /api/users/me/profile`
+
+Purpose:
+
+- Update the current user's display name and/or country/region.
+- Requires an active account and a valid bearer token.
+
+Request shape:
+
+```json
+{
+  "displayName": "BigMo",
+  "countryRegionCode": "DE"
+}
+```
+
+Response shape:
+
+```json
+{
+  "displayName": "BigMo",
+  "countryRegionCode": "DE"
+}
+```
+
+After success the frontend calls `refreshUser()` to re-fetch `GET /api/auth/me` and update the auth context.
+
+### `POST /api/users/me/change-password`
+
+Purpose:
+
+- Verify the current password, then update the password hash.
+- Reject mismatched `newPassword`/`confirmPassword` with `400`.
+- Reject wrong current password with `400`.
+- Reject new password equal to the current one with `400`.
+- Revoke all refresh sessions on success (forces re-login on all devices).
+
+Request shape:
+
+```json
+{
+  "currentPassword": "old-secret",
+  "newPassword": "new-secret-min8",
+  "confirmPassword": "new-secret-min8"
+}
+```
+
+Response shape:
+
+```json
+{
+  "message": "Password updated. You have been signed out of all devices."
+}
+```
+
+### `POST /api/users/me/sessions/revoke-all`
+
+Purpose:
+
+- Revoke all active refresh sessions for the current user.
+- Forces re-login on all devices including the current one.
+
+Response shape:
+
+```json
+{
+  "message": "All sessions have been signed out."
+}
+```
+
 ## API Principles
 
 - REST API from Spring Boot backend.
@@ -668,11 +738,14 @@ Current implemented auth endpoint:
 - `POST /api/moderation/reports/comments/{id}/hide`
 - `POST /api/moderation/posts/{id}/lock`
 - `POST /api/moderation/users/{id}/ban`
+- `PATCH /api/users/me/profile`
+- `POST /api/users/me/change-password`
+- `POST /api/users/me/sessions/revoke-all`
 
-Next auth slices:
+Next slices:
 
-- Add profile/account settings UI: view/edit display name, change password (reuses reset-password plumbing), country/region, sign-out-everywhere.
-- Add protected account UI/session polish only where it supports the next community milestone.
+- Content work (Learn pages, homepage journal) — frontend-only.
+- Weight tracking — V9 migration + backend endpoint + private weight log UI.
 
 Planned registration shape when auth is approved:
 

@@ -114,6 +114,11 @@ public class UserAccount {
 		this.passwordHash = newPasswordHash;
 	}
 
+	public void updateProfile(String displayName, String countryRegionCode) {
+		this.displayName = displayName.trim().replaceAll("\\s+", " ");
+		this.countryRegionCode = countryRegionCode.trim().toUpperCase(Locale.ROOT);
+	}
+
 	public void addRole(UserRole role) {
 		roles.add(role);
 	}

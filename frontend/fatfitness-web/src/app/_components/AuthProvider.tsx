@@ -24,6 +24,7 @@ type AuthContextValue = {
   login: (request: LoginRequest) => Promise<CurrentUser>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<CurrentUser | null>;
+  refreshUser: () => Promise<CurrentUser | null>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -58,6 +59,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function login(request: LoginRequest) {
     const response = await loginUser(request);
     return applyAccessToken(response.accessToken);
+  }
+
+  async function refreshUser() {
+    if (!accessToken) {
+      return null;
+    }
+
+    const currentUser = await getCurrentUser(accessToken);
+    setUser(currentUser);
+    return currentUser;
   }
 
   async function logout() {
@@ -112,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         refreshSession,
+        refreshUser,
       }}
     >
       {children}
