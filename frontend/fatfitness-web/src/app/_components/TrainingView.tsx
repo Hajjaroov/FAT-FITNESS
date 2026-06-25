@@ -160,19 +160,6 @@ export function TrainingView() {
         </div>
       </section>
 
-      <section className="site-divider mt-10 grid gap-6 border-b pb-10 lg:grid-cols-[0.75fr_1.25fr]">
-        <h2 className="text-2xl font-semibold tracking-normal">
-          {copy.training.boundariesTitle}
-        </h2>
-        <ul className="site-muted space-y-3 text-base leading-8">
-          {copy.training.boundaries.map((boundary) => (
-            <li key={boundary} className="flex gap-3">
-              <span className="site-dot bg-foreground" />
-              <span>{boundary}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </PageShell>
   );
 }

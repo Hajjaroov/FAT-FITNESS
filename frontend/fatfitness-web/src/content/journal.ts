@@ -203,7 +203,7 @@ export const learnCopy = {
       title:
         "Practical notes from the journey, organized without pretending to be a course.",
       intro:
-        "This area will collect the more structured parts of the project: food, training, and medical journey notes. The goal is to make the experience easier to understand without turning it into coaching, medical advice, or a guaranteed method.",
+        "Personal notes from the journey — food, training, and medical context, documented honestly. Not coaching, not medical advice, and not a guaranteed method for anyone else.",
       sections: [
         {
           href: "/journal/food-and-diet",
@@ -238,12 +238,6 @@ export const learnCopy = {
             "Doctor-discussion topics and personal reflections, not medical advice.",
           ],
         },
-      ],
-      boundariesTitle: "Boundaries",
-      boundaries: [
-        "Everything here starts from personal experience.",
-        "No diet, training, supplement, medication, or OP content should be framed as a universal method.",
-        "Medical decisions belong with qualified professionals.",
       ],
     },
     food: {
@@ -306,18 +300,12 @@ export const learnCopy = {
         "10 g creatine monohydrate",
         "10 g collagen",
       ],
-      boundariesTitle: "Boundaries",
-      boundaries: [
-        "This is one personal diet structure, not a universal diet plan.",
-        "Supplements are listed as part of the current routine, not as recommendations.",
-        "A future meal-structure tool should help with targets without claiming to prescribe a diet.",
-      ],
     },
     training: {
       eyebrow: "Training",
       title: "A beginner routine built around the real starting point.",
       intro:
-        "This page captures the clear workout structure from the OneNote PDF: walking progression, warm-up, weekly schedule, exercises, sets, and practical notes. It stays personal and avoids turning the routine into a universal program.",
+        "A personal routine built from the real starting point — walking, warm-up, weekly schedule, and exercises documented as a personal record, not a program for anyone else to copy.",
       walkingTitle: "Walking Progression",
       walkingIntro: "Walking is planned on off days and increases over time.",
       walkingProgression: [
@@ -341,18 +329,12 @@ export const learnCopy = {
       notesLabel: "Notes",
       photoPlaceholder: "Photo later",
       schedule: englishSchedule,
-      boundariesTitle: "Boundaries",
-      boundaries: [
-        "This is a personal routine, not a beginner program for everyone.",
-        "Exercise photos can come later after the movements are reviewed.",
-        "Exact current loads need verification from the original table before public use.",
-      ],
     },
     medical: {
       eyebrow: "Medical Journey",
       title: "A personal GLP-1 log, documented carefully.",
       intro:
-        "This page records the personal timeline provided for the journey. It is here for transparency and context, not as medication advice, dosing guidance, or a method for anyone else to copy.",
+        "A personal GLP-1 log, shared for transparency. Not medication advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional.",
       summary: [
         { label: "Starting point", value: "203.0 kg", detail: "2025-11-16" },
         { label: "Latest logged point", value: "157.0 kg", detail: "2026-06-21" },
@@ -363,12 +345,6 @@ export const learnCopy = {
         "`MJ` is kept as the source log label. The table shows completed entries through 2026-06-21.",
       tableHeaders: ["MJ", "Date", "Weight", "Change"],
       loggedEntries,
-      boundariesTitle: "Boundaries",
-      boundaries: [
-        "This is a personal log, not a GLP-1 recommendation.",
-        "This page should not explain dosing decisions or tell anyone when to change medication.",
-        "Medical decisions belong with qualified professionals.",
-      ],
     },
   },
   de: {
@@ -377,7 +353,7 @@ export const learnCopy = {
       title:
         "Praktische Notizen aus der Reise, geordnet ohne so zu tun, als wäre es ein Kurs.",
       intro:
-        "Dieser Bereich sammelt die strukturierteren Teile des Projekts: Essen, Training und medizinische Reise. Das Ziel ist, die Erfahrung verständlicher zu machen, ohne daraus Coaching, medizinische Beratung oder eine garantierte Methode zu machen.",
+        "Persönliche Notizen aus der Reise — Essen, Training und medizinischer Kontext, ehrlich dokumentiert. Kein Coaching, keine medizinische Beratung und keine garantierte Methode für andere.",
       sections: [
         {
           href: "/journal/food-and-diet",
@@ -412,12 +388,6 @@ export const learnCopy = {
             "Themen für Ärztegespräche und persönliche Reflexionen, keine medizinische Beratung.",
           ],
         },
-      ],
-      boundariesTitle: "Grenzen",
-      boundaries: [
-        "Alles hier startet bei persönlicher Erfahrung.",
-        "Keine Diät, kein Training, kein Supplement, keine Medikamente und keine OP-Themen sollen als universelle Methode dargestellt werden.",
-        "Medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       ],
     },
     food: {
@@ -480,18 +450,12 @@ export const learnCopy = {
         "10 g Creatine Monohydrate",
         "10 g Collagen",
       ],
-      boundariesTitle: "Grenzen",
-      boundaries: [
-        "Das ist eine persönliche Ernährungsstruktur, kein universeller Diätplan.",
-        "Supplements werden als Teil der aktuellen Routine gelistet, nicht als Empfehlung.",
-        "Ein späteres Mahlzeitenstruktur-Tool soll bei Zielwerten helfen, ohne eine Diät vorzuschreiben.",
-      ],
     },
     training: {
       eyebrow: "Training",
       title: "Eine Anfängerroutine, gebaut um den echten Startpunkt.",
       intro:
-        "Diese Seite sammelt die klare Trainingsstruktur aus der OneNote-PDF: Geh-Progression, Warm-up, Wochenplan, Übungen, Sätze und praktische Notizen. Sie bleibt persönlich und macht daraus kein universelles Programm.",
+        "Eine persönliche Routine, aufgebaut am realen Startpunkt — Geh-Progression, Warm-up, Wochenplan und Übungen als persönliche Aufzeichnung, kein Programm zum Nachahmen.",
       walkingTitle: "Geh-Progression",
       walkingIntro: "Gehen ist für freie Tage geplant und steigert sich mit der Zeit.",
       walkingProgression: [
@@ -515,18 +479,12 @@ export const learnCopy = {
       notesLabel: "Notizen",
       photoPlaceholder: "Foto später",
       schedule: germanSchedule,
-      boundariesTitle: "Grenzen",
-      boundaries: [
-        "Das ist eine persönliche Routine, kein Anfängerprogramm für alle.",
-        "Übungsfotos können später kommen, nachdem die Bewegungen geprüft wurden.",
-        "Exakte aktuelle Gewichte müssen vor öffentlicher Nutzung aus der Originaltabelle verifiziert werden.",
-      ],
     },
     medical: {
       eyebrow: "Medizinische Reise",
       title: "Ein persönlicher GLP-1 Log, vorsichtig dokumentiert.",
       intro:
-        "Diese Seite hält die bereitgestellte persönliche Timeline fest. Sie ist für Transparenz und Kontext da, nicht als Medikamentenberatung, Dosierungsanleitung oder Methode zum Kopieren.",
+        "Ein persönlicher GLP-1 Log, für Transparenz geteilt. Keine Medikamentenberatung, keine Dosierungsanleitung und keine Methode für andere — medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       summary: [
         { label: "Startpunkt", value: "203.0 kg", detail: "2025-11-16" },
         { label: "Letzter eingetragener Stand", value: "157.0 kg", detail: "2026-06-21" },
@@ -537,12 +495,6 @@ export const learnCopy = {
         "`MJ` bleibt als Quell-Label erhalten. Die Tabelle zeigt nur abgeschlossene Einträge bis 2026-06-07.",
       tableHeaders: ["MJ", "Datum", "Gewicht", "Veränderung"],
       loggedEntries,
-      boundariesTitle: "Grenzen",
-      boundaries: [
-        "Das ist ein persönlicher Log, keine GLP-1 Empfehlung.",
-        "Diese Seite soll keine Dosierungsentscheidungen erklären und niemandem sagen, wann Medikamente geändert werden sollen.",
-        "Medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
-      ],
     },
   },
 } satisfies Record<Locale, unknown>;

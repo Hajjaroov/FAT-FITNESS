@@ -76,19 +76,6 @@ export function MedicalJourneyView() {
         </div>
       </section>
 
-      <section className="mt-10 grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
-        <h2 className="text-2xl font-semibold tracking-normal">
-          {copy.medical.boundariesTitle}
-        </h2>
-        <ul className="site-muted space-y-3 text-base leading-8">
-          {copy.medical.boundaries.map((boundary) => (
-            <li key={boundary} className="flex gap-3">
-              <span className="site-dot bg-foreground" />
-              <span>{boundary}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </PageShell>
   );
 }
