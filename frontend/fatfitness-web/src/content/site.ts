@@ -47,6 +47,14 @@ export const siteCopy = {
       backToJournal: "Back to Journal",
       open: "Open",
     },
+    footer: {
+      tagline: "A personal weight-loss journey and peer-support community.",
+      legalTitle: "Legal",
+      impressum: "Impressum",
+      privacy: "Privacy Policy",
+      disclaimer: "Personal experience only — not medical or dietary advice.",
+      copyright: "© 2025–2026 Fat Fitness Community",
+    },
     placeholder: {
       eyebrow: "Placeholder page",
       body: "This page is only a temporary placeholder and will be worked on in a later milestone.",
@@ -78,6 +86,14 @@ export const siteCopy = {
     links: {
       backToJournal: "Zurück zum Journal",
       open: "Öffnen",
+    },
+    footer: {
+      tagline: "Eine persönliche Abnehmreise und Peer-Support-Community.",
+      legalTitle: "Rechtliches",
+      impressum: "Impressum",
+      privacy: "Datenschutz",
+      disclaimer: "Persönliche Erfahrung — keine medizinische oder ernährungsmedizinische Beratung.",
+      copyright: "© 2025–2026 Fat Fitness Community",
     },
     placeholder: {
       eyebrow: "Platzhalterseite",

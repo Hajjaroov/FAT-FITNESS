@@ -88,6 +88,30 @@ body {
   backdrop-filter: blur(18px);
 }
 
+.site-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.site-footer-heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.site-footer-link {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  transition: color 160ms ease;
+}
+
+.site-footer-link:hover {
+  color: var(--color-text);
+}
+
 .site-brand {
   color: var(--color-text);
   font-size: 0.85rem;
