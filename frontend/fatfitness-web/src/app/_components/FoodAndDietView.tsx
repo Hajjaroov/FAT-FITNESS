@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { PageShell } from "@/app/_components/PageShell";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
-import { learnCopy } from "@/content/learn";
+import { learnCopy } from "@/content/journal";
 import { siteCopy } from "@/content/site";
 
 export function FoodAndDietView() {
@@ -12,8 +12,8 @@ export function FoodAndDietView() {
 
   return (
     <PageShell>
-      <Link href="/learn" className="site-text-link mb-8">
-        {site.links.backToLearn}
+      <Link href="/journal" className="site-text-link mb-8">
+        {site.links.backToJournal}
       </Link>
 
       <section className="max-w-3xl">
@@ -54,17 +54,27 @@ export function FoodAndDietView() {
                   {meal.summary}
                 </p>
               </div>
-              <ul className="site-muted space-y-2 text-base leading-8">
+              <ul className="site-muted space-y-2.5 text-sm leading-6">
                 {meal.items.map((item) => (
-                  <li key={item} className="flex gap-3">
-                    <span className="site-dot" />
-                    <span>{item}</span>
+                  <li key={item.label} className="flex items-start gap-3">
+                    <span className="site-dot mt-[0.4rem] shrink-0" />
+                    <span>
+                      <span>{item.label}</span>
+                      {item.detail && (
+                        <span className="site-subtle mt-0.5 block text-xs">{item.detail}</span>
+                      )}
+                    </span>
                   </li>
                 ))}
               </ul>
             </article>
           ))}
         </div>
+        {copy.food.weeklyNote && (
+          <p className="site-muted mt-6 text-sm leading-7 italic">
+            {copy.food.weeklyNote}
+          </p>
+        )}
       </section>
 
       <section className="site-divider mt-12 grid gap-8 border-b pb-12 lg:grid-cols-[0.9fr_1.1fr]">
@@ -78,7 +88,10 @@ export function FoodAndDietView() {
         </div>
         <ul className="site-muted grid gap-3 text-base leading-7 sm:grid-cols-2">
           {copy.food.supplements.map((supplement) => (
-            <li key={supplement} className="site-divider border-b pb-3">
+            <li
+              key={supplement}
+              className="site-divider border-b pb-3 last:border-b-0 last:pb-0 sm:nth-last-[-n+2]:border-b-0 sm:nth-last-[-n+2]:pb-0"
+            >
               {supplement}
             </li>
           ))}

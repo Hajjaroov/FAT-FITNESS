@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { PageShell } from "@/app/_components/PageShell";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
-import { learnCopy } from "@/content/learn";
+import { learnCopy } from "@/content/journal";
 import { siteCopy } from "@/content/site";
 
 export function LearnOverviewView() {

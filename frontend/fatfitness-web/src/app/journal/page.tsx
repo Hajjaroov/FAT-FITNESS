@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { LearnOverviewView } from "@/app/_components/LearnOverviewView";
 
 export const metadata: Metadata = {
-  title: "Learn | Fat Fitness Community",
+  title: "Journal | Fat Fitness Community",
   description:
-    "Beginner-friendly personal learning notes about food, training, and medical journey topics.",
+    "Personal journal covering food & diet, training, and the medical journey — honest notes from the road.",
 };
 
-export default function LearnPage() {
+export default function JournalPage() {
   return <LearnOverviewView />;
 }

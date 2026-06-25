@@ -15,7 +15,7 @@ export function isLocale(value: string | null | undefined): value is Locale {
 
 export const siteNavigation = [
   { href: "/", key: "home" },
-  { href: "/learn", key: "learn" },
+  { href: "/journal", key: "journal" },
   { href: "/community", key: "community" },
 ] as const;
 
@@ -24,7 +24,7 @@ export const siteCopy = {
     brand: "Fat Fitness",
     nav: {
       home: "Home",
-      learn: "Learn",
+      journal: "Journal",
       community: "Community",
     },
     controls: {
@@ -44,7 +44,7 @@ export const siteCopy = {
       logoutPending: "Logging out...",
     },
     links: {
-      backToLearn: "Back to Learn",
+      backToJournal: "Back to Journal",
       open: "Open",
     },
     placeholder: {
@@ -56,7 +56,7 @@ export const siteCopy = {
     brand: "Fat Fitness",
     nav: {
       home: "Start",
-      learn: "Lernen",
+      journal: "Journal",
       community: "Community",
     },
     controls: {
@@ -76,7 +76,7 @@ export const siteCopy = {
       logoutPending: "Wird ausgeloggt...",
     },
     links: {
-      backToLearn: "Zurück zu Lernen",
+      backToJournal: "Zurück zum Journal",
       open: "Öffnen",
     },
     placeholder: {

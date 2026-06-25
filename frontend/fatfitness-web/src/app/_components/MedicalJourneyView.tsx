@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { PageShell } from "@/app/_components/PageShell";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
-import { learnCopy } from "@/content/learn";
+import { learnCopy } from "@/content/journal";
 import { siteCopy } from "@/content/site";
 
 export function MedicalJourneyView() {
@@ -12,8 +12,8 @@ export function MedicalJourneyView() {
 
   return (
     <PageShell>
-      <Link href="/learn" className="site-text-link mb-8">
-        {site.links.backToLearn}
+      <Link href="/journal" className="site-text-link mb-8">
+        {site.links.backToJournal}
       </Link>
 
       <section className="max-w-3xl">

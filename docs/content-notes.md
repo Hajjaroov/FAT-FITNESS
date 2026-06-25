@@ -6,12 +6,14 @@ These notes capture real personal content that can later become static pages, to
 
 Use this under `Learn > Food & Diet` when that section is built.
 
+This meal structure runs 6 days a week. On the seventh day, eating out — usually grilled meat, döner, or shawarma. No fried food, pasta, or pizza.
+
 Daily target as currently provided:
 
-- Calories: about 1850 kcal
-- Protein: about 190 g
-- Carbs: about 125 g
-- Fat: about 55 g
+- Calories: about 1790 kcal
+- Protein: about 173 g
+- Carbs: about 132 g
+- Fat: about 47 g
 
 ### Meal 1
 
@@ -50,35 +52,19 @@ Current structure: one combined batch split into two meals.
 
 Per meal:
 
-- 530 kcal
-- 50 g protein
-- 46 g carbs
-- 10 g fat
+- 560 kcal
+- 48 g protein
+- 53.7 g carbs
+- 9.5 g fat
 
 Combined batch ingredients:
 
-- 330 g chicken breast: 400 kcal, 77 g protein, 0 g carbs, 5 g fat
-- Olive oil, mustard, tomato paste, and 3.5% yogurt sauce: 116 kcal, 1.4 g protein, 3.2 g carbs, 7.75 g fat
+- 333 g chicken breast: 403 kcal, 77.5 g protein, 0 g carbs, 5 g fat
+- Sauce: olive oil, mustard, tomato paste, 3.5% yogurt: 116 kcal, 1.4 g protein, 3.2 g carbs, 7.75 g fat
 - 250 g frozen vegetables, Italian style: 125 kcal, 4 g protein, 7.25 g carbs, 4.75 g fat
-- 110 g broccoli or Kaisergemüse: 45 kcal, 2.65 g protein, 5.5 g carbs, 0.5 g fat
-- 133 g mushrooms: 29 kcal, 4.1 g protein, 4.4 g carbs, 0.45 g fat
+- 160 g broccoli / Kaisergemüse: 66 kcal, 4 g protein, 8 g carbs, 0.7 g fat
 - 150 g potato: 116 kcal, 3 g protein, 25 g carbs, 0.2 g fat
-- 66 g bulgur: 225 kcal, 6.6 g protein, 46.2 g carbs, 0.7 g fat
-
-### Snack
-
-Summary:
-
-- 125 kcal
-- 13 g protein
-- 7 g carbs
-- 5 g fat
-
-Foods:
-
-- 125 g Milbona Skyr Vanille: 67 kcal, 11 g protein, 5.1 g carbs, 0.3 g fat
-- 5 g chia: 24 kcal, 1 g protein, 2 g carbs, 1.7 g fat
-- 5 almonds: 31 kcal, 1.25 g protein, 0.25 g carbs, 2.7 g fat
+- 80 g rice: 290 kcal, 6 g protein, 64 g carbs, 0.5 g fat
 
 ## Supplements
 
@@ -109,8 +95,8 @@ Important framing:
 Current summary from the provided log:
 
 - Starting point: 203.0 kg on 2025-11-16
-- Latest logged point: 158.0 kg on 2026-06-07
-- Logged change so far: -45.0 kg
+- Latest logged point: 157.0 kg on 2026-06-21
+- Logged change so far: -46.0 kg
 
 ### Logged Entries
 
@@ -144,7 +130,9 @@ Current summary from the provided log:
 | 7.5 | 2026-05-15 | 162.0 kg | -0.5 kg |
 | 7.5 | 2026-05-22 | 161.5 kg | -0.5 kg |
 | 10 | 2026-05-31 | 160.5 kg | -1.0 kg |
-| 10 | 2026-06-07 | 158.0 kg | -2.5 kg |
+| 10 | 2026-06-07 | 158.5 kg | -2.0 kg |
+| 10 | 2026-06-14 | 158.0 kg | -0.5 kg |
+| 10 | 2026-06-21 | 157.0 kg | -1.0 kg |
 
 Note: the source message listed `-0.5g` for 2026-02-15. This has been normalized to `-0.5 kg` in the table and should be verified before publishing.
 
@@ -162,7 +150,7 @@ Important note:
 - The PDF text was extractable, but some current weight/load cells were difficult to map perfectly because the exported table split rows and columns across pages.
 - Do not publish exact current loads until the owner verifies them.
 - The clear parts below are safe to use: walking progression, warm-up, weekly schedule, exercises, sets/reps, and personal notes.
-- The Training page has a photo placeholder for each exercise. Each placeholder uses a stable `photoKey`; add a `photoSrc` for that exercise in `frontend/fatfitness-web/src/app/learn/training/page.tsx` when real photos are ready.
+- The Training page has a photo placeholder for each exercise. Each placeholder uses a stable `photoKey`; add a `photoSrc` for that exercise in `frontend/fatfitness-web/src/app/journal/training/page.tsx` when real photos are ready.
 
 ### Walking Progression
 
