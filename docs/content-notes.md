@@ -186,13 +186,6 @@ Personal notes:
 - Dumbbell curl: 3 x 12
 - Overhead dumbbell tricep extension: 3 x 12
 
-Notes extracted from the PDF:
-
-- Chest-supported row uses a bench at incline.
-- Standing up and using feet can help with better grip.
-- Chest size/body position may make the setup awkward.
-- Some upper-body movements use 2 sets for the first 2 weeks instead of 3.
-- Overhead tricep extension may work better with a chair because the bench can scratch if the back is not short.
 
 #### Wednesday: Lower + Core
 
@@ -203,13 +196,6 @@ Notes extracted from the PDF:
 - Standing calf raise: 3 x 15
 - Seated core brace: 5 x 15 seconds
 
-Notes extracted from the PDF:
-
-- Use chair depth as the squat target.
-- Hip thrust can be bench-supported if comfortable.
-- Hold a chair for balance on supported split squats.
-- Calf raises can progress from bodyweight to dumbbells and step/stair variations.
-- Core brace progression notes mention no weight, legs lifting, 10 second pause, and holding a dumbbell.
 
 #### Friday: Upper B
 
@@ -220,10 +206,6 @@ Notes extracted from the PDF:
 - Hammer curl: 3 x 12
 - Skull crusher: 3 x 12
 
-Notes extracted from the PDF:
-
-- The PDF includes a note that seated dumbbell shoulder press may be a harder option.
-- Several current load notes are present in the source, but exact mapping should be verified before publishing.
 
 #### Saturday: Recovery W5+
 
@@ -236,9 +218,6 @@ Notes extracted from the PDF:
 - Farmer carry: 3 x 20-30 seconds
 - Hip mobility and stretching: 5-10 minutes
 
-Notes extracted from the PDF:
-
-- Use lighter weights.
 
 ## Future Food & Diet Tool Idea
 
