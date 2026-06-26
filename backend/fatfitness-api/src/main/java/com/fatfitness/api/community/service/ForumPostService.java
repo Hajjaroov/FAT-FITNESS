@@ -135,7 +135,7 @@ public class ForumPostService {
 			return List.of();
 		}
 
-		List<UUID> postIds = posts.stream().map(ForumPost::getId).toList();
+		List<UUID> postIds = posts.stream().map(p -> p.getId()).toList();
 		Map<UUID, Long> likeCounts = buildLikeCountMap(postIds);
 		Set<UUID> likedIds = currentUserId != null
 				? postLikeRepository.findLikedPostIdsByUserAndPostIds(currentUserId, postIds)

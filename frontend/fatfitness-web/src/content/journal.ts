@@ -353,14 +353,120 @@ export const learnCopy = {
       supplementsIntro:
         "These belong under food and diet by default unless they are tied to labs, doctor guidance, medication interactions, or OP recovery.",
       supplements: [
-        "D3 5000 IU + K2",
-        "Omega-3, 1500 EPA / 750 DHA",
-        "Multi-vitamin",
-        "Electrolyte complex",
-        "Magnesium citrate",
-        "30 g whey protein",
-        "10 g creatine monohydrate",
-        "10 g collagen",
+        {
+          key: "d3-k2",
+          name: "Vitamin D3 5000 IU + K2",
+          brand: "vit4ever",
+          photoSrc: "/photos/supplements/d3-k2.png",
+          detail:
+            "Vitamin D3 deficiency is extremely common in Germany — limited sunlight for most of the year means most people do not produce enough naturally. D3 supports immunity, bone density, mood, and hormone regulation. K2 (ideally MK-7 form) is the essential partner: it activates proteins that direct calcium into bones and teeth rather than soft tissues and arteries. Without K2, high-dose D3 can accelerate calcification risks. The 5000 IU dose is a common starting point, but blood work is the only reliable way to know what your body actually needs. Get your 25(OH)D level checked and let a doctor recommend your dose.",
+          facts: [
+            "Take with a fatty meal — D3 is fat-soluble and absorption improves significantly.",
+            "K2 MK-7 form is more bioavailable and longer-acting than MK-4.",
+            "Blood test (25(OH)D level) recommended before taking high doses.",
+            "Deficiency is widespread in Germany, especially through the winter months.",
+          ],
+        },
+        {
+          key: "omega3",
+          name: "Omega-3, 1500 EPA / 750 DHA",
+          brand: "IRON BROTHERS",
+          photoSrc: "/photos/supplements/omega3.png",
+          detail:
+            "Two things determine whether an Omega-3 supplement is worth taking: the molecular form and the EPA/DHA values. The triglyceride form absorbs up to 70–80% more efficiently than the cheaper and more common ethyl ester form. EPA supports inflammation control, cardiovascular health, and mood. DHA is critical for brain and eye function. The target here is a minimum of 2 g combined Omega-3 per day. At 3 capsules: 1500 mg EPA + 750 mg DHA = 2250 mg total. Always read the supplement facts panel — total fish oil weight is not the same as EPA + DHA content.",
+          facts: [
+            "Look for 'triglyceride form' on the label — not 'ethyl ester'.",
+            "Check actual EPA + DHA milligrams, not just the total fish oil dose.",
+            "Take with a meal — dietary fat improves absorption further.",
+            "Aim for at least 2 g of combined EPA + DHA per day.",
+          ],
+        },
+        {
+          key: "multivitamin",
+          name: "Multivitamins & Minerals",
+          brand: "Weightworld",
+          photoSrc: "/photos/supplements/multivitamins.png",
+          detail:
+            "Eating on a sustained calorie deficit creates real micronutrient gaps over time even with careful food choices. A multivitamin acts as a daily safety net — not a replacement for real food, but a way to cover what a restricted diet may be missing. Particularly relevant for B-vitamins (especially B12 for anyone eating less meat), zinc, selenium, iodine, and vitamin A. The goal is not optimisation — it is to avoid silent deficiencies that would undermine health and the diet itself over the long term.",
+          facts: [
+            "Most useful during a sustained calorie deficit when food variety is reduced.",
+            "Not a replacement for a varied diet, but a sensible insurance policy.",
+            "Check the formula includes B12, zinc, selenium, and iodine.",
+          ],
+        },
+        {
+          key: "electrolytes",
+          name: "Electrolyte Complex",
+          brand: "gloryfeel",
+          photoSrc: "/photos/supplements/electrolytes.png",
+          detail:
+            "GLP-1 medications like Mounjaro significantly reduce appetite — and with it, fluid intake often drops unnoticed. Proper hydration is not just about water volume: electrolytes (sodium, potassium, magnesium, chloride) regulate how the body retains and distributes water. Without them, drinking large amounts can actually flush minerals out. Despite targeting 3–4 liters per day, electrolytes help that water stay where it is needed — inside cells, supporting energy, muscle function, and preventing cramps. Electrolyte loss also accelerates during active weight loss.",
+          facts: [
+            "Especially important on GLP-1 medications where fluid intake can drop unnoticed.",
+            "Electrolytes help the body retain and use the water you drink.",
+            "Supports energy, prevents muscle cramps, and reduces fatigue headaches.",
+            "Sodium, potassium, and magnesium are the three key electrolytes to prioritise.",
+          ],
+        },
+        {
+          key: "magnesium",
+          name: "Magnesium Citrate",
+          brand: "WeightWorld",
+          photoSrc: "/photos/supplements/magnesium.png",
+          detail:
+            "Not the final pick. After using magnesium citrate, a better option was found: Magnesium Bisglycinate. Bisglycinate is a chelated form — magnesium bound to the amino acid glycine — which makes it significantly gentler on the digestive system and better absorbed. Citrate has a mild laxative effect useful for constipation, but at higher doses it can cause diarrhoea. Current dose: 1 capsule = 222 mg elemental magnesium. If starting fresh, go straight to Bisglycinate. Magnesium supports sleep quality, muscle relaxation, nerve function, and energy production.",
+          facts: [
+            "Bisglycinate = better absorption, gentler on the stomach — the better long-term choice.",
+            "Citrate = useful for constipation, but can cause diarrhoea at higher doses.",
+            "Magnesium oxide is the cheapest form but has very poor absorption.",
+            "Supports sleep quality, muscle relaxation, and nerve function.",
+            "Current dose: 222 mg elemental magnesium per capsule (1 capsule daily).",
+          ],
+        },
+        {
+          key: "whey",
+          name: "30 g Whey Protein",
+          brand: "BioTechUSA",
+          photoSrc: "/photos/supplements/whey.png",
+          detail:
+            "Hitting 170+ g of protein per day from whole food alone is genuinely difficult on a calorie deficit. Whey protein fills the gap cleanly — fast-digesting, high bioavailability, minimal fat and carbs. Always vanilla: neutral enough to mix with milk, water, yogurt, or oats — the safe option you cannot get wrong. Brand comparison from personal experience: PBN was excellent value but is no longer available and had reports of inaccurate labelling. Bulk caused stomach discomfort, likely from high lactose. IRON BROTHERS is currently the best price-per-gram on the German market — average taste with milk, acceptable with water. BioTechUSA vanilla with milk is the current choice: good taste, mixes well, consistent quality.",
+          facts: [
+            "Always vanilla if unsure — it mixes well with anything.",
+            "Compare price per gram of protein, not price per kg of powder.",
+            "Whey concentrate is fine unless you are lactose intolerant — isolate has less lactose.",
+            "Brands tried: PBN (discontinued), Bulk (stomach issues), IRON BROTHERS (good price), BioTechUSA (current).",
+          ],
+        },
+        {
+          key: "creatine",
+          name: "10 g Creatine Monohydrate",
+          brand: "IRON BROTHERS",
+          photoSrc: "/photos/supplements/creatine.png",
+          detail:
+            "Creatine is one of the most extensively researched supplements in sports science, with consistent evidence across decades. It increases phosphocreatine stores in muscles, which allows ATP (cellular energy) to regenerate faster during short intense efforts — weightlifting, sprints, anything explosive. For someone building strength from scratch, it is a clean and meaningful addition. Monohydrate is the original form: proven, cheap, and identical in effect to more expensive alternatives like Kre-Alkalyn or creatine HCl. No loading phase needed — 5–10 g daily is sufficient. Mixed directly into the whey shake. Rule: buy the cheapest monohydrate from a reputable manufacturer. The active compound is the same everywhere.",
+          facts: [
+            "No loading phase needed — 5–10 g daily is the standard effective dose.",
+            "Monohydrate is identical in effect to more expensive creatine forms.",
+            "Takes 2–4 weeks of consistent use before the strength benefit becomes noticeable.",
+            "Brand is irrelevant — just confirm it is pure monohydrate from a reputable source.",
+            "Safe for long-term use with no evidence of kidney harm in healthy individuals.",
+          ],
+        },
+        {
+          key: "collagen",
+          name: "10 g Collagen",
+          brand: "IRON BROTHERS",
+          photoSrc: "/photos/supplements/collagen.png",
+          detail:
+            "Collagen supports the structural integrity of joints, tendons, ligaments, and skin — all under extra demand when losing significant weight. Rapid weight loss reduces the fat tissue that cushions joints and can loosen skin, making collagen genuinely relevant rather than cosmetic. The critical detail: vitamin C is required for collagen synthesis — the body cannot build collagen without it. The vit4ever product did not include vitamin C, requiring a separate supplement. The IRON BROTHERS version includes vitamin C in the formula — simpler and not more expensive. Either product works as long as vitamin C is covered. Best taken 30–60 minutes before training when collagen synthesis is most active.",
+          facts: [
+            "Vitamin C is non-negotiable — the body cannot synthesise collagen without it.",
+            "Best taken 30–60 minutes before training to support connective tissue repair.",
+            "Relevant for joint health, tendon support, and skin elasticity during weight loss.",
+            "Check your product includes vitamin C — or add a separate supplement.",
+            "Hydrolysed collagen (type I/III) is the most studied form for joints and skin.",
+          ],
+        },
       ],
     },
     training: {
@@ -495,14 +601,120 @@ export const learnCopy = {
       supplementsIntro:
         "Diese gehören standardmäßig zu Essen und Ernährung, außer sie hängen mit Laborwerten, ärztlicher Begleitung, Medikamenten-Interaktionen oder OP-Erholung zusammen.",
       supplements: [
-        "D3 5000 IU + K2",
-        "Omega-3, 1500 EPA / 750 DHA",
-        "Multi-Vitamin",
-        "Elektrolyt-Komplex",
-        "Magnesium Citrate",
-        "30 g Whey Protein",
-        "10 g Creatine Monohydrate",
-        "10 g Collagen",
+        {
+          key: "d3-k2",
+          name: "Vitamin D3 5000 IU + K2",
+          brand: "vit4ever",
+          photoSrc: "/photos/supplements/d3-k2.png",
+          detail:
+            "Vitamin-D3-Mangel ist in Deutschland weit verbreitet — wenig Sonnenlicht über viele Monate bedeutet, dass die meisten Menschen nicht genug davon selbst produzieren können. D3 unterstützt das Immunsystem, die Knochendichte, die Stimmung und die Hormonregulation. K2 (idealerweise MK-7-Form) ist der unverzichtbare Partner: Es lenkt Kalzium gezielt in Knochen und Zähne statt in Weichteile und Arterien. Ohne K2 kann hochdosiertes D3 Verkalkungsrisiken erhöhen. Die 5000-IU-Dosis ist ein üblicher Ausgangspunkt, doch Blutarbeit ist der einzig verlässliche Weg, den eigenen Bedarf zu kennen. Den 25(OH)D-Wert messen lassen und die Dosierung mit einem Arzt absprechen.",
+          facts: [
+            "Mit einer fetthaltigen Mahlzeit nehmen — D3 ist fettlöslich und wird so deutlich besser aufgenommen.",
+            "K2 MK-7 ist bioverfügbarer und länger wirksam als K2 MK-4.",
+            "Bluttest (25(OH)D-Spiegel) vor der Einnahme hoher Dosen empfohlen.",
+            "In Deutschland sind die meisten Menschen defizient — besonders in den Wintermonaten.",
+          ],
+        },
+        {
+          key: "omega3",
+          name: "Omega-3, 1500 EPA / 750 DHA",
+          brand: "IRON BROTHERS",
+          photoSrc: "/photos/supplements/omega3.png",
+          detail:
+            "Zwei Dinge entscheiden, ob ein Omega-3-Supplement wirklich etwas bringt: die molekulare Form und die EPA/DHA-Gehalte. Die Triglycerid-Form wird bis zu 70–80 % effizienter aufgenommen als die günstigere Ethylester-Form. EPA unterstützt die Entzündungsregulation, die Herzgesundheit und die Stimmung. DHA ist wichtig für Gehirn und Sehkraft. Das Ziel hier ist mindestens 2 g kombiniertes Omega-3 täglich. Bei 3 Kapseln: 1500 mg EPA + 750 mg DHA = 2250 mg gesamt. Immer das Nährwertlabel lesen — das Gesamtgewicht des Fischöls ist nicht dasselbe wie der EPA+DHA-Gehalt.",
+          facts: [
+            "Auf dem Label nach 'Triglycerid-Form' suchen — nicht 'Ethylester'.",
+            "Tatsächliche EPA- und DHA-Milligramm prüfen, nicht nur die Gesamtdosis.",
+            "Mit einer Mahlzeit einnehmen — Nahrungsfett verbessert die Aufnahme weiter.",
+            "Ziel: mindestens 2 g kombiniertes EPA + DHA täglich.",
+          ],
+        },
+        {
+          key: "multivitamin",
+          name: "Multivitamine & Mineralstoffe",
+          brand: "Weightworld",
+          photoSrc: "/photos/supplements/multivitamins.png",
+          detail:
+            "Ein anhaltend kalorienbeschränktes Essen erzeugt über die Zeit echte Mikronährstofflücken, selbst bei sorgfältiger Auswahl. Ein Multivitamin dient als tägliche Absicherung — kein Ersatz für echtes Essen, aber ein sinnvoller Puffer für das, was eine eingeschränkte Ernährungsphase langfristig fehlen lässt. Besonders relevant sind B-Vitamine (vor allem B12 für alle, die weniger Fleisch essen), Zink, Selen, Jod und Vitamin A. Das Ziel ist nicht Optimierung, sondern das stille Vermeiden von Mängeln, die Gesundheit und Diät von innen untergraben würden.",
+          facts: [
+            "Besonders nützlich bei anhaltendem Kaloriendefizit mit eingeschränkter Lebensmittelvielfalt.",
+            "Kein Ersatz für eine abwechslungsreiche Ernährung, aber eine sinnvolle Absicherung.",
+            "Auf B12, Zink, Selen und Jod im Präparat achten.",
+          ],
+        },
+        {
+          key: "electrolytes",
+          name: "Elektrolyt-Komplex",
+          brand: "gloryfeel",
+          photoSrc: "/photos/supplements/electrolytes.png",
+          detail:
+            "GLP-1-Medikamente wie Mounjaro reduzieren den Appetit erheblich — und damit oft unbemerkt auch die Flüssigkeitszufuhr. Gute Hydration bedeutet nicht nur Wasser trinken: Elektrolyte (Natrium, Kalium, Magnesium, Chlorid) steuern, wie der Körper das Wasser speichert und verteilt. Ohne Elektrolyte können große Wassermengen Mineralstoffe aus dem Körper spülen. Trotz eines Tagesziels von 3–4 Litern helfen Elektrolyte sicherzustellen, dass das Wasser bleibt, wo es gebraucht wird — in den Zellen, für Energie, Muskelfunktion und Vorbeugung von Krämpfen.",
+          facts: [
+            "Besonders wichtig bei GLP-1-Medikamenten, wo die Flüssigkeitszufuhr unbemerkt sinken kann.",
+            "Elektrolyte helfen dem Körper, das aufgenommene Wasser zu nutzen und zu halten.",
+            "Unterstützt Energie, beugt Muskelkrämpfen vor und reduziert Erschöpfungs-Kopfschmerzen.",
+            "Natrium, Kalium und Magnesium sind die drei wichtigsten Elektrolyte.",
+          ],
+        },
+        {
+          key: "magnesium",
+          name: "Magnesium Citrat",
+          brand: "WeightWorld",
+          photoSrc: "/photos/supplements/magnesium.png",
+          detail:
+            "Nicht die endgültige Wahl. Nach der Nutzung von Magnesium Citrat wurde eine bessere Option gefunden: Magnesium Bisglycinat. Bisglycinat ist eine chelierte Form — Magnesium gebunden an die Aminosäure Glycin — was es deutlich magenverträglicher und besser aufnehmbar macht. Citrat hat einen leichten abführenden Effekt, der bei Verstopfung nützlich sein kann, bei höheren Dosen aber Durchfall verursachen kann. Aktuelle Dosis: 1 Kapsel = 222 mg elementares Magnesium. Wer neu anfängt, sollte direkt zu Bisglycinat greifen. Magnesium unterstützt Schlafqualität, Muskelentspannung, Nervenfunktion und Energieproduktion.",
+          facts: [
+            "Bisglycinat = bessere Aufnahme, magenverträglicher — die bessere Wahl auf Dauer.",
+            "Citrat = nützlich bei Verstopfung, kann bei höheren Dosen Durchfall verursachen.",
+            "Magnesiumoxid ist die günstigste Form, hat aber eine sehr schlechte Bioverfügbarkeit.",
+            "Unterstützt Schlafqualität, Muskelentspannung und Nervenfunktion.",
+            "Aktuelle Dosis: 222 mg elementares Magnesium pro Kapsel (1 Kapsel täglich).",
+          ],
+        },
+        {
+          key: "whey",
+          name: "30 g Whey Protein",
+          brand: "BioTechUSA",
+          photoSrc: "/photos/supplements/whey.png",
+          detail:
+            "Täglich 170+ g Protein allein aus vollwertigen Lebensmitteln zu erreichen ist bei einem Kaloriendefizit wirklich schwierig. Whey-Protein schließt diese Lücke sauber — schnell verdaulich, hohe Bioverfügbarkeit, wenig Fett und Kohlenhydrate. Immer Vanilla: neutral genug, um mit Milch, Wasser, Joghurt oder Haferflocken gemischt zu werden — die sichere Wahl. Markenvergleich: PBN war preislich ausgezeichnet, ist aber nicht mehr erhältlich und hatte Berichte über ungenaue Nährwertangaben. Bulk verursachte Magenbeschwerden, wahrscheinlich durch hohen Laktosegehalt. IRON BROTHERS ist aktuell das günstigste Preis-pro-Gramm-Angebot auf dem deutschen Markt. BioTechUSA Vanilla mit Milch ist die aktuelle Wahl: guter Geschmack, mischt sich gut, gleichbleibende Qualität.",
+          facts: [
+            "Im Zweifelsfall immer Vanilla — passt zu allem.",
+            "Preis pro Gramm Protein vergleichen, nicht den Preis pro Kilogramm Pulver.",
+            "Whey-Konzentrat ist gut, es sei denn du bist laktoseintolerant — Isolat hat weniger Laktose.",
+            "Getestete Marken: PBN (nicht mehr verfügbar), Bulk (Magenprobleme), IRON BROTHERS (guter Preis), BioTechUSA (aktuelle Wahl).",
+          ],
+        },
+        {
+          key: "creatine",
+          name: "10 g Creatin Monohydrat",
+          brand: "IRON BROTHERS",
+          photoSrc: "/photos/supplements/creatine.png",
+          detail:
+            "Kreatin ist eines der am umfangreichsten erforschten Supplements in der Sportwissenschaft, mit konsistenten Belegen über Jahrzehnte. Es erhöht den Phosphokreatin-Speicher in den Muskeln, was die ATP-Regeneration bei kurzen intensiven Belastungen beschleunigt — Krafttraining, Sprints, alles Explosive. Für jemanden, der von Grund auf Kraft aufbaut, ist es eine sinnvolle Ergänzung. Monohydrat ist die ursprüngliche Form: bewiesen, günstig und in der Wirksamkeit identisch mit teureren Formen wie Kre-Alkalyn oder Kreatin-HCl. Keine Ladephase nötig — 5–10 g täglich reichen. Wird direkt in den Whey-Shake gemischt. Regel: das günstigste Monohydrat von einem seriösen Hersteller kaufen.",
+          facts: [
+            "Keine Ladephase nötig — 5–10 g täglich ist die standardmäßig wirksame Dosis.",
+            "Monohydrat ist in der Wirkung identisch mit teureren Kreatin-Formen.",
+            "Es dauert 2–4 Wochen kontinuierlicher Einnahme, bis der Krafteffekt spürbar ist.",
+            "Marke irrelevant — nur reines Monohydrat von einem seriösen Hersteller wählen.",
+            "Bei gesunden Personen langfristig sicher — kein Beleg für Nierenschäden.",
+          ],
+        },
+        {
+          key: "collagen",
+          name: "10 g Kollagen",
+          brand: "IRON BROTHERS",
+          photoSrc: "/photos/supplements/collagen.png",
+          detail:
+            "Kollagen unterstützt die strukturelle Integrität von Gelenken, Sehnen, Bändern und Haut — alles, was beim Verlust erheblicher Gewichtsmengen unter besonderem Druck steht. Schneller Gewichtsverlust reduziert das Fettgewebe, das Gelenke polstert, und kann die Haut lockern, was Kollagen zu echter Unterstützung macht. Der entscheidende Punkt: Vitamin C ist für die Kollagensynthese unverzichtbar — der Körper kann ohne es kein Kollagen aufbauen. Das vit4ever-Kollagen enthielt kein Vitamin C, weshalb ein separates Präparat nötig war. Die IRON-BROTHERS-Version enthält Vitamin C bereits in der Formel — einfacher und nicht teurer. Idealerweise 30–60 Minuten vor dem Training einnehmen.",
+          facts: [
+            "Vitamin C ist unverzichtbar — ohne es kann der Körper kein Kollagen aufbauen.",
+            "Idealerweise 30–60 Minuten vor dem Training für optimale Kollagensynthese.",
+            "Relevant für Gelenkgesundheit, Sehnenunterstützung und Hautelastizität beim Abnehmen.",
+            "Sicherstellen, dass das Produkt Vitamin C enthält — oder separat ergänzen.",
+            "Hydrolysiertes Kollagen (Typ I/III) ist die am besten untersuchte Form für Gelenke und Haut.",
+          ],
+        },
       ],
     },
     training: {

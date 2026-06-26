@@ -72,7 +72,7 @@ public class ForumCommentService {
 			return List.of();
 		}
 
-		List<UUID> commentIds = comments.stream().map(ForumComment::getId).toList();
+		List<UUID> commentIds = comments.stream().map(c -> c.getId()).toList();
 		Map<UUID, Long> likeCounts = buildLikeCountMap(commentIds);
 		Set<UUID> likedIds = currentUserId != null
 				? commentLikeRepository.findLikedCommentIdsByUserAndCommentIds(currentUserId, commentIds)

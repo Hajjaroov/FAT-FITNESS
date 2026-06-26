@@ -50,7 +50,7 @@ public class RefreshTokenCookieService {
 		}
 
 		return findRefreshCookie(servletRequest)
-				.map(Cookie::getValue)
+				.map(c -> c.getValue())
 				.map(RefreshTokenCookieService::cleanToken)
 				.map((cookieToken) -> new ResolvedRefreshToken(cookieToken, true))
 				.orElseGet(() -> new ResolvedRefreshToken(null, false));

@@ -38,7 +38,7 @@ public class JwtAccessTokenService {
 				.expiresAt(expiresAt)
 				.subject(user.getId().toString())
 				.claim("email", user.getEmail())
-				.claim("roles", user.getRoles().stream().map(Enum::name).sorted().toList())
+				.claim("roles", user.getRoles().stream().map(role -> role.name()).sorted().toList())
 				.build();
 		JwsHeader headers = JwsHeader.with(MacAlgorithm.HS256).build();
 

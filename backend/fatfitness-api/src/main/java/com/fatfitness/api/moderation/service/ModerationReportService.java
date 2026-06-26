@@ -1,7 +1,6 @@
 package com.fatfitness.api.moderation.service;
 
 import java.time.Instant;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -134,7 +133,7 @@ public class ModerationReportService {
 				.toList();
 
 		return java.util.stream.Stream.concat(postReports.stream(), commentReports.stream())
-				.sorted(Comparator.comparing(ModerationReportResponse::createdAt).reversed())
+				.sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
 				.limit(cleanedLimit)
 				.toList();
 	}
