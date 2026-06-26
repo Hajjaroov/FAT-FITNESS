@@ -193,33 +193,9 @@ export function AdminModerationView() {
     <PageShell className="gap-8">
       <section className="site-panel p-8 sm:p-10">
         <p className="site-kicker">{copy.eyebrow}</p>
-        <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_18rem] lg:items-end">
-          <div>
-            <h1 className="max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
-              {copy.title}
-            </h1>
-            <p className="mt-5 max-w-3xl text-base leading-8 opacity-85">
-              {copy.intro}
-            </p>
-          </div>
-
-          {user ? (
-            <dl className="rounded-3xl border border-white/20 bg-white/10 p-5 text-sm backdrop-blur">
-              <div>
-                <dt className="opacity-70">{copy.filters.statusLabel}</dt>
-                <dd className="mt-1 text-2xl font-semibold">
-                  {copy.filters.statuses[statusFilter]}
-                </dd>
-              </div>
-              <div className="mt-4">
-                <dt className="opacity-70">{copy.filters.targetTypeLabel}</dt>
-                <dd className="mt-1 text-2xl font-semibold">
-                  {copy.filters.targetTypes[targetTypeFilter]}
-                </dd>
-              </div>
-            </dl>
-          ) : null}
-        </div>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+          {copy.title}
+        </h1>
       </section>
 
       {authStatus === "checking" ? (

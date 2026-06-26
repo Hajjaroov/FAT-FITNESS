@@ -7,6 +7,13 @@ type Exercise = {
   photoSrc?: string;
 };
 
+type WarmupItem = {
+  name: string;
+  sets: string;
+  photoKey: string;
+  photoSrc?: string;
+};
+
 type TrainingDay = {
   day: string;
   focus: string;
@@ -48,6 +55,15 @@ const loggedEntries = [
   ["10", "2026-06-21", "157.0 kg", "-1.0 kg"],
 ] as const;
 
+const warmupItems: WarmupItem[] = [
+  { name: "March in place", sets: "2 minutes", photoKey: "warmup-march-in-place", photoSrc: "" },
+  { name: "Shoulder rolls", sets: "10 forward and 10 back", photoKey: "warmup-shoulder-rolls", photoSrc: "" },
+  { name: "Arm circles", sets: "10 forward and 10 back", photoKey: "warmup-arm-circles", photoSrc: "" },
+  { name: "Hip circles", sets: "10 each direction", photoKey: "warmup-hip-circles", photoSrc: "" },
+  { name: "Bodyweight chair squats", sets: "10 slow reps", photoKey: "warmup-chair-squats", photoSrc: "" },
+  { name: "Cat-cow mobility", sets: "20 reps", photoKey: "warmup-cat-cow", photoSrc: "" },
+];
+
 const englishSchedule: TrainingDay[] = [
   {
     day: "Monday",
@@ -57,86 +73,121 @@ const englishSchedule: TrainingDay[] = [
         name: "Incline dumbbell press, 30-45 degrees",
         sets: "3 x 8-10",
         photoKey: "incline-dumbbell-press",
+        photoSrc: ""
       },
       {
         name: "Chest-supported dumbbell row",
         sets: "3 x 10",
         photoKey: "chest-supported-dumbbell-row",
-      },
-      {
-        name: "Dumbbell lateral raise",
-        sets: "3 x 12-15",
-        photoKey: "dumbbell-lateral-raise",
+        photoSrc: ""
       },
       {
         name: "Seated dumbbell shoulder press",
         sets: "3 x 10",
         photoKey: "seated-dumbbell-shoulder-press",
+        photoSrc: ""
       },
-      { name: "Dumbbell curl", sets: "3 x 12", photoKey: "dumbbell-curl" },
+      {
+        name: "Dumbbell lateral raise",
+        sets: "3 x 12-15",
+        photoKey: "dumbbell-lateral-raise",
+        photoSrc: ""
+      },
+      {
+        name: "Dumbbell curl",
+        sets: "3 x 12",
+        photoKey: "dumbbell-curl",
+        photoSrc: ""
+      },
       {
         name: "Overhead dumbbell tricep extension",
         sets: "3 x 12",
         photoKey: "overhead-dumbbell-tricep-extension",
+        photoSrc: ""
       },
     ],
     notes: [
-      "Chest-supported row uses a bench at incline.",
-      "Some upper-body movements use 2 sets for the first 2 weeks.",
-      "Overhead tricep extension may work better with a chair.",
+      "• Chest-supported row: cheast fat gets in the way — deal with it.",
+      "• Shoulder press, lateral raise, curl, and overhead tricep extension: 2 sets are enough for the first 2 weeks.",
+      "• Overhead tricep extension: use a chair or a flat bench — an upright bench can cause the dumbbell to scratch it, and the range of motion is easier when the back is supported flat.",
+
     ],
   },
   {
     day: "Wednesday",
     focus: "Lower + Core",
     exercises: [
-      { name: "Chair squat", sets: "3 x 8", photoKey: "chair-squat" },
-      { name: "Romanian deadlift", sets: "3 x 10", photoKey: "romanian-deadlift" },
-      { name: "Hip thrust", sets: "3 x 10-12", photoKey: "hip-thrust" },
       {
-        name: "Supported split squat",
-        sets: "2 x 6 each leg",
-        photoKey: "supported-split-squat",
+        name: "Chair squat",
+        sets: "3 x 8",
+        photoKey: "chair-squat",
+        photoSrc: ""
       },
-      { name: "Standing calf raise", sets: "3 x 15", photoKey: "standing-calf-raise" },
+      {
+        name: "Romanian deadlift",
+        sets: "3 x 10",
+        photoKey: "romanian-deadlift",
+        photoSrc: ""
+      },
+      {
+        name: "Hip thrust",
+        sets: "3 x 10-12",
+        photoKey: "hip-thrust",
+        photoSrc: ""
+      },
+      {
+        name: "Lateral step-out squat",
+        sets: "2 x 12-15 each side",
+        photoKey: "lateral-step-out-squat",
+        photoSrc: ""
+      },
+      {
+        name: "Standing calf raise",
+        sets: "3 x 15",
+        photoKey: "standing-calf-raise",
+        photoSrc: ""
+      },
       {
         name: "Seated core brace",
         sets: "5 x 15 seconds",
         photoKey: "seated-core-brace",
+        photoSrc: ""
       },
     ],
     notes: [
-      "Use chair depth as the squat target.",
-      "Hip thrust can be bench-supported if comfortable.",
-      "Hold a chair for balance on supported split squats.",
-      "Calf raises can progress from bodyweight to dumbbells and step/stair variations.",
+      "• Chair squat: use the chair as a touch target for depth, not a full sit.",
+      "• Hip thrust: spread arms along the bench and lightly touch it as your start position — as you drive your hips up, your upper back rests on the bench to support your weight.",
+      "• Standing calf raise: start with bodyweight, then progress to dumbbells or step/stair variations.",
+      "• Seated core brace: start by just holding the seated position, then progress by lifting your legs.",
     ],
   },
   {
     day: "Friday",
     focus: "Upper B",
     exercises: [
-      { name: "Flat dumbbell press", sets: "3 x 8-10", photoKey: "flat-dumbbell-press" },
-      { name: "One-arm dumbbell row", sets: "3 x 10", photoKey: "one-arm-dumbbell-row" },
-      { name: "Arnold press", sets: "3 x 10", photoKey: "arnold-press" },
-      { name: "Rear delt fly", sets: "3 x 12-15", photoKey: "rear-delt-fly" },
-      { name: "Hammer curl", sets: "3 x 12", photoKey: "hammer-curl" },
-      { name: "Skull crusher", sets: "3 x 12", photoKey: "skull-crusher" },
+      { name: "Flat dumbbell press", sets: "3 x 8-10", photoKey: "flat-dumbbell-press", photoSrc: "" },
+      { name: "One-arm dumbbell row", sets: "3 x 10 each side", photoKey: "one-arm-dumbbell-row", photoSrc: "" },
+      { name: "Arnold press", sets: "3 x 10", photoKey: "arnold-press", photoSrc: "" },
+      { name: "Rear delt fly", sets: "3 x 12-15", photoKey: "rear-delt-fly", photoSrc: "" },
+      { name: "Hammer curl", sets: "3 x 12", photoKey: "hammer-curl", photoSrc: "" },
+      { name: "Skull crusher", sets: "3 x 12", photoKey: "skull-crusher", photoSrc: "" },
     ],
     notes: [
-      "The source PDF includes a note that seated dumbbell shoulder press may be a harder option.",
-      "Current load notes exist in the source PDF, but row mapping needs verification before publishing.",
+      "• Shoulder press, rear delt fly, hammer curl, and skull crusher: 2 sets are enough for the first 2 weeks.",
+      "• Rest well between shoulder press and rear delt fly — shoulders tire quickly and are generally not a strong muscle group at a higher weight. Keep the load light on both.",
+      "• Skull crusher: stay focused and control the path of the dumbbell throughout — if the bar is long, the risk of hitting your head is real.",
     ],
   },
   {
     day: "Saturday",
     focus: "Recovery W5+",
     exercises: [
-      { name: "Chest-supported row", sets: "2 x 12", photoKey: "chest-supported-row" },
+      { name: "Chest-supported row", sets: "2 x 12", photoKey: "chest-supported-row", photoSrc: "" },
       {
         name: "Incline dumbbell press",
         sets: "2 x 12",
         photoKey: "incline-dumbbell-press-recovery",
+        photoSrc: ""
       },
       { name: "Lateral raise", sets: "2 x 15", photoKey: "lateral-raise-recovery" },
       { name: "Rear delt fly", sets: "2 x 15", photoKey: "rear-delt-fly-recovery" },
@@ -153,7 +204,11 @@ const englishSchedule: TrainingDay[] = [
         photoKey: "hip-mobility-stretching",
       },
     ],
-    notes: ["Use lighter weights."],
+    notes: [
+      "• This is not a hard training day — the goal is blood flow, technique practice, recovery, mobility, and some extra upper-body hypertrophy.",
+      "• Overhead tricep extension can be done standing on this day.",
+      "• Finish with 5–10 minutes of hip mobility and stretching after the workout.",
+    ],
   },
 ];
 
@@ -163,9 +218,10 @@ const germanSchedule: TrainingDay[] = [
     focus: "Oberkörper A",
     exercises: englishSchedule[0].exercises,
     notes: [
-      "Chest-supported Row nutzt eine Schrägbank.",
-      "Einige Oberkörperübungen nutzen in den ersten 2 Wochen 2 Sätze.",
-      "Overhead Tricep Extension kann mit einem Stuhl besser funktionieren.",
+      "• Chest-supported Row: Brustfett kann im Weg sein — damit umgehen.",
+      "• Schulterdrücken, Seitheben, Curl und Overhead Tricep Extension: In den ersten 2 Wochen reichen 2 Sätze.",
+      "• Overhead Tricep Extension: Stuhl oder flache Bank verwenden — aufrechte Position kann dazu führen, dass die Hantel die Bank kratzt, und der Bewegungsradius ist flach angenehmer.",
+
     ],
   },
   {
@@ -173,10 +229,10 @@ const germanSchedule: TrainingDay[] = [
     focus: "Unterkörper + Core",
     exercises: englishSchedule[1].exercises,
     notes: [
-      "Die Stuhltiefe dient als Ziel für die Kniebeuge.",
-      "Hip Thrust kann mit Bankunterstützung gemacht werden, wenn es bequem ist.",
-      "Bei Supported Split Squats einen Stuhl für Balance halten.",
-      "Calf Raises können von Körpergewicht zu Kurzhanteln und später Stufe/Treppe gesteigert werden.",
+      "• Chair Squat: Den Stuhl als Berührungspunkt für die Tiefe nutzen, nicht als volles Hinsetzen.",
+      "• Hip Thrust: Arme auf der Bank ausstrecken und die Bank leicht berühren als Startposition — beim Hochdrücken der Hüfte liegt der obere Rücken zur Unterstützung auf der Bank.",
+      "• Standing Calf Raise: Mit Körpergewicht beginnen, dann zu Kurzhanteln oder Stufen-/Treppenvarianten steigern.",
+      "• Seated Core Brace: Zunächst nur die sitzende Position halten, dann mit Beinheben steigern.",
     ],
   },
   {
@@ -184,15 +240,20 @@ const germanSchedule: TrainingDay[] = [
     focus: "Oberkörper B",
     exercises: englishSchedule[2].exercises,
     notes: [
-      "Die PDF-Quelle notiert, dass Seated Dumbbell Shoulder Press eine schwierigere Option sein kann.",
-      "Aktuelle Gewichtsnotizen existieren in der Quelle, aber die Row-Zuordnung muss vor Veröffentlichung geprüft werden.",
+      "• Schulterdrücken, Rear Delt Fly, Hammer Curl und Skull Crusher: In den ersten 2 Wochen reichen 2 Sätze.",
+      "• Zwischen Schulterdrücken und Rear Delt Fly gut erholen — Schultern ermüden schnell und sind bei höherem Körpergewicht oft keine starke Muskelgruppe. Leichte Gewichte bei beiden wählen.",
+      "• Skull Crusher: die Hantel bewusst kontrollieren und die Bahn im Blick behalten — bei einer langen Stange besteht echtes Risiko, den Kopf zu treffen.",
     ],
   },
   {
     day: "Samstag",
     focus: "Recovery W5+",
     exercises: englishSchedule[3].exercises,
-    notes: ["Leichtere Gewichte nutzen."],
+    notes: [
+      "• Kein harter Trainingstag — das Ziel ist Durchblutung, Technikübung, Erholung, Mobilität und etwas zusätzliche Oberkörperhypertrophie.",
+      "• Overhead Tricep Extension kann an diesem Tag im Stehen ausgeführt werden.",
+      "• Nach dem Training 5–10 Minuten Hip Mobility und Stretching.",
+    ],
   },
 ];
 
@@ -224,8 +285,8 @@ export const learnCopy = {
             "Training from a very high starting weight, with beginner-friendly notes that do not assume fitness experience.",
           startsWith: [
             "Current training situation and 3-4 sessions per week.",
-            "Exercises that fit the real starting point, with photos later.",
-            "Notes about confidence, gym anxiety, recovery, and equipment.",
+            "Exercises that fit the real starting point.",
+            "Notes about confidence, gym, recovery, and equipment.",
           ],
         },
         {
@@ -263,7 +324,7 @@ export const learnCopy = {
             { label: "330 ml lactose-free milk, 1.5 %", detail: "152 kcal | 11.2 g protein | 15 g carbs | 5 g fat" },
             { label: "10 g creatine", detail: "0 kcal" },
           ],
-        },        
+        },
         {
           name: "Meal 1",
           summary: "350 kcal | 33 g protein | 8 g carbs | 21 g fat",
@@ -304,11 +365,11 @@ export const learnCopy = {
     },
     training: {
       eyebrow: "Training",
-      title: "A beginner routine built around the real starting point.",
+      title: "A beginner routine built around a real starting point 160kg.",
       intro:
-        "A personal routine built from the real starting point — walking, warm-up, weekly schedule, and exercises documented as a personal record, not a program for anyone else to copy.",
+        "A gym would be the ideal setup, but that is not an option right now. Instead: two dumbbells, a bench, and a plan built with AI. Training only started after losing enough weight to feel comfortable moving — not to get fit from scratch, but to protect existing muscle and build some to support the rest of the journey. Walking, warm-up, weekly schedule, and exercises logged here as a personal record, not a plan for anyone else to follow.",
       walkingTitle: "Walking Progression",
-      walkingIntro: "Walking is planned on off days and increases over time.",
+      walkingIntro: "• Walking is planned on off days and increases over time.\n• It is recovery work, not punishment cardio.",
       walkingProgression: [
         { phase: "Weeks 01-08", target: "30 minutes on off days" },
         { phase: "Weeks 09-16", target: "40 minutes on off days" },
@@ -316,15 +377,8 @@ export const learnCopy = {
       ],
       warmupTitle: "Warm-Up Protocol",
       warmupIntro:
-        "The notes say to go slow and use the chair as a touch target, not a full sit.",
-      warmup: [
-        "March in place: 2 minutes",
-        "Shoulder rolls: 10 reps",
-        "Arm circles: 10 forward and 10 backward",
-        "Hip circles: 10 each direction",
-        "Bodyweight chair squats: 10 slow reps",
-        "Cat-cow mobility: 8 reps",
-      ],
+        "• Around 5 to 8 minutes total.\n• March in place slowly — fill the 2 minutes, don't rush them.\n• Bodyweight chair squats: use the chair as a touch target only, not a full sit.\n• Cat-cow mobility looks odd but is genuinely good for the back.\n• Session duration: maximum 60 minutes including warm-up.",
+      warmup: warmupItems,
       scheduleTitle: "Weekly Schedule, Weeks 1-12",
       exerciseLabel: "Exercises",
       notesLabel: "Notes",
@@ -373,8 +427,8 @@ export const learnCopy = {
             "Training aus einem sehr hohen Startgewicht heraus, mit anfängerfreundlichen Notizen ohne Fitness-Erfahrung vorauszusetzen.",
           startsWith: [
             "Aktuelle Trainingssituation und 3-4 Einheiten pro Woche.",
-            "Übungen, die zum echten Startpunkt passen, mit Fotos später.",
-            "Notizen zu Sicherheit, Gym-Angst, Erholung und Equipment.",
+            "Übungen, die zum echten Startpunkt passen.",
+            "Notizen zu Sicherheit, Gym, Erholung und Equipment.",
           ],
         },
         {
@@ -453,11 +507,11 @@ export const learnCopy = {
     },
     training: {
       eyebrow: "Training",
-      title: "Eine Anfängerroutine, gebaut um den echten Startpunkt.",
+      title: "Eine Anfängerroutine, gebaut um einen echten Startpunkt 160kg.",
       intro:
-        "Eine persönliche Routine, aufgebaut am realen Startpunkt — Geh-Progression, Warm-up, Wochenplan und Übungen als persönliche Aufzeichnung, kein Programm zum Nachahmen.",
-      walkingTitle: "Geh-Progression",
-      walkingIntro: "Gehen ist für freie Tage geplant und steigert sich mit der Zeit.",
+        "Ein Fitnessstudio wäre ideal, ist aber momentan keine Option. Stattdessen: zwei Kurzhanteln, eine Bank und ein mit KI entwickelter Plan. Mit dem Training wurde erst begonnen, nachdem genug Gewicht verloren war, um sich dabei wohlzufühlen — nicht um von null fit zu werden, sondern um vorhandene Muskeln zu erhalten und neue aufzubauen, die die Reise unterstützen. Geh-Progression, Warm-up, Wochenplan und Übungen hier als persönliche Aufzeichnung, kein Plan zum Nachahmen.",
+      walkingTitle: "Lauf-Progression",
+      walkingIntro: "• Laufen ist für freie Tage geplant und steigert sich mit der Zeit.\n• Es ist eine Erholungsarbeit, kein Strafkardio.",
       walkingProgression: [
         { phase: "Wochen 01-08", target: "30 Minuten an freien Tagen" },
         { phase: "Wochen 09-16", target: "40 Minuten an freien Tagen" },
@@ -465,15 +519,9 @@ export const learnCopy = {
       ],
       warmupTitle: "Warm-up Protokoll",
       warmupIntro:
-        "Die Notizen sagen: langsam arbeiten und den Stuhl als Berührungspunkt nutzen, nicht als volles Hinsetzen.",
-      warmup: [
-        "Auf der Stelle marschieren: 2 Minuten",
-        "Schulterkreisen: 10 Wiederholungen",
-        "Armkreisen: 10 vorwärts und 10 rückwärts",
-        "Hüftkreisen: 10 pro Richtung",
-        "Bodyweight Chair Squats: 10 langsame Wiederholungen",
-        "Cat-Cow Mobilität: 8 Wiederholungen",
-      ],
+        "• Etwa 5 bis 8 Minuten insgesamt.\n• Auf der Stelle langsam marschieren — die 2 Minuten ausfüllen, nicht überspringen.\n• Bodyweight Chair Squats: den Stuhl nur als Berührungspunkt nutzen, nicht als volles Hinsetzen.\n• Cat-Cow Mobilität sieht merkwürdig aus, ist aber wirklich gut für den Rücken.\n• Trainingszeit: maximal 60 Minuten inklusive Warm-up."
+,
+      warmup: warmupItems,
       scheduleTitle: "Wochenplan, Wochen 1-12",
       exerciseLabel: "Übungen",
       notesLabel: "Notizen",

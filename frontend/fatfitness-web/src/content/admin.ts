@@ -3,9 +3,7 @@ import type { Locale } from "@/content/site";
 export const adminCopy = {
   en: {
     eyebrow: "Admin",
-    title: "Moderation reports",
-    intro:
-      "Review reports from forum threads and replies. This dashboard can hide reported content, resolve reports, or dismiss reports; locking, banning, and full audit tools come later.",
+    title: "Reports",
     loading: {
       title: "Checking admin access",
       body: "The dashboard is checking your current session before loading reports.",
@@ -88,9 +86,7 @@ export const adminCopy = {
   },
   de: {
     eyebrow: "Admin",
-    title: "Moderationsmeldungen",
-    intro:
-      "Prüfe Meldungen aus Forum-Threads und Antworten. Dieses Dashboard kann gemeldete Inhalte verstecken, Meldungen lösen oder Meldungen ablehnen; Sperren, Bann und vollständige Audit-Werkzeuge kommen später.",
+    title: "Meldungen",
     loading: {
       title: "Admin-Zugriff wird geprüft",
       body:

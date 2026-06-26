@@ -25,124 +25,290 @@ export function SiteHeader() {
   const { theme, toggleTheme } = useTheme();
   const { status, user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const copy = useLocalizedContent(siteCopy);
   const nextTheme = theme === "dark" ? "light" : "dark";
   const themeIcon = theme === "dark" ? "☾" : "☀";
   const canOpenAdmin = user ? hasModeratorAccess(user.roles) : false;
 
+  const currentNavItem = siteNavigation.find((item) => isActiveRoute(pathname, item.href));
+  const currentPageLabel = currentNavItem ? copy.nav[currentNavItem.key] : copy.brand;
+
   async function handleLogout() {
     setIsLoggingOut(true);
-
     try {
       await logout();
     } finally {
       setIsLoggingOut(false);
+      setMenuOpen(false);
     }
   }
 
+  const pillClass =
+    "flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-surface) p-1 shadow-sm";
+
   return (
-    <header className="site-header">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <Link href="/" className="site-brand">
-          {copy.brand}
-        </Link>
+    <>
+      <header className="site-header">
+        <div className="mx-auto flex w-full max-w-6xl flex-row items-center justify-between px-6 py-4">
+          <Link href="/" className="site-brand" onClick={() => setMenuOpen(false)}>
+            {copy.brand}
+          </Link>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <nav
-            aria-label="Main navigation"
-            className="flex flex-wrap items-center gap-1 rounded-full border border-(--color-border) bg-(--color-surface) p-1 shadow-sm"
-          >
-            {siteNavigation.map((item) => {
-              const isActive = isActiveRoute(pathname, item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={isActive ? "site-nav-link-active" : "site-nav-link"}
-                >
-                  {copy.nav[item.key]}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="site-select-wrap">
-            <label htmlFor="site-language" className="sr-only">
-              {copy.controls.languageLabel}
-            </label>
-            <select
-              id="site-language"
-              className="site-select"
-              value={locale}
-              aria-label={copy.controls.languageLabel}
-              onChange={(event) => {
-                const selectedLocale = event.currentTarget.value;
-
-                if (isLocale(selectedLocale)) {
-                  setLocale(selectedLocale);
-                }
-              }}
+          {/* Mobile: current page pill + burger */}
+          <div className="flex items-center gap-2 sm:hidden">
+            <span className="site-nav-link-active">{currentPageLabel}</span>
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-foreground shadow-sm transition hover:bg-(--color-surface-raised)"
             >
-              {localeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <span className="site-select-arrow" aria-hidden="true">
-              v
-            </span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
           </div>
 
-          <button
-            type="button"
-            className="site-icon-control"
-            aria-label={
-              nextTheme === "dark"
-                ? copy.controls.switchToDarkTheme
-                : copy.controls.switchToLightTheme
-            }
-            title={`${copy.controls.themeLabel}: ${copy.controls[theme]}`}
-            onClick={toggleTheme}
-          >
-            <span aria-hidden="true">{themeIcon}</span>
-          </button>
+          {/* Desktop: three pills */}
+          <div className="hidden items-center gap-3 sm:flex">
+            {/* Nav pill */}
+            <nav aria-label="Main navigation" className={pillClass}>
+              {siteNavigation.map((item) => {
+                const isActive = isActiveRoute(pathname, item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={isActive ? "site-nav-link-active" : "site-nav-link"}
+                  >
+                    {copy.nav[item.key]}
+                  </Link>
+                );
+              })}
+            </nav>
 
-          {status === "checking" ? (
-            <span className="site-control" aria-live="polite">
-              {copy.account.checking}
-            </span>
-          ) : user ? (
-            <div className="flex flex-wrap items-center gap-2">
-              {canOpenAdmin ? (
-                <Link href="/admin" className="site-control">
-                  {copy.account.admin}
-                </Link>
-              ) : null}
-              <Link
-                href="/dashboard"
-                className="site-control"
-                title={`${copy.account.signedInAs} ${user.email}`}
+            {/* Utility pill: locale + theme */}
+            <div className={pillClass}>
+              {localeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  aria-label={option.label}
+                  aria-pressed={locale === option.value}
+                  onClick={() => {
+                    if (isLocale(option.value)) setLocale(option.value);
+                  }}
+                  className={locale === option.value ? "site-nav-link-active" : "site-nav-link"}
+                >
+                  {option.value.toUpperCase()}
+                </button>
+              ))}
+              <button
+                type="button"
+                aria-label={
+                  nextTheme === "dark"
+                    ? copy.controls.switchToDarkTheme
+                    : copy.controls.switchToLightTheme
+                }
+                title={`${copy.controls.themeLabel}: ${copy.controls[theme]}`}
+                onClick={toggleTheme}
+                className="site-nav-link"
               >
-                {copy.account.signedInAs} {user.displayName}
+                <span aria-hidden="true">{themeIcon}</span>
+              </button>
+            </div>
+
+            {/* Auth pill */}
+            <div className={pillClass}>
+              {status === "checking" ? (
+                <span className="site-nav-link" aria-live="polite">
+                  {copy.account.checking}
+                </span>
+              ) : user ? (
+                <>
+                  {canOpenAdmin && (
+                    <Link href="/admin" className="site-nav-link">
+                      {copy.account.admin}
+                    </Link>
+                  )}
+                  <Link
+                    href="/dashboard"
+                    className="site-nav-link inline-flex items-center gap-1.5"
+                    title={user.email}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                    </svg>
+                    {user.displayName}
+                  </Link>
+                  <button
+                    type="button"
+                    className="site-nav-link"
+                    disabled={isLoggingOut}
+                    onClick={handleLogout}
+                  >
+                    {isLoggingOut ? copy.account.logoutPending : copy.account.logout}
+                  </button>
+                </>
+              ) : (
+                <Link href="/login" className="site-nav-link">
+                  {copy.account.login}
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-50 sm:hidden"
+          aria-modal="true"
+          role="dialog"
+          aria-label="Site menu"
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+          />
+
+          {/* Slide-in panel */}
+          <div className="absolute right-0 top-0 flex h-full w-72 flex-col overflow-y-auto bg-(--color-surface) shadow-2xl">
+            {/* Panel header */}
+            <div className="flex items-center justify-between border-b border-(--color-border) px-5 py-4">
+              <Link href="/" className="site-brand min-w-0 truncate" onClick={() => setMenuOpen(false)}>
+                {copy.brand}
               </Link>
               <button
                 type="button"
-                className="site-control"
-                disabled={isLoggingOut}
-                onClick={handleLogout}
+                aria-label="Close menu"
+                onClick={() => setMenuOpen(false)}
+                className="ml-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-(--color-border) text-foreground transition hover:bg-(--color-surface-raised)"
               >
-                {isLoggingOut ? copy.account.logoutPending : copy.account.logout}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
-          ) : (
-            <Link href="/login" className="site-control">
-              {copy.account.login}
-            </Link>
-          )}
+
+            {/* Nav section */}
+            <div className="border-b border-(--color-border) px-4 py-4">
+              <nav aria-label="Mobile navigation" className="flex flex-col gap-1">
+                {siteNavigation.map((item) => {
+                  const isActive = isActiveRoute(pathname, item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={`rounded-xl px-4 py-2.5 text-sm transition ${
+                        isActive
+                          ? "bg-foreground font-semibold text-background"
+                          : "text-(--color-muted) hover:bg-(--color-surface-raised) hover:text-foreground"
+                      }`}
+                    >
+                      {copy.nav[item.key]}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Utility section */}
+            <div className="border-b border-(--color-border) px-4 py-4">
+              <div className="flex gap-2">
+                {localeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={locale === option.value}
+                    onClick={() => {
+                      if (isLocale(option.value)) setLocale(option.value);
+                    }}
+                    className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                      locale === option.value
+                        ? "bg-foreground text-background"
+                        : "border border-(--color-border) text-(--color-muted) hover:text-foreground"
+                    }`}
+                  >
+                    {option.value.toUpperCase()}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  aria-label={
+                    nextTheme === "dark"
+                      ? copy.controls.switchToDarkTheme
+                      : copy.controls.switchToLightTheme
+                  }
+                  title={`${copy.controls.themeLabel}: ${copy.controls[theme]}`}
+                  onClick={toggleTheme}
+                  className="rounded-xl border border-(--color-border) px-4 py-2.5 text-sm text-(--color-muted) transition hover:text-foreground"
+                >
+                  <span aria-hidden="true">{themeIcon}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Auth section */}
+            <div className="px-4 py-4">
+              {status === "checking" ? (
+                <p className="px-4 py-2.5 text-sm text-(--color-muted)">{copy.account.checking}</p>
+              ) : user ? (
+                <div className="flex flex-col gap-1">
+                  <div className="mb-1 flex items-center gap-2 rounded-xl bg-(--color-surface-raised) px-4 py-2.5">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 text-(--color-muted)">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                    </svg>
+                    <span className="text-sm font-semibold text-foreground">{user.displayName}</span>
+                  </div>
+                  {canOpenAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMenuOpen(false)}
+                      className="rounded-xl px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                    >
+                      {copy.account.admin}
+                    </Link>
+                  )}
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-xl px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                  >
+                    Account
+                  </Link>
+                  <button
+                    type="button"
+                    disabled={isLoggingOut}
+                    onClick={handleLogout}
+                    className="rounded-xl px-4 py-2.5 text-left text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {isLoggingOut ? copy.account.logoutPending : copy.account.logout}
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="block rounded-xl bg-foreground px-4 py-2.5 text-center text-sm font-semibold text-background transition hover:opacity-90"
+                >
+                  {copy.account.login}
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </header>
+      )}
+    </>
   );
 }

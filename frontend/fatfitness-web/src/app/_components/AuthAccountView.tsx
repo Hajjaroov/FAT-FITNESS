@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { CountryCombobox } from "@/app/_components/CountryCombobox";
 import { PageShell } from "@/app/_components/PageShell";
@@ -56,6 +57,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
   const copy = useLocalizedContent(authCopy);
   const page = copy[mode];
   const noteId = `${mode}-account-note`;
+  const router = useRouter();
   const { status, user, login, logout } = useAuth();
   const [formState, setFormState] = useState<FormState>({ kind: "idle" });
   const agreementLabel =
@@ -77,7 +79,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
           deviceLabel: "Web browser",
         });
 
-        setFormState({ kind: "success", message: page.successText });
+        router.push("/community");
         return;
       }
 

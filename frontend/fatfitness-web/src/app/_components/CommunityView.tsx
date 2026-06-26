@@ -23,7 +23,7 @@ export function CommunityView() {
     <PageShell className="gap-8">
       <section className="site-card p-8 sm:p-10">
         <div className="grid gap-6 lg:grid-cols-[1fr_18rem] lg:items-end">
-          <div>
+          <div className="min-w-0">
             <p className="site-kicker">{copy.hero.eyebrow}</p>
             <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
               {copy.hero.title}
