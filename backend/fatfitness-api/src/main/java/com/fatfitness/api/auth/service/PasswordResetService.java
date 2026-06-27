@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import com.fatfitness.api.user.repository.UserAccountRepository;
 @Service
 public class PasswordResetService {
 
+	private static final Logger log = LoggerFactory.getLogger(PasswordResetService.class);
 	private static final Duration TOKEN_TTL = Duration.ofMinutes(30);
 	private static final String SAFE_RESPONSE =
 			"If an active account exists for this email, a password reset link has been sent.";
@@ -66,6 +69,8 @@ public class PasswordResetService {
 
 		emailService.sendPasswordResetEmail(user.getEmail(), user.getDisplayName(), rawToken);
 
+		log.info("user.password_reset_requested userId={}", user.getId());
+
 		return new ForgotPasswordResponse(SAFE_RESPONSE);
 	}
 
@@ -97,6 +102,8 @@ public class PasswordResetService {
 
 		// Revoke all existing refresh sessions so all devices must re-login
 		refreshSessionRepository.revokeAllByUserId(user.getId(), Instant.now());
+
+		log.info("user.password_reset_completed userId={}", user.getId());
 
 		return new ResetPasswordResponse("Password updated. Please sign in with your new password.");
 	}

@@ -11,6 +11,12 @@ services:
       - "5432:5432"
     volumes:
       - fitness_postgres_data_pg18:/var/lib/postgresql
+    command: >
+      postgres
+        -c log_min_duration_statement=500
+        -c log_statement=ddl
+        -c log_connections=on
+        -c log_disconnections=on
 
 volumes:
   fitness_postgres_data_pg18:

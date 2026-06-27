@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,8 @@ import com.fatfitness.api.user.repository.UserAccountRepository;
 
 @Service
 public class AuthRegistrationService {
+
+	private static final Logger log = LoggerFactory.getLogger(AuthRegistrationService.class);
 
 	private final UserAccountRepository userAccountRepository;
 	private final PasswordHashingService passwordHashingService;
@@ -84,6 +88,8 @@ public class AuthRegistrationService {
 		CreatedEmailVerificationToken verificationToken = emailVerificationTokenService.createFor(user);
 		emailService.sendVerificationEmail(user.getEmail(), user.getDisplayName(), verificationToken.rawToken());
 
+		log.info("user.registered userId={}", user.getId());
+
 		return new RegisterResponse(
 				user.getId(),
 				user.getEmail(),
@@ -94,6 +100,8 @@ public class AuthRegistrationService {
 	@Transactional
 	public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
 		UserAccount user = emailVerificationTokenService.verify(request.token());
+
+		log.info("user.email_verified userId={}", user.getId());
 
 		return new VerifyEmailResponse(
 				user.getId(),
@@ -123,14 +131,20 @@ public class AuthRegistrationService {
 	@Transactional
 	public LoginResponse login(LoginRequest request, String userAgent, String ipAddress) {
 		String email = normalizeEmail(request.email());
-		UserAccount user = userAccountRepository.findByEmail(email)
-				.orElseThrow(AuthRegistrationService::invalidCredentials);
+		UserAccount user = userAccountRepository.findByEmail(email).orElse(null);
+
+		if (user == null) {
+			log.warn("user.login_failed reason=unknown_email ip={}", ipAddress);
+			throw invalidCredentials();
+		}
 
 		if (!passwordHashingService.matches(request.password(), user.getPasswordHash())) {
+			log.warn("user.login_failed reason=bad_password userId={} ip={}", user.getId(), ipAddress);
 			throw invalidCredentials();
 		}
 
 		if (user.getStatus() != UserStatus.ACTIVE) {
+			log.warn("user.login_failed reason=inactive userId={} ip={}", user.getId(), ipAddress);
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not active");
 		}
 
@@ -149,6 +163,8 @@ public class AuthRegistrationService {
 
 		refreshSessionRepository.save(refreshSession);
 		user.recordLogin();
+
+		log.info("user.login userId={} ip={}", user.getId(), ipAddress);
 
 		return new LoginResponse(
 				user.getId(),

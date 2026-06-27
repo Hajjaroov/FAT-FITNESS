@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ import com.fatfitness.api.user.service.UserPublicDisplayNameService;
 @Service
 public class ModerationReportService {
 
+	private static final Logger log = LoggerFactory.getLogger(ModerationReportService.class);
 	private static final int DEFAULT_LIMIT = 50;
 	private static final int MAX_LIMIT = 100;
 	private static final int PREVIEW_LIMIT = 220;
@@ -79,6 +82,7 @@ public class ModerationReportService {
 		post.lock();
 		forumPostRepository.save(post);
 		moderationActionRepository.save(ModerationAction.lock(moderator, postId, null));
+		log.info("moderation.post_locked postId={} moderatorId={}", postId, moderator.getId());
 	}
 
 	@Transactional
@@ -95,6 +99,7 @@ public class ModerationReportService {
 		userAccountRepository.save(targetUser);
 		refreshSessionRepository.revokeAllByUserId(targetUserId, Instant.now());
 		moderationActionRepository.save(ModerationAction.ban(moderator, targetUserId, null));
+		log.info("moderation.user_banned userId={} moderatorId={}", targetUserId, moderator.getId());
 	}
 
 	@Transactional(readOnly = true)

@@ -41,9 +41,9 @@ Current structure:
 
 - The homepage currently acts as the landing page, story page, and journal surface.
 - Separate About / Journey and Blog pages are intentionally omitted for now to avoid duplication.
-- Navigation should stay simple for now: `Home`, `Learn`, and `Community`.
+- Navigation should stay simple for now: `Home`, `Journal`, and `Community`.
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
-- `Learn` has a static overview page plus initial detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
+- `Journal` has a static overview page plus detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
 - `/community` is the static forum index for the future forum-style community.
 - `/community/guidelines` is a static community guidelines page for safety and behavior rules.
 - Community category routes show board-level thread lists and create-thread entry points.
@@ -73,9 +73,9 @@ Current content approach:
 - Journal content: updates, reflections, experiments, product reviews, lessons, and progress notes over time.
 - Separate story/blog pages should only be introduced later if there is enough distinct content to justify them.
 
-### Learn
+### Journal
 
-This is the structured learning/content area. Public-facing language should use `Learn` instead of `Knowledge Base`, because the project is personal and beginner-friendly rather than an expert help center.
+This is the structured learning/content area. Public-facing language should use `Journal` instead of `Knowledge Base` or `Learn`, because the project is personal and beginner-friendly rather than an expert help center.
 
 Use three main sections:
 
@@ -160,21 +160,24 @@ Current state:
 - The signed-in header name links to `/dashboard`, which shows the current account summary and logout.
 - `/register` submits display name, email, searchable country/region picker, password, confirm password, and rules/privacy agreement.
 - `/dashboard` is frontend-only and uses the current auth provider; it does not add profile editing or collect health details.
-- Registration currently shows the development-only email verification token and can verify it locally until real email delivery exists.
 - The country/region picker lets users search and select country/region names, keeps codes internal, shows up to 9 suggestions plus `Other`, and includes commonly missed entries such as Syria, Iran, Sudan, Palestine, Taiwan, and Kosovo.
 - Backend auth persistence foundation exists: users, role storage, email verification token storage, and refresh-token session storage.
-- `POST /api/auth/register` exists as the first backend auth endpoint.
-- Registration currently creates pending accounts and returns a development-only raw verification token for local testing.
-- `POST /api/auth/verify-email` exists and activates pending accounts with valid verification tokens.
-- `POST /api/auth/resend-verification` exists and creates a fresh development verification token for pending accounts without revealing unknown emails.
-- `POST /api/auth/login` exists and issues a JWT access token plus a raw refresh token backed by hashed refresh-session storage.
-- `POST /api/auth/refresh` exists and rotates refresh tokens by revoking/linking old sessions and creating replacement sessions.
-- `POST /api/auth/logout` exists and revokes refresh sessions idempotently.
-- `GET /api/auth/me` exists as the first protected endpoint and returns the current active account for a valid bearer token.
-- Web refresh-token handling now uses an `HttpOnly` cookie, while future mobile/desktop clients can still use JSON refresh tokens with secure platform storage.
+- `POST /api/auth/register` creates a pending account and sends a real verification email via Resend; no raw dev token is returned in the response.
+- `POST /api/auth/verify-email` activates pending accounts with valid unexpired tokens.
+- `POST /api/auth/resend-verification` sends a fresh verification email without revealing whether the address exists.
+- `POST /api/auth/login` issues JWT access tokens and refresh sessions; web clients receive refresh tokens through `HttpOnly` cookies.
+- `POST /api/auth/refresh` rotates refresh-session records.
+- `POST /api/auth/logout` revokes refresh sessions idempotently.
+- `GET /api/auth/me` is the protected current-user endpoint.
+- `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` exist with rate limiting; frontend pages `/forgot-password` and `/reset-password` are connected.
+- `/verify-email` reads `?token=` and shows success or error state.
+- Web refresh-token handling uses an `HttpOnly` cookie; future mobile/desktop clients use JSON refresh tokens with secure platform storage.
 - Local development can seed one active `OWNER` account from environment variables without committing credentials.
 - The local owner seed is only for development. It must be removed or disabled before public launch, and any seeded dev owner must not be copied into production data.
-- No real email delivery or complete account settings UI exists yet.
+- Rate limiting is applied to login (10/15 min), resend-verification (5/hour), forgot-password (5/hour), and reset-password (10/15 min). Disabled in tests via `fatfitness.auth.rate-limit.enabled=false`.
+- `/settings` page has three sections: Profile (display name + country/region edit), Change password, and Active sessions (sign out all devices). Linked from `/dashboard`.
+- `PATCH /api/users/me/profile`, `POST /api/users/me/change-password`, and `POST /api/users/me/sessions/revoke-all` are authenticated endpoints backing the settings page.
+- Flyway migrations V1–V8 are applied; next new migration is V9.
 
 Approved auth direction:
 
@@ -391,7 +394,7 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-The community/forum foundation through post lock, user ban, likes/bookmarks, and UX polish is complete.
+Auth hardening, profile/account settings, and Journal content work (supplement modals, responsive chart, training carousels) are complete. The next decision point is what to build next — weight tracking (V9 migration) is recommended.
 
 Completed-enough checkpoints for now:
 
@@ -407,9 +410,9 @@ Completed-enough checkpoints for now:
 - Frontend community pages can list/read published posts, let signed-in verified users create top-level threads, and support reply list/create/report flows on post detail pages.
 - `/login` and `/register` exist as working frontend account pages for the local backend auth flow.
 - Backend auth persistence foundation exists with Flyway migration, JPA entities, repositories, password hashing, and deleted/banned public display-name behavior.
-- `POST /api/auth/register` exists and creates pending accounts with hashed password storage plus hashed email verification token storage.
-- `POST /api/auth/verify-email` exists and consumes valid email verification tokens while activating accounts.
-- `POST /api/auth/resend-verification` exists for development-only verification token refresh.
+- `POST /api/auth/register` creates pending accounts and sends a real verification email via Resend; no raw token in the response.
+- `POST /api/auth/verify-email` consumes valid verification tokens while activating accounts.
+- `POST /api/auth/resend-verification` sends a fresh verification email without revealing whether the email exists.
 - `POST /api/auth/login` exists for active users and creates hashed refresh-session records.
 - `POST /api/auth/refresh` exists and rotates refresh-session records.
 - `POST /api/auth/logout` exists and revokes refresh-session records.
@@ -419,14 +422,25 @@ Completed-enough checkpoints for now:
 - Frontend login/register form submission and in-memory access-token session restore exist.
 - Shared header account session visibility and logout exist.
 - `/dashboard` shows loading, signed-out, and signed-in account states using the existing auth provider.
+- Real email delivery is implemented via Resend; no dev token is returned in any response. `POST /api/auth/register` sends a verification email; `POST /api/auth/resend-verification` resends without leaking existence.
+- `/verify-email` reads `?token=` from the URL and shows success or error state.
+- `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` exist with IP-based rate limiting; `/forgot-password` and `/reset-password` frontend pages are connected.
+- `InMemoryRateLimiter` applies sliding-window rate limits: login (10/15 min), resend-verification (5/hour), forgot-password (5/hour), reset-password (10/15 min). Disabled in tests.
+- `/settings` page covers display name/country edit, change password, and sign out all devices.
+- `PATCH /api/users/me/profile`, `POST /api/users/me/change-password`, `POST /api/users/me/sessions/revoke-all` back the settings page. `CountryCombobox` accepts an `initialCode` prop.
+- `AuthProvider` exposes `refreshUser()` to re-fetch `/api/auth/me` and update context after a profile edit.
+- Three-pill desktop nav (nav / utility / auth) and mobile burger panel with full nav, locale, theme, and auth. Locale is EN/DE toggle; no native `<select>`. Auth pill shows person icon + display name.
+- Successful login redirects to `/community`.
+- Journal detail pages are complete: `Food & Diet` (supplement modal with photo, brand, detail, key facts for 8 supplements), `Training` (desktop carousels with thumbnail strip, warm-up and exercise photo system), `Medical Journey` (compact stats row, full GLP-1 log table).
+- Weight chart uses a dual chart pattern for responsive layout (mobile angled labels, desktop original horizontal layout).
 - German user-facing copy should use proper German characters such as `ä`, `ö`, `ü`, and `ß`, not ASCII fallbacks like `ae`, `oe`, `ue`, or `ss`.
 
-Approved auth implementation goals:
+Approved auth implementation goals (all complete):
 
 - Implement API-first auth endpoints with short-lived JWT access tokens, bearer-token validation, and refresh-token session records.
 - Support web, mobile, and future desktop clients through the shared Spring Boot API.
 - Require email verification before posting or other account-only community actions.
-- Add auth hardening before launch: stronger password guidance, rate limiting for login/verification attempts, and forgot-password/reset-password flow.
+- Auth hardening is complete: rate limiting on login/resend/forgot/reset, and forgot-password/reset-password flow.
 - Define roles before persistence: `OWNER`, `ADMIN`, `MODERATOR`, and `USER`.
 - Keep owner creation local and credential-safe during development by using environment variables, not committed passwords.
 - Replace the development owner seed with a deliberate secure owner/admin setup before launch.
@@ -440,11 +454,10 @@ Approved auth implementation goals:
 
 Content direction:
 
-- Current Learn pages: overview, `Food & Diet`, `Training`, and `Medical Journey`.
-- `Food & Diet` uses the diet and supplement source material in `docs/content-notes.md`.
-- `Training` uses the extracted workout PDF source material in `docs/content-notes.md`, but exact current loads should be verified before publishing.
-- `Training` can include exercise photo placeholders, but real images should be reviewed before publishing.
-- `Medical Journey` can use the GLP-1 timeline in `docs/content-notes.md`, but must stay especially careful.
+- Current Journal pages: overview, `Food & Diet`, `Training`, and `Medical Journey`.
+- `Food & Diet` is live with diet stats, meals, and 8 clickable supplement cards (modal with photo, brand, detail, key facts). Source material in `docs/content-notes.md`.
+- `Training` is live with desktop carousels (warm-up and per-day exercise carousels with thumbnail strip) and photo system. Exact current loads should be verified with the owner before publishing.
+- `Medical Journey` is live with compact stats row and full GLP-1 log table. Stays personal and non-prescriptive per content rules.
 - Current Community page: static forum index with planned boards and zero-state forum metadata.
 - Current Community Guidelines page: static rules, health-topic boundaries, and future moderation expectations.
 - Current Community Category pages: category thread-list pages for each planned forum category.
@@ -455,8 +468,8 @@ Content direction:
 - Current Community UI: frontend post lists, category thread lists, post detail rendering, signed-in create-thread form, signed-in report form, reply list, signed-in reply form, signed-in reply report form, and `/admin` report dashboard with hide/resolve/dismiss actions are connected to the API.
 - Current Community UI: likes and bookmarks are wired with SVG icon buttons; like/bookmark state restores on refresh via auth-aware fetch; report is a modal on threads and an inline modal on comments; comment report button is right-aligned.
 - Current theme system: dark mode uses `.dark` class on `<html>` (not `data-theme` attribute), applied by a blocking `<script>` in `layout.tsx` before hydration; `ThemeProvider` and `LocaleProvider` both use a `hasHydrated` guard to prevent stored preferences from being overwritten on mount.
-- Current Login/Register pages: working local auth forms with dev-only verification token handling until real email delivery is added.
-- Current shared header: shows local account session state, links signed-in users to `/dashboard`, and supports logout.
+- Current Login/Register pages: working auth forms with real Resend email delivery. No dev token in any response.
+- Current shared header: three-pill desktop layout + mobile burger panel; shows session state, links signed-in users to `/dashboard`, supports logout.
 - Current Dashboard page: frontend-only account/session summary for the current browser session.
 - Current Owner seed: backend startup can create or ensure a local `OWNER` account from `FATFITNESS_OWNER_EMAIL`, `FATFITNESS_OWNER_DISPLAY_NAME`, `FATFITNESS_OWNER_COUNTRY_REGION_CODE`, and `FATFITNESS_OWNER_PASSWORD`.
 - Launch cleanup: remove or disable the owner seed and delete any seeded development owner from non-local databases before the site is public.

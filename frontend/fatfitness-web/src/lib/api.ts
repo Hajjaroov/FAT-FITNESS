@@ -1,4 +1,5 @@
 import { apiBaseUrl } from "@/lib/config";
+import { logger } from "@/lib/logger";
 import type {
   ChangePasswordRequest,
   ChangePasswordResponse,
@@ -117,11 +118,9 @@ async function apiRequest<T>(
   const payload = await parseResponseBody(response);
 
   if (!response.ok) {
-    throw new ApiError(
-      getApiErrorMessage(payload, `API request failed with status ${response.status}`),
-      response.status,
-      payload,
-    );
+    const message = getApiErrorMessage(payload, `API request failed with status ${response.status}`);
+    logger.error("api.request_failed", { path, status: response.status, message });
+    throw new ApiError(message, response.status, payload);
   }
 
   return payload as T;
