@@ -47,7 +47,7 @@ export function CommunityCategoryView({ slug }: CommunityCategoryViewProps) {
             </p>
           </div>
 
-          <dl className="grid grid-cols-3 gap-4 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5 text-sm">
+          <dl className="grid grid-cols-3 gap-4 rounded-xl border border-(--color-border) bg-(--color-surface) p-5 text-sm">
             <div>
               <dt className="site-subtle">{copy.categoryDetail.topicsLabel}</dt>
               <dd className="mt-1 text-2xl font-semibold">

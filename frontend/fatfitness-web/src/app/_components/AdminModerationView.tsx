@@ -215,7 +215,7 @@ export function AdminModerationView() {
           </p>
           <Link
             href="/login"
-            className="mt-7 inline-flex min-h-12 items-center rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90"
+            className="mt-7 inline-flex min-h-12 items-center rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90"
           >
             {copy.signedOut.loginLabel}
           </Link>
@@ -259,7 +259,7 @@ export function AdminModerationView() {
                           .value as ModerationReportStatusFilter,
                       );
                     }}
-                    className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
+                    className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
                   >
                     {statusFilters.map((status) => (
                       <option key={status} value={status}>
@@ -284,7 +284,7 @@ export function AdminModerationView() {
                         event.currentTarget.value as TargetTypeFilter,
                       );
                     }}
-                    className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
+                    className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
                   >
                     {targetTypeFilters.map((targetType) => (
                       <option key={targetType} value={targetType}>
@@ -300,7 +300,7 @@ export function AdminModerationView() {
                   onClick={() => {
                     void refreshReports();
                   }}
-                  className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                  className="min-h-12 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
                 >
                   {isRefreshing
                     ? copy.filters.refreshPendingLabel
@@ -412,7 +412,7 @@ function ModerationReportCard({
                 {copy.targetTypes[report.targetType]}
               </span>
               <span
-                className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${reportStatusClass(report.status)}`}
+                className={`rounded-xl border px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${reportStatusClass(report.status)}`}
               >
                 {copy.statusBadges[report.status]}
               </span>
@@ -424,7 +424,7 @@ function ModerationReportCard({
 
           <Link
             href={`/community/posts/${report.postId}`}
-            className="min-h-11 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold transition hover:border-(--color-border-strong)"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold transition hover:border-(--color-border-strong)"
           >
             {copy.list.openThreadLabel}
           </Link>
@@ -463,7 +463,7 @@ function ModerationReportCard({
             </ReportMetaItem>
           </dl>
 
-          <div className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
+          <div className="rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
             <p className="site-subtle text-xs font-bold uppercase tracking-[0.14em]">
               {copy.list.detailsLabel}
             </p>
@@ -473,7 +473,7 @@ function ModerationReportCard({
           </div>
 
           {report.resolutionNote ? (
-            <div className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
+            <div className="rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
               <p className="site-subtle text-xs font-bold uppercase tracking-[0.14em]">
                 {copy.actions.noteLabel}
               </p>
@@ -498,7 +498,7 @@ function ReportMetaItem({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <dt className="site-subtle text-xs font-bold uppercase tracking-[0.14em]">
         {label}
       </dt>
@@ -526,7 +526,7 @@ function ModerationResolutionForm({
 
   if (report.status !== "OPEN") {
     return (
-      <aside className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
+      <aside className="rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
         <p className="site-kicker">{copy.actions.closedTitle}</p>
         <p className="site-muted mt-4 text-sm leading-7">
           {copy.actions.closedBody}
@@ -637,7 +637,7 @@ function ModerationResolutionForm({
   }
 
   return (
-    <form className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
+    <form className="rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
       <p className="site-kicker">{copy.actions.title}</p>
 
       <label
@@ -655,13 +655,13 @@ function ModerationResolutionForm({
           setResolutionNote(event.currentTarget.value);
         }}
         placeholder={copy.actions.notePlaceholder}
-        className="mt-2 w-full rounded-2xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+        className="mt-2 w-full rounded-xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
       />
 
       {formError ? (
         <p
           role="alert"
-          className="mt-4 rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+          className="mt-4 rounded-xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
         >
           {formError}
         </p>
@@ -670,7 +670,7 @@ function ModerationResolutionForm({
       {successMessage ? (
         <p
           role="status"
-          className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
+          className="mt-4 rounded-xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
         >
           {successMessage}
         </p>
@@ -683,7 +683,7 @@ function ModerationResolutionForm({
           onClick={() => {
             void handleHide();
           }}
-          className="min-h-12 rounded-full border border-red-500/30 bg-red-600 px-5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 rounded-xl border border-red-500/30 bg-red-600 px-5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-wait disabled:opacity-60"
         >
           {pendingAction === "HIDDEN"
             ? copy.actions.submitPendingLabel
@@ -695,7 +695,7 @@ function ModerationResolutionForm({
           onClick={() => {
             void handleResolve("RESOLVED");
           }}
-          className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
         >
           {pendingAction === "RESOLVED"
             ? copy.actions.submitPendingLabel
@@ -707,7 +707,7 @@ function ModerationResolutionForm({
           onClick={() => {
             void handleResolve("DISMISSED");
           }}
-          className="min-h-12 rounded-full border border-(--color-border) bg-background px-5 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong) disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 rounded-xl border border-(--color-border) bg-background px-5 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong) disabled:cursor-wait disabled:opacity-60"
         >
           {pendingAction === "DISMISSED"
             ? copy.actions.submitPendingLabel
@@ -720,7 +720,7 @@ function ModerationResolutionForm({
             onClick={() => {
               void handleLock();
             }}
-            className="min-h-12 rounded-full border border-yellow-500/30 bg-yellow-600 px-5 text-sm font-semibold text-white transition hover:bg-yellow-700 disabled:cursor-wait disabled:opacity-60"
+            className="min-h-12 rounded-xl border border-yellow-500/30 bg-yellow-600 px-5 text-sm font-semibold text-white transition hover:bg-yellow-700 disabled:cursor-wait disabled:opacity-60"
           >
             {pendingAction === "LOCKED"
               ? copy.actions.submitPendingLabel
@@ -733,7 +733,7 @@ function ModerationResolutionForm({
           onClick={() => {
             void handleBan();
           }}
-          className="min-h-12 rounded-full border border-red-600/30 bg-red-700 px-5 text-sm font-semibold text-white transition hover:bg-red-800 disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 rounded-xl border border-red-600/30 bg-red-700 px-5 text-sm font-semibold text-white transition hover:bg-red-800 disabled:cursor-wait disabled:opacity-60"
         >
           {pendingAction === "BANNED"
             ? copy.actions.submitPendingLabel

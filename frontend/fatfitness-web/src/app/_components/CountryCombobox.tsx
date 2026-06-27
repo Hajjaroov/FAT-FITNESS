@@ -135,7 +135,7 @@ export function CountryCombobox({
               setIsOpen(false);
             }
           }}
-          className="min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+          className="min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
         />
         <input
           type="hidden"
@@ -148,7 +148,7 @@ export function CountryCombobox({
           <div
             id={listboxId}
             role="listbox"
-            className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-10 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-2 shadow-(--shadow-card)"
+            className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-10 overflow-hidden rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-2 shadow-(--shadow-card)"
           >
             <p className="site-muted px-3 py-2 text-xs leading-5">
               {searchHint}

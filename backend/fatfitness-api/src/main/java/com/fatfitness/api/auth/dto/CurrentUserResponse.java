@@ -15,6 +15,7 @@ public record CurrentUserResponse(
 		UserStatus status,
 		Set<UserRole> roles,
 		Instant emailVerifiedAt,
-		Instant lastLoginAt
+		Instant lastLoginAt,
+		boolean hasAvatar
 ) {
 }

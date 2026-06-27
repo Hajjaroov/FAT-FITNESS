@@ -133,19 +133,20 @@ export function FoodAndDietView() {
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={() => setSelected(null)}
         />
-        <div className="relative z-10 w-full max-h-[92vh] overflow-y-auto rounded-t-3xl bg-(--color-surface) shadow-2xl sm:rounded-3xl sm:max-w-lg">
+        <div className="relative z-10 w-full max-h-[92vh] overflow-y-auto rounded-t-xl bg-(--color-surface) shadow-2xl sm:rounded-xl sm:max-w-lg">
           {/* Photo area */}
           {selected.photoSrc ? (
-            <div className="relative flex aspect-4/3 w-full items-center justify-center overflow-hidden rounded-t-3xl bg-(--color-surface-raised) p-6">
+            <div className="relative flex aspect-4/3 w-full items-center justify-center overflow-hidden rounded-t-xl bg-(--color-surface-raised) p-6">
               <Image
                 src={selected.photoSrc}
                 alt={selected.name}
                 fill
+                sizes="(min-width: 640px) 512px, 100vw"
                 className="object-contain p-6"
               />
             </div>
           ) : (
-            <div className="relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-t-3xl bg-(--color-surface-raised)">
+            <div className="relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-t-xl bg-(--color-surface-raised)">
               <svg
                 className="opacity-20"
                 width="56"
@@ -168,7 +169,7 @@ export function FoodAndDietView() {
             type="button"
             aria-label="Close"
             onClick={() => setSelected(null)}
-            className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+            className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-xl bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
           >
             <svg
               width="14"

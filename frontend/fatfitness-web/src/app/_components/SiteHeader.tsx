@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserAvatar } from "@/app/_components/UserAvatar";
 import { useState } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
@@ -45,25 +47,37 @@ export function SiteHeader() {
   }
 
   const pillClass =
-    "flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-surface) p-1 shadow-sm";
+    "flex h-10 items-center gap-1 rounded-xl border border-(--color-border) bg-(--color-surface) p-1 shadow-sm";
 
   return (
     <>
       <header className="site-header">
         <div className="mx-auto flex w-full max-w-6xl flex-row items-center justify-between px-6 py-4">
-          <Link href="/" className="site-brand" onClick={() => setMenuOpen(false)}>
+          <Link
+            href="/"
+            className="site-brand inline-flex items-center gap-2"
+            onClick={() => setMenuOpen(false)}
+          >
+            <Image
+              src="/photos/logo/logo-500.png"
+              alt=""
+              width={28}
+              height={28}
+              className="rounded-sm"
+              aria-hidden="true"
+            />
             {copy.brand}
           </Link>
 
           {/* Mobile: current page pill + burger */}
-          <div className="flex items-center gap-2 sm:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <span className="site-nav-link-active">{currentPageLabel}</span>
             <button
               type="button"
               aria-label="Open menu"
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-foreground shadow-sm transition hover:bg-(--color-surface-raised)"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) bg-(--color-surface) text-foreground shadow-sm transition hover:bg-(--color-surface-raised)"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="3" y1="6" x2="21" y2="6" />
@@ -74,7 +88,7 @@ export function SiteHeader() {
           </div>
 
           {/* Desktop: three pills */}
-          <div className="hidden items-center gap-3 sm:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             {/* Nav pill */}
             <nav aria-label="Main navigation" className={pillClass}>
               {siteNavigation.map((item) => {
@@ -140,10 +154,7 @@ export function SiteHeader() {
                     className="site-nav-link inline-flex items-center gap-1.5"
                     title={user.email}
                   >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="12" cy="8" r="4" />
-                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                    </svg>
+                    <UserAvatar displayName={user.displayName} userId={user.userId} hasAvatar={user.hasAvatar} size={16} />
                     {user.displayName}
                   </Link>
                   <button
@@ -168,7 +179,7 @@ export function SiteHeader() {
       {/* Mobile menu overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-50 sm:hidden"
+          className="fixed inset-0 z-50 lg:hidden"
           aria-modal="true"
           role="dialog"
           aria-label="Site menu"
@@ -183,14 +194,26 @@ export function SiteHeader() {
           <div className="absolute right-0 top-0 flex h-full w-72 flex-col overflow-y-auto bg-(--color-surface) shadow-2xl">
             {/* Panel header */}
             <div className="flex items-center justify-between border-b border-(--color-border) px-5 py-4">
-              <Link href="/" className="site-brand min-w-0 truncate" onClick={() => setMenuOpen(false)}>
+              <Link
+                href="/"
+                className="site-brand inline-flex min-w-0 items-center gap-2 truncate"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Image
+                  src="/photos/logo/logo-500.png"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="shrink-0 rounded-sm"
+                  aria-hidden="true"
+                />
                 {copy.brand}
               </Link>
               <button
                 type="button"
                 aria-label="Close menu"
                 onClick={() => setMenuOpen(false)}
-                className="ml-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-(--color-border) text-foreground transition hover:bg-(--color-surface-raised)"
+                className="ml-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-(--color-border) text-foreground transition hover:bg-(--color-surface-raised)"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -209,7 +232,7 @@ export function SiteHeader() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMenuOpen(false)}
-                      className={`rounded-xl px-4 py-2.5 text-sm transition ${
+                      className={`rounded-lg px-4 py-2.5 text-sm transition ${
                         isActive
                           ? "bg-foreground font-semibold text-background"
                           : "text-(--color-muted) hover:bg-(--color-surface-raised) hover:text-foreground"
@@ -233,7 +256,7 @@ export function SiteHeader() {
                     onClick={() => {
                       if (isLocale(option.value)) setLocale(option.value);
                     }}
-                    className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                    className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
                       locale === option.value
                         ? "bg-foreground text-background"
                         : "border border-(--color-border) text-(--color-muted) hover:text-foreground"
@@ -265,17 +288,14 @@ export function SiteHeader() {
               ) : user ? (
                 <div className="flex flex-col gap-1">
                   <div className="mb-1 flex items-center gap-2 rounded-xl bg-(--color-surface-raised) px-4 py-2.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 text-(--color-muted)">
-                      <circle cx="12" cy="8" r="4" />
-                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                    </svg>
+                    <UserAvatar displayName={user.displayName} userId={user.userId} hasAvatar={user.hasAvatar} size={22} />
                     <span className="text-sm font-semibold text-foreground">{user.displayName}</span>
                   </div>
                   {canOpenAdmin && (
                     <Link
                       href="/admin"
                       onClick={() => setMenuOpen(false)}
-                      className="rounded-xl px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                      className="rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
                     >
                       {copy.account.admin}
                     </Link>
@@ -283,7 +303,7 @@ export function SiteHeader() {
                   <Link
                     href="/dashboard"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-xl px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                    className="rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
                   >
                     Account
                   </Link>
@@ -291,7 +311,7 @@ export function SiteHeader() {
                     type="button"
                     disabled={isLoggingOut}
                     onClick={handleLogout}
-                    className="rounded-xl px-4 py-2.5 text-left text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground disabled:cursor-wait disabled:opacity-60"
+                    className="rounded-lg px-4 py-2.5 text-left text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground disabled:cursor-wait disabled:opacity-60"
                   >
                     {isLoggingOut ? copy.account.logoutPending : copy.account.logout}
                   </button>

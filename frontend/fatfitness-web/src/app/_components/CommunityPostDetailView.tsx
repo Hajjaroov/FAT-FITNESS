@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { UserAvatar } from "@/app/_components/UserAvatar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { CommunityComments } from "@/app/_components/CommunityComments";
@@ -169,7 +170,8 @@ export function CommunityPostDetailView({
                     {state.post.categoryName}
                   </Link>
                   <span aria-hidden="true">/</span>
-                  <span>
+                  <span className="flex items-center gap-1.5">
+                    <UserAvatar displayName={state.post.authorDisplayName} size={18} />
                     {copy.posts.postedByLabel} {state.post.authorDisplayName}
                   </span>
                   <span aria-hidden="true">/</span>
@@ -198,8 +200,8 @@ export function CommunityPostDetailView({
                     aria-label={liked ? copy.interactions.likedLabel : copy.interactions.likeLabel}
                     className={
                       liked
-                        ? "flex min-h-10 items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 text-blue-700 transition dark:text-blue-200"
-                        : "flex min-h-10 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-surface) px-3 text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-default"
+                        ? "flex min-h-10 items-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 text-blue-700 transition dark:text-blue-200"
+                        : "flex min-h-10 items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-default"
                     }
                   >
                     {liked ? (
@@ -220,8 +222,8 @@ export function CommunityPostDetailView({
                     aria-label={bookmarked ? copy.interactions.bookmarkedLabel : copy.interactions.bookmarkLabel}
                     className={
                       bookmarked
-                        ? "flex min-h-10 min-w-10 items-center justify-center rounded-full border border-amber-200 bg-amber-100 px-3 text-amber-800 transition dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200"
-                        : "flex min-h-10 min-w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) px-3 text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-default"
+                        ? "flex min-h-10 min-w-10 items-center justify-center rounded-xl border border-amber-200 bg-amber-100 px-3 text-amber-800 transition dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-200"
+                        : "flex min-h-10 min-w-10 items-center justify-center rounded-xl border border-(--color-border) bg-(--color-surface) px-3 text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-default"
                     }
                   >
                     {bookmarked ? (
@@ -285,14 +287,14 @@ export function CommunityPostDetailView({
                 onClick={() => setIsReporting(false)}
                 aria-hidden="true"
               />
-              <div className="site-card relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden sm:max-w-lg sm:rounded-3xl">
+              <div className="site-card relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden sm:max-w-lg sm:rounded-xl">
                 <div className="site-divider flex items-center justify-between border-b p-4 sm:p-5">
                   <p className="text-sm font-semibold">{copy.reports.title}</p>
                   <button
                     type="button"
                     onClick={() => setIsReporting(false)}
                     aria-label="Close"
-                    className="rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1.5 text-sm font-semibold text-(--color-muted) transition hover:text-foreground"
+                    className="rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-1.5 text-sm font-semibold text-(--color-muted) transition hover:text-foreground"
                   >
                     &#x2715;
                   </button>

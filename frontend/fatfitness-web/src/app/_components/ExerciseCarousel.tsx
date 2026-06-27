@@ -86,7 +86,7 @@ export function ExerciseCarousel({
         <button
           onClick={prev}
           aria-label="Previous exercise"
-          className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition hover:bg-black/60"
+          className="absolute left-3 top-1/2 -translate-y-1/2 rounded-xl bg-black/40 p-2 text-white transition hover:bg-black/60"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
@@ -95,7 +95,7 @@ export function ExerciseCarousel({
         <button
           onClick={next}
           aria-label="Next exercise"
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition hover:bg-black/60"
+          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-xl bg-black/40 p-2 text-white transition hover:bg-black/60"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
@@ -103,7 +103,7 @@ export function ExerciseCarousel({
         </button>
 
         {/* Counter */}
-        <div className="absolute right-3 top-3 rounded-full bg-black/40 px-2.5 py-0.5 text-xs text-white">
+        <div className="absolute right-3 top-3 rounded-xl bg-black/40 px-2.5 py-0.5 text-xs text-white">
           {current + 1} / {items.length}
         </div>
       </div>

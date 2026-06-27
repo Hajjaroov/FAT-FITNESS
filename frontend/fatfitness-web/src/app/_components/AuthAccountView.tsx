@@ -159,7 +159,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
 
           <div
             id={noteId}
-            className="mt-8 rounded-3xl border border-(--color-border) bg-(--color-accent-soft) p-5 text-sm leading-7 text-(--color-muted)"
+            className="mt-8 rounded-xl border border-(--color-border) bg-(--color-accent-soft) p-5 text-sm leading-7 text-(--color-muted)"
           >
             <p className="font-semibold text-foreground">{page.statusLabel}</p>
             <p className="mt-2">{page.statusNote}</p>
@@ -188,7 +188,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
           </div>
 
           {mode === "login" && user ? (
-            <div className="rounded-3xl border border-(--color-border) bg-(--color-accent-soft) p-5">
+            <div className="rounded-xl border border-(--color-border) bg-(--color-accent-soft) p-5">
               <p className="text-sm font-semibold text-foreground">
                 {copy.shared.activeSessionLabel}
               </p>
@@ -206,7 +206,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleLogout}
-                className="mt-5 min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                className="mt-5 min-h-12 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
               >
                 {isSubmitting
                   ? copy.shared.logoutPendingLabel
@@ -241,14 +241,14 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
                       placeholder={field.placeholder}
                       required
                       minLength={inputMinLength(field.id)}
-                      className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+                      className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
                     />
                   </div>
                 ),
               )}
 
               {agreementLabel ? (
-                <label className="flex gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-sm leading-6 text-(--color-muted)">
+                <label className="flex gap-3 rounded-xl border border-(--color-border) bg-(--color-surface) p-4 text-sm leading-6 text-(--color-muted)">
                   <input
                     type="checkbox"
                     name="register-agreement"
@@ -261,7 +261,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
               {formState.kind === "error" ? (
                 <p
                   role="alert"
-                  className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+                  className="rounded-xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
                 >
                   {formState.message}
                 </p>
@@ -270,7 +270,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
               {formState.kind === "success" ? (
                 <div
                   role="status"
-                  className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
+                  className="rounded-xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
                 >
                   <p className="font-semibold">{page.successTitle}</p>
                   <p className="mt-1">{formState.message}</p>
@@ -280,7 +280,7 @@ export function AuthAccountView({ mode }: AuthAccountViewProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="min-h-12 w-full rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                className="min-h-12 w-full rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
               >
                 {isSubmitting ? page.submitPendingLabel : page.submitLabel}
               </button>

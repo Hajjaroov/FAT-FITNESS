@@ -21,19 +21,19 @@ export function CommunityView() {
 
   return (
     <PageShell className="gap-8">
-      <section className="site-card p-8 sm:p-10">
-        <div className="grid gap-6 lg:grid-cols-[1fr_18rem] lg:items-end">
+      <section className="pt-6 pb-4">
+        <p className="site-kicker">{copy.hero.eyebrow}</p>
+        <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_18rem] lg:items-end">
           <div className="min-w-0">
-            <p className="site-kicker">{copy.hero.eyebrow}</p>
-            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
               {copy.hero.title}
             </h1>
-            <p className="site-muted mt-6 max-w-3xl text-base leading-8">
+            <p className="site-muted mt-4 max-w-3xl text-base leading-8">
               {copy.hero.intro}
             </p>
           </div>
 
-          <aside className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
+          <aside className="rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
             <p className="site-subtle text-sm font-semibold">
               {copy.forumIndex.statusLabel}
             </p>

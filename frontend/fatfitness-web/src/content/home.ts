@@ -16,7 +16,8 @@ export const homeCopy = {
       eyebrow: "Snapshot",
       items: [
         { label: "Starting point", value: "203 kg" },
-        { label: "Current known point", value: "157 kg" },
+        { label: "Current", value: "157 kg" },
+        { label: "Progress", value: "−46 kg" },
         { label: "Latest log", value: "21 Jun 2026" },
       ],
       guardrails: [
@@ -25,6 +26,10 @@ export const homeCopy = {
         "Nothing here is a guaranteed method.",
         "GLP-1 is mentioned only as part of my own story.",
       ],
+    },
+    cta: {
+      journal: "Open Journal",
+      community: "Join Community",
     },
     why: {
       eyebrow: "Why this exists",
@@ -61,7 +66,8 @@ export const homeCopy = {
       eyebrow: "Momentaufnahme",
       items: [
         { label: "Startpunkt", value: "203 kg" },
-        { label: "Aktueller bekannter Stand", value: "157 kg" },
+        { label: "Aktuell", value: "157 kg" },
+        { label: "Fortschritt", value: "−46 kg" },
         { label: "Letzter Eintrag", value: "21. Juni 2026" },
       ],
       guardrails: [
@@ -70,6 +76,10 @@ export const homeCopy = {
         "Nichts hier ist eine garantierte Methode.",
         "GLP-1 wird nur als Teil meiner eigenen Geschichte erwähnt.",
       ],
+    },
+    cta: {
+      journal: "Journal öffnen",
+      community: "Community beitreten",
     },
     why: {
       eyebrow: "Warum es das gibt",

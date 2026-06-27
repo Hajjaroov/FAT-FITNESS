@@ -4,42 +4,42 @@
 
 :root {
   color-scheme: light;
-  --color-page: #f5f0e7;
-  --color-page-rgb: 245 240 231;
-  --color-surface: #fffaf1;
-  --color-surface-rgb: 255 250 241;
+  --color-page: #eaf4ea;
+  --color-page-rgb: 234 244 234;
+  --color-surface: #f3faf3;
+  --color-surface-rgb: 243 250 243;
   --color-surface-raised: #ffffff;
-  --color-panel: #15130f;
-  --color-panel-text: #fff7ed;
-  --color-text: #15130f;
-  --color-muted: #675f55;
-  --color-subtle: #8a8176;
-  --color-border: #ded4c5;
-  --color-border-strong: #b9aa99;
-  --color-accent: #d95b21;
-  --color-accent-strong: #9f3512;
-  --color-accent-soft: #ffe1c7;
-  --shadow-card: 0 24px 70px rgb(52 39 24 / 0.12);
+  --color-panel: #19281b;
+  --color-panel-text: #f0f8f0;
+  --color-text: #0e1d10;
+  --color-muted: #44604a;
+  --color-subtle: #6a866e;
+  --color-border: #bfd8c1;
+  --color-border-strong: #92b896;
+  --color-accent: #3a9448;
+  --color-accent-strong: #25623a;
+  --color-accent-soft: #c8e8cc;
+  --shadow-card: 0 24px 70px rgb(14 28 16 / 0.10);
 }
 
 :root.dark {
   color-scheme: dark;
-  --color-page: #11100e;
-  --color-page-rgb: 17 16 14;
-  --color-surface: #1b1916;
-  --color-surface-rgb: 27 25 22;
-  --color-surface-raised: #24211d;
-  --color-panel: #f0dfc5;
-  --color-panel-text: #15130f;
-  --color-text: #f8efe2;
-  --color-muted: #c7b9a6;
-  --color-subtle: #9d917f;
-  --color-border: #3c352e;
-  --color-border-strong: #665a4d;
-  --color-accent: #ff955c;
-  --color-accent-strong: #ffb184;
-  --color-accent-soft: #3b241a;
-  --shadow-card: 0 24px 70px rgb(0 0 0 / 0.3);
+  --color-page: #0e0e0e;
+  --color-page-rgb: 14 14 14;
+  --color-surface: #1a1a1a;
+  --color-surface-rgb: 26 26 26;
+  --color-surface-raised: #242424;
+  --color-panel: #d4ead6;
+  --color-panel-text: #0e1d10;
+  --color-text: #efefef;
+  --color-muted: #8a8a8a;
+  --color-subtle: #666666;
+  --color-border: #2a2a2a;
+  --color-border-strong: #3f3f3f;
+  --color-accent: #5dc96d;
+  --color-accent-strong: #88da92;
+  --color-accent-soft: #0e1f12;
+  --shadow-card: 0 24px 70px rgb(0 0 0 / 0.40);
 }
 
 @theme inline {
@@ -69,9 +69,7 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgb(217 91 33 / 0.18), transparent 36rem),
-    linear-gradient(180deg, rgb(var(--color-page-rgb)) 0%, var(--color-page) 100%);
+  background: var(--color-page);
   color: var(--color-text);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
@@ -81,11 +79,10 @@ body {
   color: var(--color-text);
 }
 
+
+
 .site-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 12% 0%, rgb(217 91 33 / 0.16), transparent 32rem),
-    radial-gradient(circle at 88% 18%, rgb(185 170 153 / 0.22), transparent 28rem);
   color: var(--color-text);
 }
 
@@ -135,7 +132,7 @@ body {
 .site-control,
 .site-select,
 .site-icon-control {
-  border-radius: 999px;
+  border-radius: 0.625rem;
   padding: 0.58rem 0.9rem;
   font-size: 0.875rem;
   line-height: 1;
@@ -221,18 +218,18 @@ body {
 }
 
 .site-card {
-  border-radius: 2rem;
+  border-radius: 0.75rem;
   background: rgb(var(--color-surface-rgb) / 0.9);
 }
 
 .site-panel {
-  border-radius: 2rem;
+  border-radius: 0.75rem;
   background: var(--color-panel);
   color: var(--color-panel-text);
 }
 
 .site-callout {
-  border-radius: 2rem;
+  border-radius: 0.75rem;
   background: var(--color-accent-soft);
 }
 

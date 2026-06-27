@@ -451,3 +451,21 @@ export function revokeAllSessions(accessToken: string) {
     accessToken,
   });
 }
+
+export async function uploadAvatar(blob: Blob, accessToken: string): Promise<void> {
+  const formData = new FormData();
+  formData.append("avatar", blob, "avatar.jpg");
+  const response = await fetch(`${apiBaseUrl}/api/users/me/avatar`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: formData,
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null);
+    throw new ApiError(
+      getApiErrorMessage(payload, `Avatar upload failed with status ${response.status}`),
+      response.status,
+      payload,
+    );
+  }
+}

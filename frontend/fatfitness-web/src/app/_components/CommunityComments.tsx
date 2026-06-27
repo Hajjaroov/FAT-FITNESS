@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { UserAvatar } from "@/app/_components/UserAvatar";
 import {
   useEffect,
   useState,
@@ -136,7 +137,7 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
               {copy.comments.title}
             </h2>
           </div>
-          <p className="rounded-full border border-(--color-border) bg-(--color-surface) px-4 py-2 text-sm font-semibold text-(--color-muted)">
+          <p className="rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-2 text-sm font-semibold text-(--color-muted)">
             {status === "success" ? comments.length : "..."}
           </p>
         </div>
@@ -167,7 +168,7 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
                 void refresh();
               });
             }}
-            className="mt-5 min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            className="mt-5 min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
           >
             {isRefreshing
               ? copy.comments.retryPendingLabel
@@ -248,7 +249,10 @@ function CommunityCommentItem({
   return (
     <article className="p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
-        <span>{copy.comments.postedByLabel} {comment.authorDisplayName}</span>
+        <span className="flex items-center gap-1.5">
+          <UserAvatar displayName={comment.authorDisplayName} size={20} />
+          {copy.comments.postedByLabel} {comment.authorDisplayName}
+        </span>
         <span aria-hidden="true">/</span>
         <time dateTime={comment.createdAt}>
           {formatForumPostDate(comment.createdAt, locale)}
@@ -379,7 +383,7 @@ function CommunityCommentComposer({
         <p className="text-sm text-(--color-muted)">{copy.comments.signInTitle}</p>
         <Link
           href="/login"
-          className="min-h-10 rounded-full border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
+          className="min-h-10 rounded-xl border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
         >
           {copy.comments.signInLabel}
         </Link>
@@ -393,7 +397,7 @@ function CommunityCommentComposer({
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="w-full cursor-text rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-left text-sm text-(--color-subtle) transition hover:border-(--color-border-strong)"
+          className="w-full cursor-text rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-left text-sm text-(--color-subtle) transition hover:border-(--color-border-strong)"
         >
           {copy.comments.createTitle}…
         </button>
@@ -413,7 +417,7 @@ function CommunityCommentComposer({
           autoFocus
           rows={4}
           placeholder={copy.comments.bodyPlaceholder}
-          className="w-full rounded-2xl border border-(--color-border) bg-background px-4 py-3 text-sm leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+          className="w-full rounded-xl border border-(--color-border) bg-background px-4 py-3 text-sm leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
         />
 
         {formError ? (
@@ -439,7 +443,7 @@ function CommunityCommentComposer({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="min-h-9 rounded-full border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            className="min-h-9 rounded-xl border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
           >
             {isSubmitting
               ? copy.comments.submitPendingLabel
@@ -511,7 +515,7 @@ function CommunityCommentReportForm({
   if (status === "checking") {
     return (
       <div
-        className="mt-5 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5"
+        className="mt-5 rounded-xl border border-(--color-border) bg-(--color-surface) p-5"
         aria-live="polite"
       >
         <p className="site-kicker">{copy.commentReports.eyebrow}</p>
@@ -524,7 +528,7 @@ function CommunityCommentReportForm({
 
   if (!accessToken) {
     return (
-      <div className="mt-5 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5">
+      <div className="mt-5 rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
         <p className="site-kicker">{copy.commentReports.eyebrow}</p>
         <h3 className="mt-3 text-xl font-semibold">
           {copy.commentReports.signInTitle}
@@ -535,13 +539,13 @@ function CommunityCommentReportForm({
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/login"
-            className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
           >
             {copy.commentReports.signInLabel}
           </Link>
           <Link
             href="/register"
-            className="min-h-11 rounded-full border border-(--color-border) bg-background px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-background px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
           >
             {copy.commentReports.registerLabel}
           </Link>
@@ -553,7 +557,7 @@ function CommunityCommentReportForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-5 rounded-3xl border border-(--color-border) bg-(--color-surface) p-5"
+      className="mt-5 rounded-xl border border-(--color-border) bg-(--color-surface) p-5"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -565,7 +569,7 @@ function CommunityCommentReportForm({
         <button
           type="button"
           onClick={onCancel}
-          className="min-h-10 rounded-full border border-(--color-border) bg-background px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+          className="min-h-10 rounded-xl border border-(--color-border) bg-background px-4 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
         >
           {copy.comments.cancelReportLabel}
         </button>
@@ -587,7 +591,7 @@ function CommunityCommentReportForm({
             name="forum-comment-report-reason"
             required
             defaultValue=""
-            className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-background px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
+            className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-background px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
           >
             <option value="" disabled>
               {copy.commentReports.reasonPlaceholder}
@@ -613,14 +617,14 @@ function CommunityCommentReportForm({
             maxLength={1000}
             rows={4}
             placeholder={copy.commentReports.detailsPlaceholder}
-            className="mt-2 w-full rounded-2xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+            className="mt-2 w-full rounded-xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
           />
         </div>
 
         {formError ? (
           <p
             role="alert"
-            className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+            className="rounded-xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           >
             {formError}
           </p>
@@ -629,7 +633,7 @@ function CommunityCommentReportForm({
         {successMessage ? (
           <div
             role="status"
-            className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
+            className="rounded-xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
           >
             <p className="font-semibold">{copy.commentReports.successTitle}</p>
             <p className="mt-1">{successMessage}</p>
@@ -639,7 +643,7 @@ function CommunityCommentReportForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="min-h-12 w-full rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 w-full rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
         >
           {isSubmitting
             ? copy.commentReports.submitPendingLabel

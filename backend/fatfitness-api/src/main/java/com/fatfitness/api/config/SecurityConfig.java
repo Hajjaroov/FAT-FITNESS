@@ -32,8 +32,10 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.PATCH, "/api/users/me/profile").authenticated()
 						.requestMatchers(HttpMethod.POST,
 								"/api/users/me/change-password",
-								"/api/users/me/sessions/revoke-all")
+								"/api/users/me/sessions/revoke-all",
+								"/api/users/me/avatar")
 						.authenticated()
+						.requestMatchers(HttpMethod.GET, "/api/avatars/**").permitAll()
 						.requestMatchers(HttpMethod.POST,
 								"/api/community/posts",
 								"/api/community/posts/*/comments",

@@ -63,7 +63,7 @@ export function VerifyEmailView() {
             {state.kind === "success" ? (
               <div
                 role="status"
-                className="rounded-2xl border border-emerald-200 bg-emerald-100 p-5 dark:border-emerald-500/30 dark:bg-emerald-500/15"
+                className="rounded-xl border border-emerald-200 bg-emerald-100 p-5 dark:border-emerald-500/30 dark:bg-emerald-500/15"
               >
                 <p className="font-semibold text-emerald-800 dark:text-emerald-300">
                   {copy.successTitle}
@@ -73,7 +73,7 @@ export function VerifyEmailView() {
                 </p>
                 <Link
                   href="/login"
-                  className="mt-5 inline-flex min-h-11 items-center rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90"
+                  className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90"
                 >
                   {copy.signInLabel}
                 </Link>
@@ -83,7 +83,7 @@ export function VerifyEmailView() {
             {state.kind === "error" ? (
               <div
                 role="alert"
-                className="rounded-2xl border border-red-200 bg-red-100 p-5 dark:border-red-500/30 dark:bg-red-500/15"
+                className="rounded-xl border border-red-200 bg-red-100 p-5 dark:border-red-500/30 dark:bg-red-500/15"
               >
                 <p className="font-semibold text-red-800 dark:text-red-300">
                   {copy.errorTitle}

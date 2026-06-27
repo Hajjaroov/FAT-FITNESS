@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { UserAvatar } from "@/app/_components/UserAvatar";
 import {
   useEffect,
   useRef,
@@ -200,7 +201,7 @@ export function CommunityPostList({
                 void onRetry();
               });
             }}
-            className="mt-5 min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            className="mt-5 min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
           >
             {isRefreshing ? copy.posts.retryPendingLabel : copy.posts.retryLabel}
           </button>
@@ -225,7 +226,8 @@ export function CommunityPostList({
               className="site-divider block border-b p-5 transition hover:bg-(--color-surface) sm:p-6"
             >
               <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
-                <span>
+                <span className="flex items-center gap-1.5">
+                  <UserAvatar displayName={post.authorDisplayName} size={18} />
                   {copy.posts.postedByLabel} {post.authorDisplayName}
                 </span>
                 <span aria-hidden="true">/</span>
@@ -363,7 +365,7 @@ export function CommunityPostComposerModal({
         <button
           type="button"
           onClick={handleOpen}
-          className="flex shrink-0 cursor-pointer items-center gap-2 min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90"
+          className="flex shrink-0 cursor-pointer items-center gap-2 min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90"
         >
           <span className="text-base leading-none">+</span>
           {copy.posts.createTitle}
@@ -387,7 +389,7 @@ export function CommunityPostComposerModal({
           />
 
           {/* Dialog */}
-          <div className="site-card relative z-10 flex max-h-[92vh] w-full flex-col overflow-hidden rounded-b-none sm:max-w-2xl sm:rounded-3xl">
+          <div className="site-card relative z-10 flex max-h-[92vh] w-full flex-col overflow-hidden rounded-b-none sm:max-w-2xl sm:rounded-xl">
             {/* Header: type tabs + close */}
             <div className="site-divider flex items-center justify-between border-b p-4 sm:p-5">
               <div className="flex gap-2">
@@ -399,8 +401,8 @@ export function CommunityPostComposerModal({
                     onClick={() => setPostType(key)}
                     className={
                       postType === key
-                        ? "rounded-full border border-(--color-accent)/30 bg-(--color-accent)/10 px-4 py-1.5 text-xs font-semibold text-(--color-accent-strong)"
-                        : "cursor-default rounded-full border border-(--color-border) bg-(--color-surface) px-4 py-1.5 text-xs font-semibold text-(--color-muted) opacity-50"
+                        ? "rounded-xl border border-(--color-accent)/30 bg-(--color-accent)/10 px-4 py-1.5 text-xs font-semibold text-(--color-accent-strong)"
+                        : "cursor-default rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-1.5 text-xs font-semibold text-(--color-muted) opacity-50"
                     }
                   >
                     {label}
@@ -414,7 +416,7 @@ export function CommunityPostComposerModal({
                 type="button"
                 onClick={handleClose}
                 aria-label="Close"
-                className="rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1.5 text-sm font-semibold text-(--color-muted) transition hover:text-foreground"
+                className="rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-1.5 text-sm font-semibold text-(--color-muted) transition hover:text-foreground"
               >
                 &#x2715;
               </button>
@@ -426,7 +428,7 @@ export function CommunityPostComposerModal({
               onClick={handleClose}
               className="site-divider flex items-center gap-3 border-b px-5 py-3 transition hover:bg-(--color-surface) sm:px-6"
             >
-              <span className="shrink-0 rounded-full border border-(--color-border) bg-(--color-surface) px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-(--color-subtle)">
+              <span className="shrink-0 rounded-xl border border-(--color-border) bg-(--color-surface) px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-(--color-subtle)">
                 {copy.categoryDetail.pinnedTitle}
               </span>
               <span className="min-w-0 flex-1 text-sm font-semibold">
@@ -458,14 +460,14 @@ export function CommunityPostComposerModal({
                     <Link
                       href="/login"
                       onClick={handleClose}
-                      className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+                      className="min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
                     >
                       {copy.posts.signInLabel}
                     </Link>
                     <Link
                       href="/register"
                       onClick={handleClose}
-                      className="min-h-11 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+                      className="min-h-11 rounded-xl border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
                     >
                       {copy.posts.registerLabel}
                     </Link>
@@ -496,7 +498,7 @@ export function CommunityPostComposerModal({
                           name="forum-post-category"
                           required
                           defaultValue={categories[0]?.slug ?? ""}
-                          className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-background px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
+                          className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-background px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
                         >
                           {categories.map((category) => (
                             <option key={category.slug} value={category.slug}>
@@ -523,7 +525,7 @@ export function CommunityPostComposerModal({
                         minLength={4}
                         maxLength={160}
                         placeholder={copy.posts.titlePlaceholder}
-                        className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-background px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+                        className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-background px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
                       />
                     </div>
 
@@ -542,11 +544,11 @@ export function CommunityPostComposerModal({
                         maxLength={12000}
                         rows={6}
                         placeholder={copy.posts.bodyPlaceholder}
-                        className="mt-2 w-full rounded-2xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+                        className="mt-2 w-full rounded-xl border border-(--color-border) bg-background px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
                       />
                     </div>
 
-                    <label className="flex gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-sm leading-6 text-(--color-muted)">
+                    <label className="flex gap-3 rounded-xl border border-(--color-border) bg-(--color-surface) p-4 text-sm leading-6 text-(--color-muted)">
                       <input
                         type="checkbox"
                         name="forum-post-guidelines"
@@ -558,7 +560,7 @@ export function CommunityPostComposerModal({
                     {formError ? (
                       <p
                         role="alert"
-                        className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+                        className="rounded-xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
                       >
                         {formError}
                       </p>
@@ -567,7 +569,7 @@ export function CommunityPostComposerModal({
                     {successMessage ? (
                       <div
                         role="status"
-                        className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
+                        className="rounded-xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
                       >
                         <p className="font-semibold">
                           {copy.posts.createSuccessTitle}
@@ -579,7 +581,7 @@ export function CommunityPostComposerModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="min-h-12 w-full rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                      className="min-h-12 w-full rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
                     >
                       {isSubmitting
                         ? copy.posts.submitPendingLabel
@@ -684,13 +686,13 @@ export function CommunityPostComposer({
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/login"
-            className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
           >
             {copy.posts.signInLabel}
           </Link>
           <Link
             href="/register"
-            className="min-h-11 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
           >
             {copy.posts.registerLabel}
           </Link>
@@ -720,7 +722,7 @@ export function CommunityPostComposer({
               name="forum-post-category"
               required
               defaultValue={categories[0]?.slug ?? ""}
-              className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
+              className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
             >
               {categories.map((category) => (
                 <option key={category.slug} value={category.slug}>
@@ -746,7 +748,7 @@ export function CommunityPostComposer({
             minLength={4}
             maxLength={160}
             placeholder={copy.posts.titlePlaceholder}
-            className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+            className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
           />
         </div>
 
@@ -765,11 +767,11 @@ export function CommunityPostComposer({
             maxLength={12000}
             rows={8}
             placeholder={copy.posts.bodyPlaceholder}
-            className="mt-2 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+            className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
           />
         </div>
 
-        <label className="flex gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-sm leading-6 text-(--color-muted)">
+        <label className="flex gap-3 rounded-xl border border-(--color-border) bg-(--color-surface) p-4 text-sm leading-6 text-(--color-muted)">
           <input
             type="checkbox"
             name="forum-post-guidelines"
@@ -781,7 +783,7 @@ export function CommunityPostComposer({
         {formError ? (
           <p
             role="alert"
-            className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+            className="rounded-xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           >
             {formError}
           </p>
@@ -790,7 +792,7 @@ export function CommunityPostComposer({
         {successMessage ? (
           <div
             role="status"
-            className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
+            className="rounded-xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
           >
             <p className="font-semibold">{copy.posts.createSuccessTitle}</p>
             <p className="mt-1">{successMessage}</p>
@@ -800,7 +802,7 @@ export function CommunityPostComposer({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="min-h-12 w-full rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 w-full rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
         >
           {isSubmitting ? copy.posts.submitPendingLabel : copy.posts.submitLabel}
         </button>

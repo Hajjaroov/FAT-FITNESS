@@ -64,6 +64,9 @@ public class UserAccount {
 	@Column(name = "deleted_at")
 	private Instant deletedAt;
 
+	@Column(name = "avatar_jpeg")
+	private byte[] avatarJpeg;
+
 	protected UserAccount() {
 	}
 
@@ -123,6 +126,10 @@ public class UserAccount {
 		roles.add(role);
 	}
 
+	public void updateAvatar(byte[] jpegBytes) {
+		this.avatarJpeg = jpegBytes;
+	}
+
 	public UUID getId() {
 		return id;
 	}
@@ -169,6 +176,14 @@ public class UserAccount {
 
 	public Instant getDeletedAt() {
 		return deletedAt;
+	}
+
+	public byte[] getAvatarJpeg() {
+		return avatarJpeg;
+	}
+
+	public boolean hasAvatar() {
+		return avatarJpeg != null;
 	}
 
 	private static String normalizeEmail(String email) {

@@ -15,6 +15,7 @@ export type CurrentUser = {
   roles: UserRole[];
   emailVerifiedAt: string | null;
   lastLoginAt: string | null;
+  hasAvatar: boolean;
 };
 
 export type RegisterRequest = {

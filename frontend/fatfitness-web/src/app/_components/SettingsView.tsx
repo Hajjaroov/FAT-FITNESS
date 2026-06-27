@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { AvatarUpload } from "@/app/_components/AvatarUpload";
 import { CountryCombobox } from "@/app/_components/CountryCombobox";
 import { PageShell } from "@/app/_components/PageShell";
 import { useAuth } from "@/app/_components/AuthProvider";
@@ -68,6 +69,15 @@ function ProfileSection() {
       <header className="site-divider border-b p-6 sm:p-7">
         <h2 className="text-xl font-semibold">{copy.profile.title}</h2>
       </header>
+      <div className="site-divider border-b p-6 sm:p-7">
+        <p className="mb-4 text-sm font-semibold text-foreground">{copy.avatar.title}</p>
+        <AvatarUpload
+          userId={user.userId}
+          hasAvatar={user.hasAvatar}
+          displayName={user.displayName}
+          onUploaded={() => void refreshUser()}
+        />
+      </div>
       <form onSubmit={handleSubmit} className="p-6 sm:p-7">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
@@ -85,7 +95,7 @@ function ProfileSection() {
               maxLength={80}
               defaultValue={user.displayName}
               placeholder={copy.profile.displayNamePlaceholder}
-              className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+              className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
             />
           </div>
           <CountryCombobox
@@ -102,7 +112,7 @@ function ProfileSection() {
           <button
             type="submit"
             disabled={status === "pending"}
-            className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
           >
             {status === "pending"
               ? copy.profile.savingLabel
@@ -197,7 +207,7 @@ function PasswordSection() {
               type="password"
               required
               autoComplete="current-password"
-              className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+              className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
             />
           </div>
           <div>
@@ -214,7 +224,7 @@ function PasswordSection() {
               required
               minLength={8}
               autoComplete="new-password"
-              className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+              className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
             />
           </div>
           <div>
@@ -230,7 +240,7 @@ function PasswordSection() {
               type="password"
               required
               autoComplete="new-password"
-              className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+              className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
             />
           </div>
         </div>
@@ -239,7 +249,7 @@ function PasswordSection() {
           <button
             type="submit"
             disabled={status === "pending"}
-            className="min-h-11 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            className="min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
           >
             {status === "pending"
               ? copy.password.savingLabel
@@ -298,7 +308,7 @@ function SessionsSection() {
           type="button"
           disabled={status === "pending"}
           onClick={handleRevoke}
-          className="min-h-11 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-semibold text-red-800 transition hover:bg-red-100 disabled:cursor-wait disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+          className="min-h-11 rounded-xl border border-red-200 bg-red-50 px-5 text-sm font-semibold text-red-800 transition hover:bg-red-100 disabled:cursor-wait disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
         >
           {status === "pending"
             ? copy.sessions.revokingLabel
@@ -341,7 +351,7 @@ export function SettingsView() {
           <div className="mt-7">
             <Link
               href="/login"
-              className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+              className="min-h-12 rounded-xl border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
             >
               {copy.notSignedIn.loginLabel}
             </Link>

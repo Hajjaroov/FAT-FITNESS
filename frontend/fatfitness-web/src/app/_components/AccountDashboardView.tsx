@@ -99,7 +99,7 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
               </div>
               <Link
                 href={`/community/posts/${post.id}`}
-                className="shrink-0 min-h-9 rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+                className="shrink-0 min-h-9 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
               >
                 {copy.savedPosts.openLabel}
               </Link>
@@ -187,13 +187,13 @@ export function AccountDashboardView() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/login"
-                className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+                className="min-h-12 rounded-xl border border-(--color-border) bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
               >
                 {copy.signedOut.loginLabel}
               </Link>
               <Link
                 href="/register"
-                className="min-h-12 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+                className="min-h-12 rounded-xl border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
               >
                 {copy.signedOut.registerLabel}
               </Link>
@@ -210,13 +210,13 @@ export function AccountDashboardView() {
                   {copy.summary.intro}
                 </p>
               </div>
-              <span className="rounded-full border border-emerald-200 bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300">
+              <span className="rounded-xl border border-emerald-200 bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300">
                 {copy.summary.activeBadge}
               </span>
             </div>
 
             <dl className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.displayName}
                 </dt>
@@ -224,7 +224,7 @@ export function AccountDashboardView() {
                   {user.displayName}
                 </dd>
               </div>
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.email}
                 </dt>
@@ -232,7 +232,7 @@ export function AccountDashboardView() {
                   {user.email}
                 </dd>
               </div>
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.countryRegion}
                 </dt>
@@ -240,7 +240,7 @@ export function AccountDashboardView() {
                   {getCountryLabel(user, locale, copy.empty.country)}
                 </dd>
               </div>
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.status}
                 </dt>
@@ -248,7 +248,7 @@ export function AccountDashboardView() {
                   {copy.statuses[user.status]}
                 </dd>
               </div>
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.roles}
                 </dt>
@@ -256,7 +256,7 @@ export function AccountDashboardView() {
                   {user.roles.map((role) => copy.roles[role]).join(", ")}
                 </dd>
               </div>
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.emailVerifiedAt}
                 </dt>
@@ -264,7 +264,7 @@ export function AccountDashboardView() {
                   {formatDateTime(user.emailVerifiedAt, locale, copy.empty.date)}
                 </dd>
               </div>
-              <div className="rounded-2xl border border-(--color-border) bg-(--color-surface-raised) p-4 sm:col-span-2">
+              <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4 sm:col-span-2">
                 <dt className="site-subtle text-xs font-bold uppercase">
                   {copy.labels.lastLoginAt}
                 </dt>
@@ -277,7 +277,7 @@ export function AccountDashboardView() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/settings"
-                className="min-h-12 rounded-full border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+                className="min-h-12 rounded-xl border border-(--color-border) bg-(--color-surface) px-5 py-3 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
               >
                 {copy.summary.settingsLabel}
               </Link>
@@ -285,7 +285,7 @@ export function AccountDashboardView() {
                 type="button"
                 disabled={isLoggingOut}
                 onClick={handleLogout}
-                className="min-h-12 rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                className="min-h-12 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
               >
                 {isLoggingOut
                   ? copy.summary.logoutPendingLabel

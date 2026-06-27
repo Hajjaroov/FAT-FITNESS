@@ -98,7 +98,7 @@ export function CommunityPostReportForm({
         <div className="mt-5">
           <Link
             href="/login"
-            className="min-h-10 rounded-full border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
+            className="min-h-10 rounded-xl border border-(--color-border) bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90"
           >
             {copy.reports.signInLabel}
           </Link>
@@ -124,7 +124,7 @@ export function CommunityPostReportForm({
             name="forum-report-reason"
             required
             defaultValue=""
-            className="mt-2 min-h-12 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
+            className="mt-2 min-h-12 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-base text-foreground outline-none transition focus:border-(--color-accent)"
           >
             <option value="" disabled>
               {copy.reports.reasonPlaceholder}
@@ -150,14 +150,14 @@ export function CommunityPostReportForm({
             maxLength={1000}
             rows={5}
             placeholder={copy.reports.detailsPlaceholder}
-            className="mt-2 w-full rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
+            className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base leading-7 text-foreground outline-none transition placeholder:text-(--color-subtle) focus:border-(--color-accent)"
           />
         </div>
 
         {formError ? (
           <p
             role="alert"
-            className="rounded-2xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+            className="rounded-xl border border-red-200 bg-red-100 p-4 text-sm leading-6 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           >
             {formError}
           </p>
@@ -166,7 +166,7 @@ export function CommunityPostReportForm({
         {successMessage ? (
           <div
             role="status"
-            className="rounded-2xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
+            className="rounded-xl border border-emerald-200 bg-emerald-100 p-4 text-sm leading-6 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300"
           >
             <p className="font-semibold">{copy.reports.successTitle}</p>
             <p className="mt-1">{successMessage}</p>
@@ -176,7 +176,7 @@ export function CommunityPostReportForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="min-h-12 w-full rounded-full border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+          className="min-h-12 w-full rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
         >
           {isSubmitting
             ? copy.reports.submitPendingLabel
