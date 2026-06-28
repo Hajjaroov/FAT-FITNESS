@@ -59,7 +59,7 @@ export function SiteHeader() {
             onClick={() => setMenuOpen(false)}
           >
             <Image
-              src="/photos/logo/logo-500.png"
+              src="/photos/logo/logo-500.jpg"
               alt=""
               width={28}
               height={28}
@@ -200,7 +200,7 @@ export function SiteHeader() {
                 onClick={() => setMenuOpen(false)}
               >
                 <Image
-                  src="/photos/logo/logo-500.png"
+                  src="/photos/logo/logo-500.jpg"
                   alt=""
                   width={24}
                   height={24}

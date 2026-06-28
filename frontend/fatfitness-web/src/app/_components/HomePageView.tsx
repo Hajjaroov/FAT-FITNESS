@@ -15,7 +15,7 @@ export function HomePageView() {
       <section className="flex flex-col items-center pt-10 pb-14 text-center sm:pt-14 sm:pb-18">
         <div className="mb-6">
           <Image
-            src="/photos/logo/logo-500.png"
+            src="/photos/logo/logo-500.jpg"
             alt="Fat Fitness"
             width={250}
             height={250}
