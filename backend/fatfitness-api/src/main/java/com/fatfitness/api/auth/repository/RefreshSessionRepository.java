@@ -18,7 +18,7 @@ public interface RefreshSessionRepository extends JpaRepository<RefreshSession, 
 
 	List<RefreshSession> findByUserId(UUID userId);
 
-	@Modifying(clearAutomatically = true)
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Transactional
 	@Query("update RefreshSession r set r.revokedAt = :now where r.user.id = :userId and r.revokedAt is null")
 	void revokeAllByUserId(UUID userId, Instant now);
