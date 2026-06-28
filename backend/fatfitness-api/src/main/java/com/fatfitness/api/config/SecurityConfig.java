@@ -46,6 +46,10 @@ public class SecurityConfig {
 								"/api/community/posts/*/bookmark",
 								"/api/community/comments/*/like")
 						.authenticated()
+						.requestMatchers(HttpMethod.PATCH, "/api/community/posts/*").authenticated()
+						.requestMatchers(HttpMethod.DELETE, "/api/community/posts/*").authenticated()
+						.requestMatchers(HttpMethod.PATCH, "/api/community/comments/*").authenticated()
+						.requestMatchers(HttpMethod.DELETE, "/api/community/comments/*").authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/community/bookmarks").authenticated()
 						.requestMatchers("/api/moderation/**").authenticated()
 						.anyRequest().permitAll())

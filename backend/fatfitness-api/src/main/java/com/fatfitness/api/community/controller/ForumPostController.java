@@ -6,7 +6,9 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import com.fatfitness.api.community.dto.CreateForumPostRequest;
 import com.fatfitness.api.community.dto.ForumPostReportResponse;
 import com.fatfitness.api.community.dto.ForumPostResponse;
 import com.fatfitness.api.community.dto.ReportForumPostRequest;
+import com.fatfitness.api.community.dto.UpdateForumPostRequest;
 import com.fatfitness.api.community.service.ForumPostService;
 
 import jakarta.validation.Valid;
@@ -56,6 +59,22 @@ public class ForumPostController {
 			@Valid @RequestBody CreateForumPostRequest request,
 			@AuthenticationPrincipal Jwt jwt) {
 		return forumPostService.createPost(request, jwt.getSubject());
+	}
+
+	@PatchMapping("/{postId}")
+	public ForumPostResponse updatePost(
+			@PathVariable UUID postId,
+			@Valid @RequestBody UpdateForumPostRequest request,
+			@AuthenticationPrincipal Jwt jwt) {
+		return forumPostService.updatePost(postId, request, jwt.getSubject());
+	}
+
+	@DeleteMapping("/{postId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deletePost(
+			@PathVariable UUID postId,
+			@AuthenticationPrincipal Jwt jwt) {
+		forumPostService.deletePost(postId, jwt.getSubject());
 	}
 
 	@PostMapping("/{postId}/reports")

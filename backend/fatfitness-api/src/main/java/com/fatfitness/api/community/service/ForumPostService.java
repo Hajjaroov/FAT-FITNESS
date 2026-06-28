@@ -18,6 +18,7 @@ import com.fatfitness.api.community.dto.CreateForumPostRequest;
 import com.fatfitness.api.community.dto.ForumPostReportResponse;
 import com.fatfitness.api.community.dto.ForumPostResponse;
 import com.fatfitness.api.community.dto.ReportForumPostRequest;
+import com.fatfitness.api.community.dto.UpdateForumPostRequest;
 import com.fatfitness.api.community.entity.ForumCategory;
 import com.fatfitness.api.community.entity.ForumPost;
 import com.fatfitness.api.community.entity.ForumPostReport;
@@ -28,6 +29,7 @@ import com.fatfitness.api.community.repository.ForumPostRepository;
 import com.fatfitness.api.community.repository.PostBookmarkRepository;
 import com.fatfitness.api.community.repository.PostLikeRepository;
 import com.fatfitness.api.user.entity.UserAccount;
+import com.fatfitness.api.user.entity.UserRole;
 import com.fatfitness.api.user.entity.UserStatus;
 import com.fatfitness.api.user.repository.UserAccountRepository;
 import com.fatfitness.api.user.service.UserPublicDisplayNameService;
@@ -170,6 +172,48 @@ public class ForumPostService {
 		return user;
 	}
 
+	private static final Set<UserRole> EDITOR_ROLES = Set.of(UserRole.OWNER, UserRole.ADMIN, UserRole.MODERATOR);
+
+	private static boolean canEditPost(UserAccount caller, ForumPost post) {
+		return caller.getId().equals(post.getAuthor().getId())
+				|| caller.getRoles().stream().anyMatch(EDITOR_ROLES::contains);
+	}
+
+	@Transactional
+	public ForumPostResponse updatePost(UUID postId, UpdateForumPostRequest request, String userIdSubject) {
+		UserAccount caller = requireActiveUser(userIdSubject);
+		ForumPost post = forumPostRepository.findByIdAndStatus(postId, ForumPostStatus.PUBLISHED)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
+
+		if (!canEditPost(caller, post)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to edit this post");
+		}
+
+		String newTitle = request.title() != null ? cleanSingleLine(request.title()) : post.getTitle();
+		String newBody = request.body() != null ? cleanMultiline(request.body()) : post.getBody();
+		post.edit(newTitle, newBody);
+		forumPostRepository.save(post);
+
+		long likeCount = postLikeRepository.countByPostId(post.getId());
+		Boolean liked = postLikeRepository.findByPostIdAndUserId(post.getId(), caller.getId()).isPresent();
+		Boolean bookmarked = postBookmarkRepository.findByPostIdAndUserId(post.getId(), caller.getId()).isPresent();
+		return toResponse(post, likeCount, liked, bookmarked);
+	}
+
+	@Transactional
+	public void deletePost(UUID postId, String userIdSubject) {
+		UserAccount caller = requireActiveUser(userIdSubject);
+		ForumPost post = forumPostRepository.findByIdAndStatus(postId, ForumPostStatus.PUBLISHED)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
+
+		if (!canEditPost(caller, post)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this post");
+		}
+
+		post.softDelete();
+		forumPostRepository.save(post);
+	}
+
 	private ForumPostResponse toResponse(ForumPost post, long likeCount, Boolean liked, Boolean bookmarked) {
 		return new ForumPostResponse(
 				post.getId(),
@@ -179,10 +223,12 @@ public class ForumPostService {
 				post.getBody(),
 				post.getAuthor().getId(),
 				userPublicDisplayNameService.resolve(post.getAuthor()),
+				post.getAuthor().hasAvatar(),
 				post.getStatus(),
 				post.isLocked(),
 				post.getCreatedAt(),
 				post.getUpdatedAt(),
+				post.getEditedAt(),
 				likeCount,
 				liked,
 				bookmarked);

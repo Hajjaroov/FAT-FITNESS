@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -162,6 +164,99 @@ class ForumPostControllerTests {
 		mockMvc.perform(get("/api/community/posts/{postId}", postId))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.authorDisplayName").value("Banned account"));
+	}
+
+	@Test
+	void updatePostByAuthorSetsEditedAt() throws Exception {
+		String accessToken = registerVerifyAndLogin("update-post-author@example.com");
+		MvcResult createResult = createPost(accessToken, "introductions").andExpect(status().isCreated()).andReturn();
+		String postId = JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+
+		mockMvc.perform(patch("/api/community/posts/{postId}", postId)
+						.header("Authorization", "Bearer " + accessToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "title": "Updated title for this post",
+								  "body": "This is the updated body text, long enough to pass validation."
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.title").value("Updated title for this post"))
+				.andExpect(jsonPath("$.body").value("This is the updated body text, long enough to pass validation."))
+				.andExpect(jsonPath("$.editedAt", notNullValue()));
+	}
+
+	@Test
+	void updatePostByNonAuthorIsForbidden() throws Exception {
+		String authorToken = registerVerifyAndLogin("update-post-owner@example.com");
+		String otherToken = registerVerifyAndLogin("update-post-other@example.com");
+		MvcResult createResult = createPost(authorToken, "introductions").andExpect(status().isCreated()).andReturn();
+		String postId = JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+
+		mockMvc.perform(patch("/api/community/posts/{postId}", postId)
+						.header("Authorization", "Bearer " + otherToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "title": "Hijacked title attempt",
+								  "body": "Someone else trying to edit this thread body."
+								}
+								"""))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void updatePostRequiresAuthentication() throws Exception {
+		String accessToken = registerVerifyAndLogin("update-post-unauth@example.com");
+		MvcResult createResult = createPost(accessToken, "introductions").andExpect(status().isCreated()).andReturn();
+		String postId = JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+
+		mockMvc.perform(patch("/api/community/posts/{postId}", postId)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "title": "No token title",
+								  "body": "No token body for this update attempt here."
+								}
+								"""))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void deletePostByAuthorSoftDeletesIt() throws Exception {
+		String accessToken = registerVerifyAndLogin("delete-post-author@example.com");
+		MvcResult createResult = createPost(accessToken, "introductions").andExpect(status().isCreated()).andReturn();
+		String postId = JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+
+		mockMvc.perform(delete("/api/community/posts/{postId}", postId)
+						.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/community/posts/{postId}", postId))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void deletePostByNonAuthorIsForbidden() throws Exception {
+		String authorToken = registerVerifyAndLogin("delete-post-owner@example.com");
+		String otherToken = registerVerifyAndLogin("delete-post-other@example.com");
+		MvcResult createResult = createPost(authorToken, "introductions").andExpect(status().isCreated()).andReturn();
+		String postId = JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+
+		mockMvc.perform(delete("/api/community/posts/{postId}", postId)
+						.header("Authorization", "Bearer " + otherToken))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void deletePostRequiresAuthentication() throws Exception {
+		String accessToken = registerVerifyAndLogin("delete-post-unauth@example.com");
+		MvcResult createResult = createPost(accessToken, "introductions").andExpect(status().isCreated()).andReturn();
+		String postId = JsonPath.read(createResult.getResponse().getContentAsString(), "$.id");
+
+		mockMvc.perform(delete("/api/community/posts/{postId}", postId))
+				.andExpect(status().isUnauthorized());
 	}
 
 	@Test

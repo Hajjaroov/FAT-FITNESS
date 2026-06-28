@@ -11,9 +11,11 @@ public record ForumCommentResponse(
 		String body,
 		UUID authorId,
 		String authorDisplayName,
+		boolean authorHasAvatar,
 		ForumCommentStatus status,
 		Instant createdAt,
 		Instant updatedAt,
+		Instant editedAt,
 		long likeCount,
 		Boolean likedByCurrentUser
 ) {

@@ -92,6 +92,14 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{post.title}</p>
                 <p className="site-subtle mt-1 text-xs">
+                  <Link
+                    href={`/users/${post.authorId}`}
+                    className="transition hover:text-(--color-accent-strong)"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {post.authorDisplayName}
+                  </Link>
+                  {" · "}
                   {new Intl.DateTimeFormat(locale, {
                     dateStyle: "medium",
                   }).format(new Date(post.createdAt))}

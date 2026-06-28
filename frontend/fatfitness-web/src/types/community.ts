@@ -9,10 +9,12 @@ export type ForumPost = {
   body: string;
   authorId: string;
   authorDisplayName: string;
+  authorHasAvatar: boolean;
   status: ForumPostStatus;
   locked: boolean;
   createdAt: string;
   updatedAt: string;
+  editedAt: string | null;
   likeCount: number;
   likedByCurrentUser: boolean | null;
   bookmarkedByCurrentUser: boolean | null;
@@ -32,6 +34,15 @@ export type CreateForumPostRequest = {
   title: string;
   body: string;
   acceptedCommunityGuidelines: boolean;
+};
+
+export type UpdateForumPostRequest = {
+  title?: string;
+  body?: string;
+};
+
+export type UpdateForumCommentRequest = {
+  body: string;
 };
 
 export type ForumReportStatus = "OPEN" | "RESOLVED" | "DISMISSED";
@@ -56,9 +67,11 @@ export type ForumComment = {
   body: string;
   authorId: string;
   authorDisplayName: string;
+  authorHasAvatar: boolean;
   status: ForumCommentStatus;
   createdAt: string;
   updatedAt: string;
+  editedAt: string | null;
   likeCount: number;
   likedByCurrentUser: boolean | null;
 };

@@ -17,6 +17,7 @@ import com.fatfitness.api.community.dto.CreateForumCommentRequest;
 import com.fatfitness.api.community.dto.ForumCommentReportResponse;
 import com.fatfitness.api.community.dto.ForumCommentResponse;
 import com.fatfitness.api.community.dto.ReportForumCommentRequest;
+import com.fatfitness.api.community.dto.UpdateForumCommentRequest;
 import com.fatfitness.api.community.entity.ForumComment;
 import com.fatfitness.api.community.entity.ForumCommentReport;
 import com.fatfitness.api.community.entity.ForumCommentStatus;
@@ -27,6 +28,7 @@ import com.fatfitness.api.community.repository.ForumCommentReportRepository;
 import com.fatfitness.api.community.repository.ForumCommentRepository;
 import com.fatfitness.api.community.repository.ForumPostRepository;
 import com.fatfitness.api.user.entity.UserAccount;
+import com.fatfitness.api.user.entity.UserRole;
 import com.fatfitness.api.user.entity.UserStatus;
 import com.fatfitness.api.user.repository.UserAccountRepository;
 import com.fatfitness.api.user.service.UserPublicDisplayNameService;
@@ -122,6 +124,45 @@ public class ForumCommentService {
 						cleanOptionalSingleLine(request.details())))));
 	}
 
+	private static final Set<UserRole> EDITOR_ROLES = Set.of(UserRole.OWNER, UserRole.ADMIN, UserRole.MODERATOR);
+
+	private static boolean canEditComment(UserAccount caller, ForumComment comment) {
+		return caller.getId().equals(comment.getAuthor().getId())
+				|| caller.getRoles().stream().anyMatch(EDITOR_ROLES::contains);
+	}
+
+	@Transactional
+	public ForumCommentResponse updateComment(UUID commentId, UpdateForumCommentRequest request, String userIdSubject) {
+		UserAccount caller = requireActiveUser(userIdSubject);
+		ForumComment comment = forumCommentRepository.findByIdAndStatus(commentId, ForumCommentStatus.PUBLISHED)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment not found"));
+
+		if (!canEditComment(caller, comment)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to edit this comment");
+		}
+
+		comment.edit(cleanMultiline(request.body()));
+		forumCommentRepository.save(comment);
+
+		long likeCount = commentLikeRepository.countByCommentId(comment.getId());
+		Boolean liked = commentLikeRepository.findByCommentIdAndUserId(comment.getId(), caller.getId()).isPresent();
+		return toResponse(comment, likeCount, liked);
+	}
+
+	@Transactional
+	public void deleteComment(UUID commentId, String userIdSubject) {
+		UserAccount caller = requireActiveUser(userIdSubject);
+		ForumComment comment = forumCommentRepository.findByIdAndStatus(commentId, ForumCommentStatus.PUBLISHED)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment not found"));
+
+		if (!canEditComment(caller, comment)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this comment");
+		}
+
+		comment.softDelete();
+		forumCommentRepository.save(comment);
+	}
+
 	private Map<UUID, Long> buildLikeCountMap(Collection<UUID> commentIds) {
 		return commentLikeRepository.countGroupedByCommentIds(commentIds)
 				.stream()
@@ -151,9 +192,11 @@ public class ForumCommentService {
 				comment.getBody(),
 				comment.getAuthor().getId(),
 				userPublicDisplayNameService.resolve(comment.getAuthor()),
+				comment.getAuthor().hasAvatar(),
 				comment.getStatus(),
 				comment.getCreatedAt(),
 				comment.getUpdatedAt(),
+				comment.getEditedAt(),
 				likeCount,
 				liked);
 	}

@@ -6,7 +6,9 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import com.fatfitness.api.community.dto.CreateForumCommentRequest;
 import com.fatfitness.api.community.dto.ForumCommentReportResponse;
 import com.fatfitness.api.community.dto.ForumCommentResponse;
 import com.fatfitness.api.community.dto.ReportForumCommentRequest;
+import com.fatfitness.api.community.dto.UpdateForumCommentRequest;
 import com.fatfitness.api.community.service.ForumCommentService;
 
 import jakarta.validation.Valid;
@@ -49,6 +52,22 @@ public class ForumCommentController {
 			@Valid @RequestBody CreateForumCommentRequest request,
 			@AuthenticationPrincipal Jwt jwt) {
 		return forumCommentService.createComment(postId, request, jwt.getSubject());
+	}
+
+	@PatchMapping("/comments/{commentId}")
+	public ForumCommentResponse updateComment(
+			@PathVariable UUID commentId,
+			@Valid @RequestBody UpdateForumCommentRequest request,
+			@AuthenticationPrincipal Jwt jwt) {
+		return forumCommentService.updateComment(commentId, request, jwt.getSubject());
+	}
+
+	@DeleteMapping("/comments/{commentId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteComment(
+			@PathVariable UUID commentId,
+			@AuthenticationPrincipal Jwt jwt) {
+		forumCommentService.deleteComment(commentId, jwt.getSubject());
 	}
 
 	@PostMapping("/comments/{commentId}/reports")

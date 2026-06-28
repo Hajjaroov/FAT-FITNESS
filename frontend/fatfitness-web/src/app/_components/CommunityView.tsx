@@ -49,7 +49,7 @@ export function CommunityView() {
 
       <section className="flex flex-col gap-6">
         <CommunityPostList
-          posts={posts}
+          posts={posts.slice(0, 1)}
           status={status}
           error={error}
           categories={categories}
@@ -117,7 +117,7 @@ export function CommunityView() {
                       </p>
                     </div>
 
-                    <dl className="grid grid-cols-3 gap-4 text-sm">
+                    <dl className="grid grid-cols-[5rem_5rem_1fr] gap-4 text-sm">
                       <div>
                         <dt className="site-subtle md:hidden">
                           {copy.forumIndex.headers.topics}
@@ -139,7 +139,7 @@ export function CommunityView() {
                         <dd className="site-muted mt-1 md:mt-0">
                           {latestPost ? (
                             <span>
-                              <span className="block font-semibold text-foreground">
+                              <span className="line-clamp-2 block font-semibold text-foreground">
                                 {latestPost.title}
                               </span>
                               <time

@@ -18,9 +18,11 @@ import { communityCopy } from "@/content/community";
 import {
   ApiError,
   createForumComment,
+  deleteForumComment,
   getForumComments,
   likeForumComment,
   reportForumComment,
+  updateForumComment,
 } from "@/lib/api";
 import type { ForumComment } from "@/types/community";
 
@@ -40,6 +42,8 @@ type CommunityCommentComposerProps = {
 type CommunityCommentItemProps = {
   comment: ForumComment;
   locale: string;
+  onUpdated: (updated: ForumComment) => void;
+  onDeleted: (commentId: string) => void;
 };
 
 type CommunityCommentReportFormProps = {
@@ -195,6 +199,14 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
               key={comment.id}
               comment={comment}
               locale={locale}
+              onUpdated={(updated) =>
+                setComments((prev) =>
+                  prev.map((c) => (c.id === updated.id ? updated : c)),
+                )
+              }
+              onDeleted={(id) =>
+                setComments((prev) => prev.filter((c) => c.id !== id))
+              }
             />
           ))}
         </div>
@@ -215,13 +227,29 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
 function CommunityCommentItem({
   comment,
   locale,
+  onUpdated,
+  onDeleted,
 }: CommunityCommentItemProps) {
   const copy = useLocalizedContent(communityCopy);
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   const [isReporting, setIsReporting] = useState(false);
   const [localLikeCount, setLocalLikeCount] = useState(comment.likeCount);
   const [localLiked, setLocalLiked] = useState(comment.likedByCurrentUser);
   const [isLiking, setIsLiking] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editBody, setEditBody] = useState(comment.body);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const EDITOR_ROLES = ["OWNER", "ADMIN", "MODERATOR"];
+  const canEdit =
+    !!user &&
+    !!accessToken &&
+    (user.userId === comment.authorId ||
+      (user.roles ?? []).some((r) => EDITOR_ROLES.includes(r)));
 
   async function handleLike() {
     if (!accessToken || isLiking) return;
@@ -234,6 +262,34 @@ function CommunityCommentItem({
       // keep current state on failure
     } finally {
       setIsLiking(false);
+    }
+  }
+
+  async function handleUpdate() {
+    if (!accessToken || isUpdating) return;
+    setIsUpdating(true);
+    setUpdateError(null);
+    try {
+      const updated = await updateForumComment(comment.id, { body: editBody }, accessToken);
+      onUpdated(updated);
+      setIsEditing(false);
+    } catch (err) {
+      setUpdateError(errorMessage(err, copy.comments.editErrorFallback));
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!accessToken || isDeleting) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteForumComment(comment.id, accessToken);
+      onDeleted(comment.id);
+    } catch (err) {
+      setDeleteError(errorMessage(err, copy.comments.deleteErrorFallback));
+      setIsDeleting(false);
     }
   }
 
@@ -253,16 +309,57 @@ function CommunityCommentItem({
           href={`/users/${comment.authorId}`}
           className="flex items-center gap-1.5 transition hover:text-(--color-accent-strong)"
         >
-          <UserAvatar displayName={comment.authorDisplayName} size={20} />
+          <UserAvatar displayName={comment.authorDisplayName} userId={comment.authorId} hasAvatar={comment.authorHasAvatar} size={20} />
           {copy.comments.postedByLabel} {comment.authorDisplayName}
         </Link>
         <span aria-hidden="true">/</span>
         <time dateTime={comment.createdAt}>
           {formatForumPostDate(comment.createdAt, locale)}
         </time>
+        {comment.editedAt ? (
+          <span className="italic">
+            · {copy.comments.editedLabel} {formatForumPostDate(comment.editedAt, locale)}
+          </span>
+        ) : null}
       </div>
 
-      <p className="mt-3 whitespace-pre-wrap text-base leading-8">{comment.body}</p>
+      {isEditing ? (
+        <div className="mt-3">
+          <textarea
+            className="w-full rounded-xl border border-(--color-border) bg-(--color-surface) p-3 text-sm leading-7 focus:outline-none focus:ring-2 focus:ring-(--color-accent)"
+            rows={5}
+            value={editBody}
+            onChange={(e) => setEditBody(e.target.value)}
+          />
+          {updateError ? (
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400">{updateError}</p>
+          ) : null}
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              disabled={isUpdating || editBody.trim().length < 2}
+              onClick={() => void handleUpdate()}
+              className="min-h-9 rounded-xl bg-foreground px-4 text-xs font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            >
+              {isUpdating ? copy.comments.savePendingLabel : copy.comments.saveLabel}
+            </button>
+            <button
+              type="button"
+              disabled={isUpdating}
+              onClick={() => {
+                setIsEditing(false);
+                setEditBody(comment.body);
+                setUpdateError(null);
+              }}
+              className="min-h-9 rounded-xl border border-(--color-border) px-4 text-xs font-semibold transition hover:bg-(--color-surface)"
+            >
+              {copy.comments.cancelLabel}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="mt-3 whitespace-pre-wrap text-base leading-8">{comment.body}</p>
+      )}
 
       <div className="mt-4 flex items-center justify-between">
         <button
@@ -287,16 +384,73 @@ function CommunityCommentItem({
           )}
           {localLikeCount > 0 ? <span>{localLikeCount}</span> : null}
         </button>
-        {accessToken ? (
-          <button
-            type="button"
-            onClick={() => setIsReporting(true)}
-            className="text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
-          >
-            {copy.comments.reportLabel}
-          </button>
-        ) : null}
+
+        <div className="flex items-center gap-3">
+          {canEdit && !isEditing ? (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditBody(comment.body);
+                  setUpdateError(null);
+                  setIsEditing(true);
+                }}
+                className="text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
+              >
+                {copy.comments.editLabel}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteError(null);
+                  setShowDeleteConfirm(true);
+                }}
+                className="text-xs text-red-500 transition hover:text-red-700 dark:hover:text-red-400"
+              >
+                {copy.comments.deleteLabel}
+              </button>
+            </>
+          ) : null}
+          {accessToken && !isEditing ? (
+            <button
+              type="button"
+              onClick={() => setIsReporting(true)}
+              className="text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
+            >
+              {copy.comments.reportLabel}
+            </button>
+          ) : null}
+        </div>
       </div>
+
+      {showDeleteConfirm ? (
+        <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
+          <p className="text-sm font-semibold text-red-700 dark:text-red-300">
+            {copy.comments.deleteConfirmText}
+          </p>
+          {deleteError ? (
+            <p className="mt-1 text-xs text-red-600 dark:text-red-400">{deleteError}</p>
+          ) : null}
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => void handleDelete()}
+              className="min-h-9 rounded-xl bg-red-600 px-4 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-wait disabled:opacity-60"
+            >
+              {isDeleting ? copy.comments.deletePendingLabel : copy.comments.deleteConfirmLabel}
+            </button>
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => setShowDeleteConfirm(false)}
+              className="min-h-9 rounded-xl border border-(--color-border) px-4 text-xs font-semibold transition hover:bg-(--color-surface)"
+            >
+              {copy.comments.cancelLabel}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {isReporting ? (
         <div

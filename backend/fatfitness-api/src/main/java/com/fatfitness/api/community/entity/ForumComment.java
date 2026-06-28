@@ -52,6 +52,9 @@ public class ForumComment {
 	@Column(name = "deleted_at")
 	private Instant deletedAt;
 
+	@Column(name = "edited_at")
+	private Instant editedAt;
+
 	protected ForumComment() {
 	}
 
@@ -76,6 +79,11 @@ public class ForumComment {
 	@PreUpdate
 	void beforeUpdate() {
 		updatedAt = Instant.now();
+	}
+
+	public void edit(String newBody) {
+		this.body = newBody;
+		this.editedAt = Instant.now();
 	}
 
 	public void hide() {
@@ -122,5 +130,9 @@ public class ForumComment {
 
 	public Instant getDeletedAt() {
 		return deletedAt;
+	}
+
+	public Instant getEditedAt() {
+		return editedAt;
 	}
 }

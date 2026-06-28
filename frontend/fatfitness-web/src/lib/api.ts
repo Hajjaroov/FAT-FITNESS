@@ -31,6 +31,8 @@ import type {
   LikeToggleResponse,
   ReportForumCommentRequest,
   ReportForumPostRequest,
+  UpdateForumCommentRequest,
+  UpdateForumPostRequest,
 } from "@/types/community";
 import type {
   HideModerationReportRequest,
@@ -42,7 +44,7 @@ import type {
 import type { UserPublicProfile } from "@/types/user";
 
 type ApiRequestOptions = {
-  method?: "GET" | "POST" | "PATCH";
+  method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   accessToken?: string;
   credentials?: RequestCredentials;
@@ -212,6 +214,25 @@ export function createForumPost(
   });
 }
 
+export function updateForumPost(
+  postId: string,
+  request: UpdateForumPostRequest,
+  accessToken: string,
+) {
+  return apiRequest<ForumPost>(`/api/community/posts/${postId}`, {
+    method: "PATCH",
+    body: request,
+    accessToken,
+  });
+}
+
+export function deleteForumPost(postId: string, accessToken: string) {
+  return apiRequest<void>(`/api/community/posts/${postId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
 export function reportForumPost(
   postId: string,
   request: ReportForumPostRequest,
@@ -256,6 +277,25 @@ export function createForumComment(
   return apiRequest<ForumComment>(`/api/community/posts/${postId}/comments`, {
     method: "POST",
     body: request,
+    accessToken,
+  });
+}
+
+export function updateForumComment(
+  commentId: string,
+  request: UpdateForumCommentRequest,
+  accessToken: string,
+) {
+  return apiRequest<ForumComment>(`/api/community/comments/${commentId}`, {
+    method: "PATCH",
+    body: request,
+    accessToken,
+  });
+}
+
+export function deleteForumComment(commentId: string, accessToken: string) {
+  return apiRequest<void>(`/api/community/comments/${commentId}`, {
+    method: "DELETE",
     accessToken,
   });
 }

@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -140,6 +142,96 @@ class ForumCommentControllerTests {
 		mockMvc.perform(get("/api/community/posts/{postId}/comments", postId))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].authorDisplayName").value("Banned account"));
+	}
+
+	@Test
+	void updateCommentByAuthorSetsEditedAt() throws Exception {
+		String authorToken = registerVerifyAndLogin("update-comment-author@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String commentId = createCommentAndReadId(authorToken, postId);
+
+		mockMvc.perform(patch("/api/community/comments/{commentId}", commentId)
+						.header("Authorization", "Bearer " + authorToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "body": "This is the updated reply body, long enough."
+								}
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.body").value("This is the updated reply body, long enough."))
+				.andExpect(jsonPath("$.editedAt", notNullValue()));
+	}
+
+	@Test
+	void updateCommentByNonAuthorIsForbidden() throws Exception {
+		String authorToken = registerVerifyAndLogin("update-comment-owner@example.com");
+		String otherToken = registerVerifyAndLogin("update-comment-other@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String commentId = createCommentAndReadId(authorToken, postId);
+
+		mockMvc.perform(patch("/api/community/comments/{commentId}", commentId)
+						.header("Authorization", "Bearer " + otherToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "body": "Someone else trying to edit this reply body."
+								}
+								"""))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void updateCommentRequiresAuthentication() throws Exception {
+		String authorToken = registerVerifyAndLogin("update-comment-unauth@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String commentId = createCommentAndReadId(authorToken, postId);
+
+		mockMvc.perform(patch("/api/community/comments/{commentId}", commentId)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "body": "Unauthenticated edit attempt on this reply."
+								}
+								"""))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void deleteCommentByAuthorSoftDeletesIt() throws Exception {
+		String authorToken = registerVerifyAndLogin("delete-comment-author@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String commentId = createCommentAndReadId(authorToken, postId);
+
+		mockMvc.perform(delete("/api/community/comments/{commentId}", commentId)
+						.header("Authorization", "Bearer " + authorToken))
+				.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/community/posts/{postId}/comments", postId))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	void deleteCommentByNonAuthorIsForbidden() throws Exception {
+		String authorToken = registerVerifyAndLogin("delete-comment-owner@example.com");
+		String otherToken = registerVerifyAndLogin("delete-comment-other@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String commentId = createCommentAndReadId(authorToken, postId);
+
+		mockMvc.perform(delete("/api/community/comments/{commentId}", commentId)
+						.header("Authorization", "Bearer " + otherToken))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	void deleteCommentRequiresAuthentication() throws Exception {
+		String authorToken = registerVerifyAndLogin("delete-comment-unauth@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String commentId = createCommentAndReadId(authorToken, postId);
+
+		mockMvc.perform(delete("/api/community/comments/{commentId}", commentId))
+				.andExpect(status().isUnauthorized());
 	}
 
 	@Test

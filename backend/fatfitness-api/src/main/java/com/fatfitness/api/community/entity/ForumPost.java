@@ -61,6 +61,9 @@ public class ForumPost {
 	@Column(name = "locked_at")
 	private Instant lockedAt;
 
+	@Column(name = "edited_at")
+	private Instant editedAt;
+
 	protected ForumPost() {
 	}
 
@@ -96,6 +99,12 @@ public class ForumPost {
 	public void softDelete() {
 		status = ForumPostStatus.DELETED;
 		deletedAt = Instant.now();
+	}
+
+	public void edit(String newTitle, String newBody) {
+		this.title = newTitle;
+		this.body = newBody;
+		this.editedAt = Instant.now();
 	}
 
 	public void lock() {
@@ -149,5 +158,9 @@ public class ForumPost {
 
 	public Instant getLockedAt() {
 		return lockedAt;
+	}
+
+	public Instant getEditedAt() {
+		return editedAt;
 	}
 }

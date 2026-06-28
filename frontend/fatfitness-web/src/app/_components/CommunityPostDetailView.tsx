@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { UserAvatar } from "@/app/_components/UserAvatar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
@@ -16,8 +17,10 @@ import { communityCopy } from "@/content/community";
 import {
   ApiError,
   bookmarkForumPost,
+  deleteForumPost,
   getForumPost,
   likeForumPost,
+  updateForumPost,
 } from "@/lib/api";
 import type { ForumPost } from "@/types/community";
 
@@ -47,7 +50,8 @@ export function CommunityPostDetailView({
 }: CommunityPostDetailViewProps) {
   const copy = useLocalizedContent(communityCopy);
   const { locale } = useLocale();
-  const { accessToken, status: authStatus } = useAuth();
+  const { accessToken, status: authStatus, user } = useAuth();
+  const router = useRouter();
   const [state, setState] = useState<LoadState>({ kind: "loading" });
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState<boolean | null>(null);
@@ -57,6 +61,20 @@ export function CommunityPostDetailView({
   const [isReporting, setIsReporting] = useState(false);
   const [likeError, setLikeError] = useState<string | null>(null);
   const [bookmarkError, setBookmarkError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const canEdit =
+    !!user &&
+    state.kind === "success" &&
+    (user.userId === state.post.authorId ||
+      user.roles.some((r) => r === "OWNER" || r === "ADMIN" || r === "MODERATOR"));
 
   useEffect(() => {
     if (!isReporting) return;
@@ -100,6 +118,47 @@ export function CommunityPostDetailView({
       isActive = false;
     };
   }, [copy.posts.formErrorFallback, postId, accessToken, authStatus]);
+
+  function startEditing() {
+    if (state.kind !== "success") return;
+    setEditTitle(state.post.title);
+    setEditBody(state.post.body);
+    setUpdateError(null);
+    setIsEditing(true);
+  }
+
+  async function handleUpdate() {
+    if (!accessToken || state.kind !== "success" || isUpdating) return;
+    setIsUpdating(true);
+    setUpdateError(null);
+    try {
+      const updated = await updateForumPost(
+        state.post.id,
+        { title: editTitle, body: editBody },
+        accessToken,
+      );
+      setState({ kind: "success", post: updated });
+      setIsEditing(false);
+    } catch (err) {
+      setUpdateError(err instanceof ApiError ? err.message : "Could not save changes.");
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!accessToken || state.kind !== "success" || isDeleting) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteForumPost(state.post.id, accessToken);
+      router.push("/community");
+    } catch (err) {
+      setDeleteError(err instanceof ApiError ? err.message : "Could not delete post.");
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  }
 
   async function handleLike() {
     if (!accessToken || isLiking) return;
@@ -174,25 +233,85 @@ export function CommunityPostDetailView({
                     href={`/users/${state.post.authorId}`}
                     className="flex items-center gap-1.5 transition hover:text-(--color-accent-strong)"
                   >
-                    <UserAvatar displayName={state.post.authorDisplayName} size={18} />
+                    <UserAvatar displayName={state.post.authorDisplayName} userId={state.post.authorId} hasAvatar={state.post.authorHasAvatar} size={18} />
                     {copy.posts.postedByLabel} {state.post.authorDisplayName}
                   </Link>
                   <span aria-hidden="true">/</span>
                   <time dateTime={state.post.createdAt}>
                     {formatForumPostDate(state.post.createdAt, locale)}
                   </time>
+                  {state.post.editedAt ? (
+                    <span className="italic">
+                      · {copy.posts.editedLabel} {formatForumPostDate(state.post.editedAt, locale)}
+                    </span>
+                  ) : null}
                 </div>
 
-                <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                  {state.post.title}
-                </h1>
+                {!isEditing ? (
+                  <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
+                    {state.post.title}
+                  </h1>
+                ) : null}
               </header>
 
-              <div className="p-8 sm:p-10">
-                <p className="whitespace-pre-wrap text-base leading-8">
-                  {state.post.body}
-                </p>
-              </div>
+              {isEditing ? (
+                <div className="p-8 sm:p-10">
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <label className="site-subtle block text-xs font-bold uppercase tracking-[0.16em]" htmlFor="edit-title">
+                        Title
+                      </label>
+                      <input
+                        id="edit-title"
+                        type="text"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        maxLength={160}
+                        className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base font-semibold text-foreground outline-none focus:border-(--color-accent) focus:ring-2 focus:ring-(--color-accent)/20"
+                      />
+                    </div>
+                    <div>
+                      <label className="site-subtle block text-xs font-bold uppercase tracking-[0.16em]" htmlFor="edit-body">
+                        Body
+                      </label>
+                      <textarea
+                        id="edit-body"
+                        value={editBody}
+                        onChange={(e) => setEditBody(e.target.value)}
+                        rows={10}
+                        className="mt-2 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-3 text-base leading-7 text-foreground outline-none focus:border-(--color-accent) focus:ring-2 focus:ring-(--color-accent)/20"
+                      />
+                    </div>
+                    {updateError ? (
+                      <p role="alert" className="text-sm text-red-800 dark:text-red-300">{updateError}</p>
+                    ) : null}
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        disabled={isUpdating || !editTitle.trim() || !editBody.trim()}
+                        onClick={() => void handleUpdate()}
+                        className="min-h-10 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+                      >
+                        {isUpdating ? copy.posts.savePendingLabel : copy.posts.saveLabel}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isUpdating}
+                        onClick={() => setIsEditing(false)}
+                        className="min-h-10 rounded-xl border border-(--color-border) bg-(--color-surface) px-5 text-sm font-semibold text-(--color-muted) transition hover:text-foreground"
+                      >
+                        {copy.posts.cancelLabel}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-8 sm:p-10">
+                  <p className="whitespace-pre-wrap text-base leading-8">
+                    {state.post.body}
+                  </p>
+                </div>
+              )}
 
               <footer className="site-divider border-t px-8 py-5 sm:px-10">
                 <div className="flex flex-wrap items-center gap-3">
@@ -239,15 +358,35 @@ export function CommunityPostDetailView({
                       </svg>
                     )}
                   </button>
-                  {accessToken ? (
-                    <button
-                      type="button"
-                      onClick={() => setIsReporting(true)}
-                      className="ml-auto text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
-                    >
-                      {copy.reports.eyebrow}
-                    </button>
-                  ) : null}
+                  <div className="ml-auto flex items-center gap-2">
+                    {canEdit && !isEditing ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={startEditing}
+                          className="text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
+                        >
+                          {copy.posts.editLabel}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowDeleteConfirm(true)}
+                          className="text-xs text-red-600 transition hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                        >
+                          {copy.posts.deleteLabel}
+                        </button>
+                      </>
+                    ) : null}
+                    {accessToken && !isEditing ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsReporting(true)}
+                        className="text-xs text-(--color-subtle) transition hover:text-(--color-muted)"
+                      >
+                        {copy.reports.eyebrow}
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
                 {!accessToken ? (
                   <p className="mt-3 text-xs text-(--color-subtle)">
@@ -255,20 +394,42 @@ export function CommunityPostDetailView({
                   </p>
                 ) : null}
                 {likeError ? (
-                  <p
-                    role="alert"
-                    className="mt-3 text-xs text-red-800 dark:text-red-300"
-                  >
+                  <p role="alert" className="mt-3 text-xs text-red-800 dark:text-red-300">
                     {likeError}
                   </p>
                 ) : null}
                 {bookmarkError ? (
-                  <p
-                    role="alert"
-                    className="mt-3 text-xs text-red-800 dark:text-red-300"
-                  >
+                  <p role="alert" className="mt-3 text-xs text-red-800 dark:text-red-300">
                     {bookmarkError}
                   </p>
+                ) : null}
+                {deleteError ? (
+                  <p role="alert" className="mt-3 text-xs text-red-800 dark:text-red-300">
+                    {deleteError}
+                  </p>
+                ) : null}
+                {showDeleteConfirm ? (
+                  <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-500/20 dark:bg-red-500/10">
+                    <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                      {copy.posts.deleteConfirmText}
+                    </p>
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => void handleDelete()}
+                      className="rounded-xl bg-red-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                    >
+                      {isDeleting ? copy.posts.deletePendingLabel : copy.posts.deleteConfirmLabel}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-1.5 text-sm font-semibold text-(--color-muted) transition hover:text-foreground"
+                    >
+                      {copy.posts.cancelLabel}
+                    </button>
+                  </div>
                 ) : null}
               </footer>
             </article>

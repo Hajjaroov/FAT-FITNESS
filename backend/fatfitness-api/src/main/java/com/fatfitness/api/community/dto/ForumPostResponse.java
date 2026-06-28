@@ -13,10 +13,12 @@ public record ForumPostResponse(
 		String body,
 		UUID authorId,
 		String authorDisplayName,
+		boolean authorHasAvatar,
 		ForumPostStatus status,
 		boolean locked,
 		Instant createdAt,
 		Instant updatedAt,
+		Instant editedAt,
 		long likeCount,
 		Boolean likedByCurrentUser,
 		Boolean bookmarkedByCurrentUser

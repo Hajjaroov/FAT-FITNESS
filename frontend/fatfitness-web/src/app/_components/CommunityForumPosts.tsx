@@ -229,7 +229,7 @@ export function CommunityPostList({
                   href={`/users/${post.authorId}`}
                   className="relative z-10 flex items-center gap-1.5 transition hover:text-(--color-accent-strong)"
                 >
-                  <UserAvatar displayName={post.authorDisplayName} size={18} />
+                  <UserAvatar displayName={post.authorDisplayName} userId={post.authorId} hasAvatar={post.authorHasAvatar} size={18} />
                   {copy.posts.postedByLabel} {post.authorDisplayName}
                 </Link>
                 <span aria-hidden="true">/</span>
