@@ -1,6 +1,5 @@
 package com.fatfitness.api.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,9 +9,8 @@ public class CorsConfig implements WebMvcConfigurer {
 
 	private final String[] allowedOrigins;
 
-	public CorsConfig(
-			@Value("${fatfitness.cors.allowed-origins:http://localhost:3000}") String[] allowedOrigins) {
-		this.allowedOrigins = allowedOrigins;
+	public CorsConfig(CorsProperties corsProperties) {
+		this.allowedOrigins = corsProperties.allowedOrigins().toArray(new String[0]);
 	}
 
 	@Override
