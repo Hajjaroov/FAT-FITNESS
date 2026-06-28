@@ -12,6 +12,7 @@ import {
   loginUser,
   logoutUser,
   refreshAuthSession,
+  registerAuthBridge,
 } from "@/lib/api";
 import type { CurrentUser, LoginRequest } from "@/types/auth";
 
@@ -80,6 +81,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStatus("anonymous");
     }
   }
+
+  useEffect(() => {
+    // Let the API client update auth state after a background token refresh (or a
+    // failed one) triggered by a 401 on any authenticated request.
+    return registerAuthBridge({
+      onAccessToken: (nextAccessToken) => setAccessToken(nextAccessToken),
+      onSignedOut: () => {
+        setAccessToken(null);
+        setUser(null);
+        setStatus("anonymous");
+      },
+    });
+  }, []);
 
   useEffect(() => {
     let isActive = true;

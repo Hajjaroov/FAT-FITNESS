@@ -45,20 +45,18 @@ Request shape:
 }
 ```
 
-Current development-only response shape:
+Response shape:
 
 ```json
 {
   "userId": "2abda4f4-8f0d-4988-9b0e-1a76f43c83e2",
   "email": "new@example.com",
   "status": "PENDING_EMAIL_VERIFICATION",
-  "message": "Account created. Verify email before posting or using account-only community features.",
-  "devEmailVerificationToken": "raw-dev-only-token",
-  "verificationExpiresAt": "2026-06-12T12:00:00Z"
+  "message": "Account created. Verify email before posting or using account-only community features."
 }
 ```
 
-This endpoint is public. The raw `devEmailVerificationToken` exists only so local development can continue before an email provider is configured. The database stores the hashed token, not the raw token.
+This endpoint is public. No raw verification token is ever returned: the verification link is delivered by email (Resend), and the database stores only the hashed token. In local development without a `RESEND_API_KEY`, the link is logged to the console instead of emailed.
 
 ### `POST /api/auth/verify-email`
 
@@ -74,7 +72,7 @@ Request shape:
 
 ```json
 {
-  "token": "raw-dev-only-token"
+  "token": "raw-token-from-email-link"
 }
 ```
 
@@ -96,9 +94,8 @@ This endpoint is public because email verification links must work before login 
 
 Purpose:
 
-- Create a fresh email verification token for a pending account.
+- Create a fresh email verification token for a pending account and send it via Resend.
 - Keep the response safe for unknown or already-active emails.
-- Continue development without real email delivery.
 
 Request shape:
 
@@ -108,27 +105,15 @@ Request shape:
 }
 ```
 
-Current development-only response shape for a pending account:
+Response shape (always identical, regardless of whether the email exists):
 
 ```json
 {
-  "message": "Verification token created. Real email delivery is not enabled yet.",
-  "devEmailVerificationToken": "raw-dev-only-token",
-  "verificationExpiresAt": "2026-06-12T12:00:00Z"
+  "message": "If an unverified account exists for this email, a verification link will be sent."
 }
 ```
 
-Response shape for an unknown, active, banned, or deleted account:
-
-```json
-{
-  "message": "If an unverified account exists for this email, a verification link will be sent.",
-  "devEmailVerificationToken": null,
-  "verificationExpiresAt": null
-}
-```
-
-This endpoint is public. It intentionally does not reveal whether an email address belongs to an account.
+This endpoint is public and rate-limited (5/hour per IP). It intentionally does not reveal whether an email address belongs to an account, and never returns a raw token.
 
 ### `POST /api/auth/login`
 
@@ -314,7 +299,8 @@ Response shape:
   "status": "ACTIVE",
   "roles": ["USER"],
   "emailVerifiedAt": "2026-06-11T12:00:00Z",
-  "lastLoginAt": "2026-06-11T12:05:00Z"
+  "lastLoginAt": "2026-06-11T12:05:00Z",
+  "hasAvatar": false
 }
 ```
 
@@ -389,6 +375,51 @@ Response shape:
   "message": "All sessions have been signed out."
 }
 ```
+
+### `POST /api/users/me/avatar`
+
+Purpose:
+
+- Accept a multipart `avatar` file (field name `avatar`), JPEG or PNG, max 8 MB.
+- Server-side resize to a 256×256 JPEG and store it as `bytea` in `users.avatar_jpeg`.
+- Requires an active account and a valid bearer token.
+
+Returns `204 No Content` on success. Empty file → `400`; unsupported type (anything but JPEG/PNG) → `415`. WebP is intentionally rejected because the JDK's bundled `ImageIO` cannot decode it.
+
+### `GET /api/avatars/{userId}`
+
+Purpose:
+
+- Serve the stored JPEG bytes for any user who has uploaded an avatar.
+- Public (no auth). `Content-Type: image/jpeg`, `Cache-Control: no-store`.
+
+Returns `404` when the user does not exist or has no avatar.
+
+### `GET /api/users/{userId}/profile`
+
+Purpose:
+
+- Public (no auth) profile for any non-deleted user.
+
+Response shape:
+
+```json
+{
+  "userId": "2abda4f4-8f0d-4988-9b0e-1a76f43c83e2",
+  "displayName": "New Member",
+  "countryRegionCode": "DE",
+  "hasAvatar": true,
+  "joinedAt": "2026-06-11T12:00:00Z",
+  "publicRoles": ["MODERATOR"],
+  "threadCount": 4,
+  "commentCount": 12,
+  "likesReceived": 7,
+  "recentThreads": [],
+  "recentComments": []
+}
+```
+
+`publicRoles` only ever exposes `OWNER`/`ADMIN`/`MODERATOR` (never `USER`). DELETED users → `404`. BANNED users → `200` with `displayName` `"Banned account"`, no country/avatar, and zeroed activity.
 
 ## API Principles
 
@@ -483,13 +514,21 @@ Response shape:
   "categoryName": "Introductions",
   "title": "Starting here",
   "body": "This is my first forum post.",
+  "authorId": "6fdc43ff-7674-4935-9420-61b77b09d083",
   "authorDisplayName": "Forum Member",
+  "authorHasAvatar": false,
   "status": "PUBLISHED",
   "locked": false,
   "createdAt": "2026-06-12T15:00:00Z",
-  "updatedAt": "2026-06-12T15:00:00Z"
+  "updatedAt": "2026-06-12T15:00:00Z",
+  "editedAt": null,
+  "likeCount": 0,
+  "likedByCurrentUser": null,
+  "bookmarkedByCurrentUser": null
 }
 ```
+
+`likedByCurrentUser` and `bookmarkedByCurrentUser` are `null` for anonymous reads and `true`/`false` when a valid bearer token is sent. `editedAt` is `null` until the title/body is edited.
 
 `POST /api/community/posts/{id}/reports` requires a valid bearer token for an active account. Reports are idempotent per post/reporter pair and start with status `OPEN`.
 
@@ -525,13 +564,20 @@ Response shape:
     "id": "a96737f7-9254-4cc7-bc8a-e7f6f5291435",
     "postId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
     "body": "A first reply on this thread.",
+    "authorId": "6fdc43ff-7674-4935-9420-61b77b09d083",
     "authorDisplayName": "Forum Member",
+    "authorHasAvatar": false,
     "status": "PUBLISHED",
     "createdAt": "2026-06-12T15:10:00Z",
-    "updatedAt": "2026-06-12T15:10:00Z"
+    "updatedAt": "2026-06-12T15:10:00Z",
+    "editedAt": null,
+    "likeCount": 0,
+    "likedByCurrentUser": null
   }
 ]
 ```
+
+As with posts, `likedByCurrentUser` is `null` for anonymous reads and a boolean when a bearer token is sent; `editedAt` is `null` until the comment is edited.
 
 `POST /api/community/posts/{id}/comments` requires a valid bearer token for an active account. The account must already be email-verified because only `ACTIVE` accounts pass the write check. Locked posts reject new comments.
 
@@ -551,10 +597,15 @@ Response shape:
   "id": "a96737f7-9254-4cc7-bc8a-e7f6f5291435",
   "postId": "29ddcb03-e6d1-4ce1-bbc3-d1f7648aa7c8",
   "body": "A first reply on this thread.",
+  "authorId": "6fdc43ff-7674-4935-9420-61b77b09d083",
   "authorDisplayName": "Forum Member",
+  "authorHasAvatar": false,
   "status": "PUBLISHED",
   "createdAt": "2026-06-12T15:10:00Z",
-  "updatedAt": "2026-06-12T15:10:00Z"
+  "updatedAt": "2026-06-12T15:10:00Z",
+  "editedAt": null,
+  "likeCount": 0,
+  "likedByCurrentUser": null
 }
 ```
 
@@ -585,6 +636,24 @@ Response shape:
 Community write APIs include top-level posts, flat comments, reporting hooks, likes, bookmarks, report-scoped hide, lock, and ban actions. The frontend can list/read published posts, create top-level threads for signed-in verified users, like/bookmark posts, submit reports, list/create/report replies, and use `/admin` to hide reported content, lock threads, ban users, resolve, or dismiss reports.
 
 `GET /api/community/posts/{id}` accepts an optional `Authorization: Bearer` header. When a valid token is provided, the response includes `likedByCurrentUser` and `bookmarkedByCurrentUser` boolean fields. The frontend must wait for auth state to resolve and pass the access token before fetching so these fields are returned correctly (otherwise the backend sees an anonymous request and always returns `false`).
+
+### Editing and deleting posts and comments
+
+Authenticated endpoints. The author OR any `OWNER`/`ADMIN`/`MODERATOR` may edit or delete; anyone else gets `403`.
+
+- `PATCH /api/community/posts/{id}` — edit a post's title and/or body
+- `DELETE /api/community/posts/{id}` — soft-delete a post (`204 No Content`)
+- `PATCH /api/community/comments/{id}` — edit a comment body
+- `DELETE /api/community/comments/{id}` — soft-delete a comment (`204 No Content`)
+
+Editing the body/title stamps `editedAt` (returned in `ForumPostResponse`/`ForumCommentResponse`); moderation hide/lock does not. Soft-deleted content is removed from public reads. Post edit request shape:
+
+```json
+{
+  "title": "Updated title",
+  "body": "Updated body text."
+}
+```
 
 ### Likes and bookmarks
 
@@ -627,6 +696,12 @@ Current implemented moderator endpoints:
 - `POST /api/moderation/users/{id}/ban` — sets account status to `BANNED`, revokes all refresh sessions, and records a `BAN` row in `moderation_actions`
 
 These require a valid bearer token for an active account with role `OWNER`, `ADMIN`, or `MODERATOR`. Role checks are performed against the persisted user record, not only the JWT claim.
+
+Authorization and idempotency rules:
+
+- **Ban respects role hierarchy.** A ban is rejected with `403` unless the actor's highest role outranks the target's (`OWNER` > `ADMIN` > `MODERATOR` > `USER`). A moderator cannot ban another moderator, an admin, the owner, or themselves.
+- **Resolve/hide require an open report.** Resolving or hiding a report that is already `RESOLVED`/`DISMISSED` returns `409 Conflict`, preserving the original resolver/timestamp/note.
+- **Hide is audited.** `hide` writes a `HIDE` row to `moderation_actions` (target type `POST`/`COMMENT`), alongside the existing `LOCK` and `BAN` audit rows.
 
 `GET /api/moderation/reports` lists reports from both post and comment report tables.
 
@@ -707,7 +782,7 @@ Auth model:
 - Do not store tokens in browser `localStorage`.
 - Ban, delete, logout, and password-change flows should be able to revoke sessions.
 
-Current implemented auth endpoint:
+Current implemented endpoints (full list; `GET /api/status` is documented separately above):
 
 - `POST /api/auth/register`
 - `POST /api/auth/verify-email`
@@ -727,6 +802,10 @@ Current implemented auth endpoint:
 - `POST /api/community/posts/{id}/comments`
 - `POST /api/community/posts/{id}/reports`
 - `POST /api/community/comments/{id}/reports`
+- `PATCH /api/community/posts/{id}`
+- `DELETE /api/community/posts/{id}`
+- `PATCH /api/community/comments/{id}`
+- `DELETE /api/community/comments/{id}`
 - `POST /api/community/posts/{id}/like`
 - `POST /api/community/comments/{id}/like`
 - `POST /api/community/posts/{id}/bookmark`
@@ -741,11 +820,14 @@ Current implemented auth endpoint:
 - `PATCH /api/users/me/profile`
 - `POST /api/users/me/change-password`
 - `POST /api/users/me/sessions/revoke-all`
+- `POST /api/users/me/avatar`
+- `GET /api/avatars/{id}`
+- `GET /api/users/{id}/profile`
 
 Next slices:
 
 - Content work (Learn pages, homepage journal) — frontend-only.
-- Weight tracking — V9 migration + backend endpoint + private weight log UI.
+- Weight tracking — new migration (next is V11) + backend endpoint + private weight log UI.
 
 Planned registration shape when auth is approved:
 
@@ -833,13 +915,13 @@ For local development, Gradle `bootRun` loads these values from `backend/fatfitn
 
 This owner seed is development-only. Before public launch, remove or disable the seed path and delete any seeded development owner from databases that are not strictly local. Production owner/admin setup should be handled through a deliberate secure process later.
 
-Email provider direction:
+Email provider:
 
-- Real email delivery should be added later through a dedicated provider integration, likely Resend if the existing account/domain setup fits.
-- Use environment variables for provider keys, for example `RESEND_API_KEY`; never commit email provider keys.
+- Real email delivery is implemented via Resend (`EmailService`) for verification and password-reset emails.
+- Provider config comes from environment variables (`RESEND_API_KEY`, `MAIL_FROM`, `APP_BASE_URL`); never commit email provider keys.
 - Prefer a separate API key for Fat Fitness instead of sharing a portfolio-site key long term.
 - Use a verified sending domain or subdomain before public launch.
-- Remove the raw `devEmailVerificationToken` response before production email verification is enabled.
+- No raw verification/reset token is returned in any API response; when `RESEND_API_KEY` is blank (local dev) the link is logged to the console instead of sent.
 
 ## Health And Safety API Guidance
 

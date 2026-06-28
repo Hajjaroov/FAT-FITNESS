@@ -17,6 +17,7 @@ public class SecurityConfig {
 				.cors(Customizer.withDefaults())
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers("/error").permitAll()
 						.requestMatchers("/api/status").permitAll()
 						.requestMatchers(HttpMethod.POST,
 								"/api/auth/register",
@@ -27,6 +28,13 @@ public class SecurityConfig {
 								"/api/auth/logout",
 								"/api/auth/forgot-password",
 								"/api/auth/reset-password")
+						.permitAll()
+						.requestMatchers(HttpMethod.GET,
+								"/api/community/categories",
+								"/api/community/categories/*",
+								"/api/community/posts",
+								"/api/community/posts/*",
+								"/api/community/posts/*/comments")
 						.permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
 						.requestMatchers(HttpMethod.PATCH, "/api/users/me/profile").authenticated()
@@ -52,7 +60,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.DELETE, "/api/community/comments/*").authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/community/bookmarks").authenticated()
 						.requestMatchers("/api/moderation/**").authenticated()
-						.anyRequest().permitAll())
+						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
 				.httpBasic(basic -> basic.disable())
 				.formLogin(login -> login.disable())

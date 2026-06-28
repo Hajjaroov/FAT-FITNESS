@@ -13,9 +13,25 @@ type LogBody = {
 const ipWindows = new Map<string, number[]>();
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 30;
+let lastSweep = 0;
+
+// Drop windows that have fully aged out so the Map cannot grow unboundedly as new
+// IPs arrive. Runs at most once per window.
+function sweepStaleWindows(now: number) {
+  if (now - lastSweep < WINDOW_MS) {
+    return;
+  }
+  lastSweep = now;
+  for (const [ip, hits] of ipWindows) {
+    if (hits.every((t) => now - t >= WINDOW_MS)) {
+      ipWindows.delete(ip);
+    }
+  }
+}
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+  sweepStaleWindows(now);
   const hits = (ipWindows.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
   hits.push(now);
   ipWindows.set(ip, hits);

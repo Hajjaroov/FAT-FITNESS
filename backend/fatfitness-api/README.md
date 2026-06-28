@@ -42,6 +42,8 @@ cp .env.example .env
 | `FATFITNESS_OWNER_DISPLAY_NAME` | Dev only | Owner display name |
 | `FATFITNESS_OWNER_COUNTRY_REGION_CODE` | Dev only | ISO country code |
 | `FATFITNESS_OWNER_PASSWORD` | Dev only | Owner password (dev seed only) |
+| `FATFITNESS_CORS_ALLOWED_ORIGINS` | Yes (prod) | Comma-separated allowed origins (default `http://localhost:3000`) |
+| `FATFITNESS_REFRESH_COOKIE_SECURE` | Yes (prod) | `true` to mark refresh cookies HTTPS-only (default `false`) |
 | `SPRING_PROFILES_ACTIVE` | Optional | Set to `dev` to enable Hibernate SQL logging |
 
 > **Never commit `.env`.** It is git-ignored. Remove the owner seed before production.
@@ -110,7 +112,9 @@ src/main/resources/
 │   ├── V5__add_forum_report_resolution_metadata.sql
 │   ├── V6__moderation_lock_and_ban.sql
 │   ├── V7__likes_and_bookmarks.sql
-│   └── V8__password_reset_tokens.sql   ← latest; next must be V9
+│   ├── V8__password_reset_tokens.sql
+│   ├── V9__add_avatar_to_users.sql
+│   └── V10__add_edited_at_to_forum_content.sql   ← latest; next must be V11
 ├── application.yml              Main Spring config
 ├── application-dev.yml          Dev profile: Hibernate SQL + bind-param logging
 └── logback-spring.xml           Logback: console + rolling file + error-only file
@@ -216,7 +220,7 @@ PostgreSQL 18 via Docker Compose (`infrastructure/docker-compose.yml`).
 
 - Slow queries (>500 ms) are logged by PostgreSQL itself.
 - Schema is managed exclusively via Flyway migrations — never edit an applied migration.
-- Applied: **V1–V8**. Next migration must be **V9**.
+- Applied: **V1–V10**. Next migration must be **V11**.
 - DDL changes in `docker-compose.yml` take effect after container recreation:
   ```bash
   docker compose down && docker compose up -d

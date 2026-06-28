@@ -91,6 +91,12 @@ public class ModerationReportService {
 		UserAccount targetUser = userAccountRepository.findById(targetUserId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
+		if (roleRank(moderator) <= roleRank(targetUser)) {
+			throw new ResponseStatusException(
+					HttpStatus.FORBIDDEN,
+					"You cannot ban a user with an equal or higher role.");
+		}
+
 		if (targetUser.getStatus() == UserStatus.BANNED) {
 			return;
 		}
@@ -152,6 +158,7 @@ public class ModerationReportService {
 		ForumPostReport report = forumPostReportRepository.findById(reportId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post report not found"));
 
+		requireOpen(report.getStatus());
 		report.close(toReportStatus(request.status()), moderator, cleanOptionalSingleLine(request.resolutionNote()));
 
 		return toResponse(report);
@@ -166,6 +173,7 @@ public class ModerationReportService {
 		ForumCommentReport report = forumCommentReportRepository.findById(reportId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment report not found"));
 
+		requireOpen(report.getStatus());
 		report.close(toReportStatus(request.status()), moderator, cleanOptionalSingleLine(request.resolutionNote()));
 
 		return toResponse(report);
@@ -180,11 +188,13 @@ public class ModerationReportService {
 		ForumPostReport report = forumPostReportRepository.findById(reportId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post report not found"));
 
-		report.getPost().hide();
-		report.close(
-				ForumReportStatus.RESOLVED,
-				moderator,
-				cleanOptionalSingleLine(request.resolutionNote()));
+		requireOpen(report.getStatus());
+		String note = cleanOptionalSingleLine(request.resolutionNote());
+		ForumPost post = report.getPost();
+		post.hide();
+		report.close(ForumReportStatus.RESOLVED, moderator, note);
+		moderationActionRepository.save(ModerationAction.hidePost(moderator, post.getId(), note));
+		log.info("moderation.post_hidden postId={} moderatorId={}", post.getId(), moderator.getId());
 
 		return toResponse(report);
 	}
@@ -198,11 +208,13 @@ public class ModerationReportService {
 		ForumCommentReport report = forumCommentReportRepository.findById(reportId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment report not found"));
 
-		report.getComment().hide();
-		report.close(
-				ForumReportStatus.RESOLVED,
-				moderator,
-				cleanOptionalSingleLine(request.resolutionNote()));
+		requireOpen(report.getStatus());
+		String note = cleanOptionalSingleLine(request.resolutionNote());
+		ForumComment comment = report.getComment();
+		comment.hide();
+		report.close(ForumReportStatus.RESOLVED, moderator, note);
+		moderationActionRepository.save(ModerationAction.hideComment(moderator, comment.getId(), note));
+		log.info("moderation.comment_hidden commentId={} moderatorId={}", comment.getId(), moderator.getId());
 
 		return toResponse(report);
 	}
@@ -221,6 +233,28 @@ public class ModerationReportService {
 		}
 
 		return forumCommentReportRepository.findByStatusOrderByCreatedAtDesc(status, pageRequest);
+	}
+
+	private static int roleRank(UserAccount user) {
+		return user.getRoles().stream()
+				.mapToInt(ModerationReportService::roleRank)
+				.max()
+				.orElse(0);
+	}
+
+	private static int roleRank(UserRole role) {
+		return switch (role) {
+			case OWNER -> 3;
+			case ADMIN -> 2;
+			case MODERATOR -> 1;
+			case USER -> 0;
+		};
+	}
+
+	private static void requireOpen(ForumReportStatus status) {
+		if (status != ForumReportStatus.OPEN) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "This report has already been resolved.");
+		}
 	}
 
 	private UserAccount requireModerator(String userIdSubject) {

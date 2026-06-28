@@ -25,7 +25,9 @@ public class AvatarService {
 
 	private static final int AVATAR_SIZE = 256;
 	private static final long MAX_FILE_BYTES = 8L * 1024 * 1024;
-	private static final Set<String> ALLOWED_TYPES = Set.of("image/jpeg", "image/png", "image/webp");
+	// WebP is intentionally excluded: the JDK's bundled ImageIO cannot decode it without an
+	// extra plugin, so accepting it would only fail later with a confusing "cannot read image".
+	private static final Set<String> ALLOWED_TYPES = Set.of("image/jpeg", "image/png");
 
 	private final UserAccountRepository userAccountRepository;
 
@@ -44,7 +46,7 @@ public class AvatarService {
 		String contentType = file.getContentType();
 		if (contentType == null || !ALLOWED_TYPES.contains(contentType)) {
 			throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
-					"Only JPEG, PNG, and WebP images are accepted.");
+					"Only JPEG and PNG images are accepted.");
 		}
 
 		BufferedImage original = ImageIO.read(file.getInputStream());

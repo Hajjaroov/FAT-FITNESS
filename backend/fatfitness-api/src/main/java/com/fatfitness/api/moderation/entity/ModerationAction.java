@@ -60,6 +60,14 @@ public class ModerationAction {
 		return new ModerationAction(moderator, "USER", userId, "BAN", note);
 	}
 
+	public static ModerationAction hidePost(UserAccount moderator, UUID postId, String note) {
+		return new ModerationAction(moderator, "POST", postId, "HIDE", note);
+	}
+
+	public static ModerationAction hideComment(UserAccount moderator, UUID commentId, String note) {
+		return new ModerationAction(moderator, "COMMENT", commentId, "HIDE", note);
+	}
+
 	public UUID getId() { return id; }
 	public UserAccount getModerator() { return moderator; }
 	public String getTargetType() { return targetType; }

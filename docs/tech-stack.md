@@ -98,9 +98,9 @@ Backend rules:
 - Forum top-level posts and post reports are persisted with Flyway; authenticated write endpoints use bearer-token validation.
 - Forum flat comments and comment reports are persisted with Flyway; authenticated write endpoints use bearer-token validation.
 - Moderator report review/resolution/hide endpoints use bearer-token validation plus persisted role checks for `OWNER`, `ADMIN`, and `MODERATOR`.
-- Current email verification is development-only: registration returns a raw dev token while the database stores only the token hash.
+- Email verification uses real delivery via Resend: registration emails a verification link and stores only the hashed token; no raw token is returned in any response. Without a `RESEND_API_KEY` (local dev), the link is logged to the console instead.
 - `POST /api/auth/verify-email` consumes valid verification tokens and activates pending accounts.
-- `POST /api/auth/resend-verification` creates fresh development verification tokens for pending accounts without revealing unknown emails.
+- `POST /api/auth/resend-verification` creates a fresh verification token and emails it, without revealing whether the email exists.
 - `POST /api/auth/login` issues Spring Security JWT access tokens and stores hashed refresh-session records.
 - `POST /api/auth/refresh` rotates refresh-session records and revokes old refresh tokens.
 - `POST /api/auth/logout` revokes refresh sessions idempotently.

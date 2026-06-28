@@ -90,6 +90,49 @@ function getApiErrorMessage(payload: unknown, fallback: string) {
   return fallback;
 }
 
+/**
+ * Bridge to the React auth state so background token refresh (triggered by a 401)
+ * can update the in-memory access token and reflect sign-out in the UI. The
+ * AuthProvider registers this on mount; api.ts stays framework-agnostic otherwise.
+ */
+type AuthBridge = {
+  onAccessToken: (accessToken: string) => void;
+  onSignedOut: () => void;
+};
+
+let authBridge: AuthBridge | null = null;
+
+export function registerAuthBridge(bridge: AuthBridge): () => void {
+  authBridge = bridge;
+  return () => {
+    if (authBridge === bridge) {
+      authBridge = null;
+    }
+  };
+}
+
+// De-duplicate concurrent refreshes so a burst of 401s triggers a single refresh call.
+let inFlightRefresh: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (!inFlightRefresh) {
+    inFlightRefresh = refreshAuthSession()
+      .then((response) => {
+        authBridge?.onAccessToken(response.accessToken);
+        return response.accessToken;
+      })
+      .catch(() => {
+        authBridge?.onSignedOut();
+        return null;
+      })
+      .finally(() => {
+        inFlightRefresh = null;
+      });
+  }
+
+  return inFlightRefresh;
+}
+
 async function apiRequest<T>(
   path: string,
   {
@@ -98,6 +141,7 @@ async function apiRequest<T>(
     accessToken,
     credentials = "same-origin",
   }: ApiRequestOptions = {},
+  allowRefreshRetry = true,
 ): Promise<T> {
   const headers = new Headers({
     Accept: "application/json",
@@ -118,6 +162,20 @@ async function apiRequest<T>(
     cache: "no-store",
     credentials,
   });
+
+  // An authenticated request whose short-lived access token expired: refresh once
+  // via the HttpOnly cookie and retry transparently before surfacing the error.
+  if (response.status === 401 && allowRefreshRetry && accessToken) {
+    const nextAccessToken = await refreshAccessToken();
+    if (nextAccessToken) {
+      return apiRequest<T>(
+        path,
+        { method, body, accessToken: nextAccessToken, credentials },
+        false,
+      );
+    }
+  }
+
   const payload = await parseResponseBody(response);
 
   if (!response.ok) {

@@ -26,7 +26,7 @@ This is not a coaching product or medical advice platform. All content is person
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS v4 |
 | Backend | Spring Boot 4.1, Java 21, Gradle |
 | Database | PostgreSQL 18 via Docker Compose |
-| Migrations | Flyway (V1–V8 applied; next is V9) |
+| Migrations | Flyway (V1–V10 applied; next is V11) |
 | Auth | JWT access tokens + HttpOnly refresh cookie + Resend email |
 | Logging | Logback (backend) · Winston (frontend) · PostgreSQL slow-query log |
 
@@ -115,6 +115,8 @@ The site will be available at `http://localhost:3000`.
 | `FATFITNESS_OWNER_DISPLAY_NAME` | Dev only | Owner display name |
 | `FATFITNESS_OWNER_COUNTRY_REGION_CODE` | Dev only | ISO country code |
 | `FATFITNESS_OWNER_PASSWORD` | Dev only | Owner password (dev seed only) |
+| `FATFITNESS_CORS_ALLOWED_ORIGINS` | Yes (prod) | Comma-separated allowed origins (default `http://localhost:3000`) |
+| `FATFITNESS_REFRESH_COOKIE_SECURE` | Yes (prod) | Set `true` so refresh cookies are HTTPS-only (default `false`) |
 | `SPRING_PROFILES_ACTIVE` | Optional | Set to `dev` to enable Hibernate SQL logging |
 
 ### Frontend (`frontend/fatfitness-web/.env.local`)
@@ -149,6 +151,8 @@ npm run build
 | `http://localhost:3000` | Frontend |
 | `http://localhost:3000/journal` | Journal overview |
 | `http://localhost:3000/community` | Forum index |
+| `http://localhost:3000/settings` | Account settings (profile, password, sessions, avatar) |
+| `http://localhost:3000/dashboard` | Signed-in account dashboard |
 | `http://localhost:3000/admin` | Moderation dashboard (OWNER/ADMIN/MODERATOR) |
 | `http://localhost:8080/api/status` | Backend health check |
 
@@ -157,9 +161,9 @@ npm run build
 ## Production Notes
 
 - Remove or disable the owner seed before public launch.
-- Enable `Secure` cookie flag and correct domain in `application.yml`.
+- Set `FATFITNESS_REFRESH_COOKIE_SECURE=true` and `FATFITNESS_CORS_ALLOWED_ORIGINS` to the production frontend origin(s).
 - Confirm `RESEND_API_KEY`, `MAIL_FROM`, and `APP_BASE_URL` are set.
 - Do **not** activate the `dev` Spring profile in production.
 - Ensure the process user has write access to the `logs/` directories.
-- Flyway migrations V1–V8 are applied. The next migration must be **V9**.
+- Flyway migrations V1–V10 are applied. The next migration must be **V11**.
 - Review GDPR / data deletion requirements before collecting real user data.

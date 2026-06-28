@@ -97,7 +97,10 @@ Current community/forum state:
 - `POST /api/moderation/users/{id}/ban` sets the user status to `BANNED`, revokes all their refresh sessions, and writes a `BAN` row to `moderation_actions`.
 - The seventh Flyway migration (`V7__likes_and_bookmarks.sql`) creates `post_likes`, `comment_likes`, and `post_bookmarks`. Each has a `(user_id, target_id)` unique constraint so a user can like/bookmark a given target at most once, plus FK constraints to `users` and the target table.
 - The eighth Flyway migration (`V8__password_reset_tokens.sql`) creates `password_reset_tokens` with a `token_hash` unique constraint and FK to `users`. Tokens expire in 30 minutes and are marked used after a successful reset.
-- The latest applied migration is `V8`. The next new migration must be `V9`.
+- The ninth Flyway migration (`V9__add_avatar_to_users.sql`) adds `avatar_jpeg BYTEA` to `users` for server-resized 256×256 JPEG avatars.
+- The tenth Flyway migration (`V10__add_edited_at_to_forum_content.sql`) adds `edited_at TIMESTAMP WITH TIME ZONE` to `forum_posts` and `forum_comments`, set only when the body/title is edited (not on moderation hide/lock).
+- `moderation_actions` also records `HIDE` rows (target type `POST`/`COMMENT`) when a report-scoped hide is performed, alongside `LOCK` and `BAN`.
+- The latest applied migration is `V10`. The next new migration must be `V11`.
 
 ### Moderation audit table
 

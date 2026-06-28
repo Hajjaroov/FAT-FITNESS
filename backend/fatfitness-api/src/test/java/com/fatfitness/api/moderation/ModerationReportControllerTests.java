@@ -567,4 +567,97 @@ class ModerationReportControllerTests {
 				""".formatted(rawRefreshToken)))
 		.andExpect(status().isForbidden());
     }
+
+	@Test
+	void moderatorCannotBanOwner() throws Exception {
+		String moderatorToken = registerVerifyAddRoleAndLogin("mod-vs-owner@example.com", UserRole.MODERATOR);
+		registerVerifyAddRoleAndLogin("owner-ban-target@example.com", UserRole.OWNER);
+		UserAccount owner = userAccountRepository.findByEmail("owner-ban-target@example.com").orElseThrow();
+
+		mockMvc.perform(post("/api/moderation/users/{userId}/ban", owner.getId().toString())
+						.header("Authorization", "Bearer " + moderatorToken))
+				.andExpect(status().isForbidden());
+
+		assertThat(userAccountRepository.findById(owner.getId()).orElseThrow().getStatus())
+				.isEqualTo(UserStatus.ACTIVE);
+	}
+
+	@Test
+	void moderatorCannotBanAnotherModerator() throws Exception {
+		String moderatorToken = registerVerifyAddRoleAndLogin("mod-actor@example.com", UserRole.MODERATOR);
+		registerVerifyAddRoleAndLogin("mod-ban-target@example.com", UserRole.MODERATOR);
+		UserAccount target = userAccountRepository.findByEmail("mod-ban-target@example.com").orElseThrow();
+
+		mockMvc.perform(post("/api/moderation/users/{userId}/ban", target.getId().toString())
+						.header("Authorization", "Bearer " + moderatorToken))
+				.andExpect(status().isForbidden());
+
+		assertThat(userAccountRepository.findById(target.getId()).orElseThrow().getStatus())
+				.isEqualTo(UserStatus.ACTIVE);
+	}
+
+	@Test
+	void higherRoleCanBanLowerRole() throws Exception {
+		String adminToken = registerVerifyAddRoleAndLogin("admin-ban-actor@example.com", UserRole.ADMIN);
+		registerVerifyAddRoleAndLogin("mod-banned-by-admin@example.com", UserRole.MODERATOR);
+		UserAccount target = userAccountRepository.findByEmail("mod-banned-by-admin@example.com").orElseThrow();
+
+		mockMvc.perform(post("/api/moderation/users/{userId}/ban", target.getId().toString())
+						.header("Authorization", "Bearer " + adminToken))
+				.andExpect(status().isOk());
+
+		assertThat(userAccountRepository.findById(target.getId()).orElseThrow().getStatus())
+				.isEqualTo(UserStatus.BANNED);
+	}
+
+	@Test
+	void resolvingAnAlreadyResolvedReportReturnsConflict() throws Exception {
+		String ownerToken = registerVerifyAddRoleAndLogin("owner-double-resolve@example.com", UserRole.OWNER);
+		String authorToken = registerVerifyAndLogin("double-resolve-author@example.com");
+		String reporterToken = registerVerifyAndLogin("double-resolve-reporter@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String reportId = reportPostAndReadId(reporterToken, postId);
+
+		mockMvc.perform(post("/api/moderation/reports/posts/{reportId}/resolve", reportId)
+						.header("Authorization", "Bearer " + ownerToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "status": "RESOLVED"
+								}
+								"""))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(post("/api/moderation/reports/posts/{reportId}/resolve", reportId)
+						.header("Authorization", "Bearer " + ownerToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "status": "DISMISSED"
+								}
+								"""))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void hidingReportedPostWritesHideAuditRow() throws Exception {
+		String ownerToken = registerVerifyAddRoleAndLogin("owner-hide-audit@example.com", UserRole.OWNER);
+		String authorToken = registerVerifyAndLogin("hide-audit-author@example.com");
+		String reporterToken = registerVerifyAndLogin("hide-audit-reporter@example.com");
+		String postId = createPostAndReadId(authorToken, "introductions");
+		String reportId = reportPostAndReadId(reporterToken, postId);
+
+		mockMvc.perform(post("/api/moderation/reports/posts/{reportId}/hide", reportId)
+						.header("Authorization", "Bearer " + ownerToken)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "resolutionNote": "Hidden after review."
+								}
+								"""))
+				.andExpect(status().isOk());
+
+		assertThat(moderationActionRepository.findAll()).anyMatch(a ->
+				"HIDE".equals(a.getAction()) && java.util.UUID.fromString(postId).equals(a.getTargetId()));
+	}
 }
