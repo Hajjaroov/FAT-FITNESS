@@ -22,4 +22,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, UUID> {
 
 	@Query("select pl.post.id from PostLike pl where pl.post.id in :postIds and pl.user.id = :userId")
 	Set<UUID> findLikedPostIdsByUserAndPostIds(@Param("userId") UUID userId, @Param("postIds") Collection<UUID> postIds);
+
+	@Query("select count(pl) from PostLike pl where pl.post.author.id = :authorId and pl.post.status = 'PUBLISHED'")
+	long countLikesReceivedByAuthorId(@Param("authorId") UUID authorId);
 }

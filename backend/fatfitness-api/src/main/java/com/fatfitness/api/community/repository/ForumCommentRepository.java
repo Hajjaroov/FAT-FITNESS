@@ -18,4 +18,8 @@ public interface ForumCommentRepository extends JpaRepository<ForumComment, UUID
 			Pageable pageable);
 
 	Optional<ForumComment> findByIdAndStatus(UUID id, ForumCommentStatus status);
+
+	List<ForumComment> findByAuthorIdAndStatusOrderByCreatedAtDesc(UUID authorId, ForumCommentStatus status, Pageable pageable);
+
+	long countByAuthorIdAndStatus(UUID authorId, ForumCommentStatus status);
 }

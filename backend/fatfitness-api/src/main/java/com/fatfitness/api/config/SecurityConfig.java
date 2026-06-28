@@ -36,6 +36,7 @@ public class SecurityConfig {
 								"/api/users/me/avatar")
 						.authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/avatars/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/users/*/profile").permitAll()
 						.requestMatchers(HttpMethod.POST,
 								"/api/community/posts",
 								"/api/community/posts/*/comments",

@@ -20,4 +20,8 @@ public interface ForumPostRepository extends JpaRepository<ForumPost, UUID> {
 			Pageable pageable);
 
 	Optional<ForumPost> findByIdAndStatus(UUID id, ForumPostStatus status);
+
+	List<ForumPost> findByAuthorIdAndStatusOrderByCreatedAtDesc(UUID authorId, ForumPostStatus status, Pageable pageable);
+
+	long countByAuthorIdAndStatus(UUID authorId, ForumPostStatus status);
 }

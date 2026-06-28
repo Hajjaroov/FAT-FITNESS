@@ -249,10 +249,13 @@ function CommunityCommentItem({
   return (
     <article className="p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
-        <span className="flex items-center gap-1.5">
+        <Link
+          href={`/users/${comment.authorId}`}
+          className="flex items-center gap-1.5 transition hover:text-(--color-accent-strong)"
+        >
           <UserAvatar displayName={comment.authorDisplayName} size={20} />
           {copy.comments.postedByLabel} {comment.authorDisplayName}
-        </span>
+        </Link>
         <span aria-hidden="true">/</span>
         <time dateTime={comment.createdAt}>
           {formatForumPostDate(comment.createdAt, locale)}

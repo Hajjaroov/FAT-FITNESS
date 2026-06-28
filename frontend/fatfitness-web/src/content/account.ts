@@ -39,14 +39,6 @@ type AccountCopy = {
   };
   statuses: Record<UserStatus, string>;
   roles: Record<UserRole, string>;
-  community: {
-    title: string;
-    body: string;
-  };
-  privacy: {
-    title: string;
-    body: string;
-  };
   savedPosts: {
     title: string;
     loading: string;
@@ -108,16 +100,6 @@ export const accountCopy = {
       MODERATOR: "Moderator",
       USER: "User",
     },
-    community: {
-      title: "Community access",
-      body:
-        "Email verification is the gate we will reuse before posting, replying, reporting, or using other account-only community actions.",
-    },
-    privacy: {
-      title: "Privacy boundary",
-      body:
-        "Basic registration stays intentionally light: no weight history, GLP-1 status, photos, diet logs, or medical history are part of this account page.",
-    },
     savedPosts: {
       title: "Saved threads",
       loading: "Loading saved threads...",
@@ -178,16 +160,6 @@ export const accountCopy = {
       ADMIN: "Admin",
       MODERATOR: "Moderator",
       USER: "User",
-    },
-    community: {
-      title: "Community-Zugang",
-      body:
-        "Die E-Mail-Verifizierung ist die Grenze, die wir später für Beiträge, Antworten, Meldungen und andere Account-Funktionen wiederverwenden.",
-    },
-    privacy: {
-      title: "Datenschutz-Grenze",
-      body:
-        "Die Basis-Registrierung bleibt bewusst schlank: Gewichtsverlauf, GLP-1-Status, Fotos, Ernährungslogs oder medizinische Geschichte gehören nicht zu dieser Account-Seite.",
     },
     savedPosts: {
       title: "Gespeicherte Threads",

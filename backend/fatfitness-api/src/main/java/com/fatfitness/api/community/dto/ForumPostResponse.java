@@ -11,6 +11,7 @@ public record ForumPostResponse(
 		String categoryName,
 		String title,
 		String body,
+		UUID authorId,
 		String authorDisplayName,
 		ForumPostStatus status,
 		boolean locked,

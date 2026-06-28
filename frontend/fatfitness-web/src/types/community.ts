@@ -7,6 +7,7 @@ export type ForumPost = {
   categoryName: string;
   title: string;
   body: string;
+  authorId: string;
   authorDisplayName: string;
   status: ForumPostStatus;
   locked: boolean;
@@ -53,6 +54,7 @@ export type ForumComment = {
   id: string;
   postId: string;
   body: string;
+  authorId: string;
   authorDisplayName: string;
   status: ForumCommentStatus;
   createdAt: string;

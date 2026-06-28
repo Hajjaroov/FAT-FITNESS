@@ -149,6 +149,7 @@ public class ForumCommentService {
 				comment.getId(),
 				comment.getPost().getId(),
 				comment.getBody(),
+				comment.getAuthor().getId(),
 				userPublicDisplayNameService.resolve(comment.getAuthor()),
 				comment.getStatus(),
 				comment.getCreatedAt(),

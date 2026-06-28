@@ -170,10 +170,13 @@ export function CommunityPostDetailView({
                     {state.post.categoryName}
                   </Link>
                   <span aria-hidden="true">/</span>
-                  <span className="flex items-center gap-1.5">
+                  <Link
+                    href={`/users/${state.post.authorId}`}
+                    className="flex items-center gap-1.5 transition hover:text-(--color-accent-strong)"
+                  >
                     <UserAvatar displayName={state.post.authorDisplayName} size={18} />
                     {copy.posts.postedByLabel} {state.post.authorDisplayName}
-                  </span>
+                  </Link>
                   <span aria-hidden="true">/</span>
                   <time dateTime={state.post.createdAt}>
                     {formatForumPostDate(state.post.createdAt, locale)}

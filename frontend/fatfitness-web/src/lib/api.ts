@@ -39,6 +39,7 @@ import type {
   ModerationReportTargetType,
   ResolveModerationReportRequest,
 } from "@/types/moderation";
+import type { UserPublicProfile } from "@/types/user";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH";
@@ -450,6 +451,10 @@ export function revokeAllSessions(accessToken: string) {
     method: "POST",
     accessToken,
   });
+}
+
+export function getPublicUserProfile(userId: string) {
+  return apiRequest<UserPublicProfile>(`/api/users/${userId}/profile`);
 }
 
 export async function uploadAvatar(blob: Blob, accessToken: string): Promise<void> {

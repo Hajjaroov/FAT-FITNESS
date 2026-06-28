@@ -177,6 +177,7 @@ public class ForumPostService {
 				post.getCategory().getName(),
 				post.getTitle(),
 				post.getBody(),
+				post.getAuthor().getId(),
 				userPublicDisplayNameService.resolve(post.getAuthor()),
 				post.getStatus(),
 				post.isLocked(),

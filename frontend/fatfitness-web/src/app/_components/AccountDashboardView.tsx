@@ -301,23 +301,6 @@ export function AccountDashboardView() {
         ) : null}
       </section>
 
-      {user ? (
-        <section className="grid gap-6 md:grid-cols-2">
-          <article className="site-card p-6 sm:p-7">
-            <h2 className="text-xl font-semibold">{copy.community.title}</h2>
-            <p className="site-muted mt-3 text-sm leading-7">
-              {copy.community.body}
-            </p>
-          </article>
-          <article className="site-card p-6 sm:p-7">
-            <h2 className="text-xl font-semibold">{copy.privacy.title}</h2>
-            <p className="site-muted mt-3 text-sm leading-7">
-              {copy.privacy.body}
-            </p>
-          </article>
-        </section>
-      ) : null}
-
       {accessToken ? <SavedPostsSection accessToken={accessToken} /> : null}
     </PageShell>
   );

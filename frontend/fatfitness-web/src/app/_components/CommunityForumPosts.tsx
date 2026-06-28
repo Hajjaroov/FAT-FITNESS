@@ -220,16 +220,18 @@ export function CommunityPostList({
       {status === "success" && posts.length > 0 ? (
         <div>
           {posts.map((post) => (
-            <Link
+            <div
               key={post.id}
-              href={`/community/posts/${post.id}`}
-              className="site-divider block border-b p-5 transition hover:bg-(--color-surface) sm:p-6"
+              className="site-divider relative border-b p-5 transition hover:bg-(--color-surface) sm:p-6"
             >
               <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-(--color-subtle)">
-                <span className="flex items-center gap-1.5">
+                <Link
+                  href={`/users/${post.authorId}`}
+                  className="relative z-10 flex items-center gap-1.5 transition hover:text-(--color-accent-strong)"
+                >
                   <UserAvatar displayName={post.authorDisplayName} size={18} />
                   {copy.posts.postedByLabel} {post.authorDisplayName}
-                </span>
+                </Link>
                 <span aria-hidden="true">/</span>
                 <span>
                   {copy.posts.inLabel}{" "}
@@ -240,11 +242,18 @@ export function CommunityPostList({
                   {formatForumPostDate(post.createdAt, locale)}
                 </time>
               </div>
-              <h3 className="mt-3 text-xl font-semibold">{post.title}</h3>
+              <h3 className="mt-3 text-xl font-semibold">
+                <Link
+                  href={`/community/posts/${post.id}`}
+                  className="after:absolute after:inset-0 after:content-['']"
+                >
+                  {post.title}
+                </Link>
+              </h3>
               <p className="site-muted mt-2 text-sm leading-7">
                 {postPreview(post.body)}
               </p>
-            </Link>
+            </div>
           ))}
         </div>
       ) : null}

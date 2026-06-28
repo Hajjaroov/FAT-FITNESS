@@ -9,6 +9,7 @@ public record ForumCommentResponse(
 		UUID id,
 		UUID postId,
 		String body,
+		UUID authorId,
 		String authorDisplayName,
 		ForumCommentStatus status,
 		Instant createdAt,
