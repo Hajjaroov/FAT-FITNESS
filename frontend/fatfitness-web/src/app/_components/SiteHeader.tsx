@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserAvatar } from "@/app/_components/UserAvatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
+import { getUnreadMessageCount } from "@/lib/api";
 import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { useTheme } from "@/app/_components/ThemeProvider";
 import { isLocale, localeOptions, siteCopy, siteNavigation } from "@/content/site";
@@ -25,9 +26,10 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { locale, setLocale } = useLocale();
   const { theme, toggleTheme } = useTheme();
-  const { status, user, logout } = useAuth();
+  const { status, user, accessToken, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const copy = useLocalizedContent(siteCopy);
   const nextTheme = theme === "dark" ? "light" : "dark";
   const themeIcon = theme === "dark" ? "☾" : "☀";
@@ -35,6 +37,26 @@ export function SiteHeader() {
 
   const currentNavItem = siteNavigation.find((item) => isActiveRoute(pathname, item.href));
   const currentPageLabel = currentNavItem ? copy.nav[currentNavItem.key] : copy.brand;
+
+  // Refresh the unread-message badge on sign-in and on every navigation. The badge
+  // is only rendered inside the authenticated block, so a stale count after logout
+  // is never shown — no synchronous reset needed here.
+  useEffect(() => {
+    if (status !== "authenticated" || !accessToken) {
+      return;
+    }
+    let isActive = true;
+    getUnreadMessageCount(accessToken)
+      .then((result) => {
+        if (isActive) setUnreadMessages(result.count);
+      })
+      .catch(() => {
+        if (isActive) setUnreadMessages(0);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, [status, accessToken, pathname]);
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -149,6 +171,22 @@ export function SiteHeader() {
                       {copy.account.admin}
                     </Link>
                   )}
+                  <Link
+                    href="/messages"
+                    className="site-nav-link relative inline-flex items-center"
+                    aria-label={copy.account.messages}
+                    title={copy.account.messages}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="14" rx="2" />
+                      <path d="m3 7 9 6 9-6" />
+                    </svg>
+                    {unreadMessages > 0 ? (
+                      <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-(--color-accent-strong) px-1 text-[10px] font-bold leading-none text-white">
+                        {unreadMessages > 9 ? "9+" : unreadMessages}
+                      </span>
+                    ) : null}
+                  </Link>
                   <Link
                     href="/dashboard"
                     className="site-nav-link inline-flex items-center gap-1.5"
@@ -300,6 +338,18 @@ export function SiteHeader() {
                       {copy.account.admin}
                     </Link>
                   )}
+                  <Link
+                    href="/messages"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-between rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                  >
+                    {copy.account.messages}
+                    {unreadMessages > 0 ? (
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-(--color-accent-strong) px-1.5 text-[11px] font-bold leading-none text-white">
+                        {unreadMessages > 9 ? "9+" : unreadMessages}
+                      </span>
+                    ) : null}
+                  </Link>
                   <Link
                     href="/dashboard"
                     onClick={() => setMenuOpen(false)}

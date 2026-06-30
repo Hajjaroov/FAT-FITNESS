@@ -42,6 +42,16 @@ import type {
   ResolveModerationReportRequest,
 } from "@/types/moderation";
 import type { UserPublicProfile } from "@/types/user";
+import type {
+  BroadcastMessageRequest,
+  BroadcastMessageResponse,
+  ConversationSummary,
+  ConversationThread,
+  MessageItem,
+  ReplyMessageRequest,
+  StartConversationRequest,
+  UnreadCount,
+} from "@/types/messaging";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
@@ -553,6 +563,61 @@ export function revokeAllSessions(accessToken: string) {
 
 export function getPublicUserProfile(userId: string) {
   return apiRequest<UserPublicProfile>(`/api/users/${userId}/profile`);
+}
+
+export function getConversations(accessToken: string) {
+  return apiRequest<ConversationSummary[]>("/api/messages", { accessToken });
+}
+
+export function getUnreadMessageCount(accessToken: string) {
+  return apiRequest<UnreadCount>("/api/messages/unread-count", { accessToken });
+}
+
+export function getConversation(conversationId: string, accessToken: string) {
+  return apiRequest<ConversationThread>(`/api/messages/${conversationId}`, {
+    accessToken,
+  });
+}
+
+export function startConversation(
+  request: StartConversationRequest,
+  accessToken: string,
+) {
+  return apiRequest<ConversationThread>("/api/messages", {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
+}
+
+export function replyToConversation(
+  conversationId: string,
+  request: ReplyMessageRequest,
+  accessToken: string,
+) {
+  return apiRequest<MessageItem>(`/api/messages/${conversationId}/reply`, {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
+}
+
+export function deleteConversation(conversationId: string, accessToken: string) {
+  return apiRequest<void>(`/api/messages/${conversationId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
+export function broadcastMessage(
+  request: BroadcastMessageRequest,
+  accessToken: string,
+) {
+  return apiRequest<BroadcastMessageResponse>("/api/messages/broadcast", {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
 }
 
 export async function uploadAvatar(blob: Blob, accessToken: string): Promise<void> {

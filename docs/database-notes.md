@@ -100,7 +100,12 @@ Current community/forum state:
 - The ninth Flyway migration (`V9__add_avatar_to_users.sql`) adds `avatar_jpeg BYTEA` to `users` for server-resized 256×256 JPEG avatars.
 - The tenth Flyway migration (`V10__add_edited_at_to_forum_content.sql`) adds `edited_at TIMESTAMP WITH TIME ZONE` to `forum_posts` and `forum_comments`, set only when the body/title is edited (not on moderation hide/lock).
 - `moderation_actions` also records `HIDE` rows (target type `POST`/`COMMENT`) when a report-scoped hide is performed, alongside `LOCK` and `BAN`.
-- The latest applied migration is `V10`. The next new migration must be `V11`.
+- The eleventh Flyway migration (`V11__create_private_messaging.sql`) creates the async private-messaging tables:
+  - `conversations` — `id`, `subject`, `created_at`.
+  - `conversation_participants` — surrogate `id`, `conversation_id`, `user_id`, `last_read_at` (nullable), `deleted` (per-user soft hide). Unique `(conversation_id, user_id)`; index on `(user_id, deleted)`. A surrogate PK is used (not a composite key) for consistency with every other table's single-UUID `id`.
+  - `messages` — `id`, `conversation_id`, `sender_user_id`, `body`, `sent_at`. Index on `(conversation_id, sent_at)`.
+  - All have FK constraints to `conversations`/`users`. Messages are not soft-deleted; deletion is per-participant via `conversation_participants.deleted`.
+- The latest applied migration is `V11`. The next new migration must be `V12`.
 
 ### Moderation audit table
 

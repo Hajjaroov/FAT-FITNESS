@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PageShell } from "@/app/_components/PageShell";
 import { UserAvatar } from "@/app/_components/UserAvatar";
+import { MessageComposeButton } from "@/app/_components/MessageComposeButton";
 import { useLocale } from "@/app/_components/LocaleProvider";
 import { ApiError, getPublicUserProfile } from "@/lib/api";
 import { getCountryOptions } from "@/content/countries";
@@ -127,6 +128,10 @@ export function UserProfileView({ userId }: Props) {
                   Member since {formatJoinDate(state.profile.joinedAt, locale)}
                 </p>
               </div>
+              <MessageComposeButton
+                recipientId={userId}
+                recipientDisplayName={state.profile.displayName}
+              />
             </div>
 
             <dl className="mt-6 flex flex-wrap gap-4">

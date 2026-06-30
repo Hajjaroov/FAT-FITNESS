@@ -421,6 +421,30 @@ Response shape:
 
 `publicRoles` only ever exposes `OWNER`/`ADMIN`/`MODERATOR` (never `USER`). DELETED users → `404`. BANNED users → `200` with `displayName` `"Banned account"`, no country/avatar, and zeroed activity.
 
+### Private messaging
+
+Async one-to-one inbox backed by `V11__create_private_messaging.sql` (`conversations`, `conversation_participants`, `messages`). All endpoints require a valid bearer token for an `ACTIVE` (email-verified) account; all live under `/api/messages/**` (authenticated in `SecurityConfig`).
+
+- `POST /api/messages` — start a new conversation. Rate-limited 20/hour per IP. Recipient must be `ACTIVE` (else `404`); messaging yourself → `400`. Returns the thread (`201`).
+- `POST /api/messages/{id}/reply` — reply to a conversation. Rate-limited 60/10min per IP. Caller must be a participant (else `404`). Returns the new message (`201`).
+- `GET /api/messages` — inbox list, newest first, excludes the caller's soft-deleted conversations.
+- `GET /api/messages/{id}` — full thread (participants only, else `404`); opening marks it read.
+- `GET /api/messages/unread-count` — `{ "count": N }` for the header badge.
+- `DELETE /api/messages/{id}` — soft-delete the caller's side only (`204`); the other participant still sees it.
+- `POST /api/messages/broadcast` — owner/admin only announcement to every member. Role-checked in the service (`OWNER` or `ADMIN`, else `403`). Creates a separate 1-to-1 conversation with each `ACTIVE` user (except the sender) so replies come back privately to the announcer, sends each a best-effort email, and returns `{ "recipientCount": N }` (`201`). Body shape is `{ "subject", "body" }`.
+
+Start request shape:
+
+```json
+{
+  "recipientId": "uuid",
+  "subject": "Subject line",
+  "body": "Message text."
+}
+```
+
+A conversation is unread for a participant when the latest message is newer than their `last_read_at` and was not sent by them. Opening the thread or replying stamps `last_read_at`. Replying also restores (un-deletes) both participant sides so a new message reappears in a recipient who had deleted the conversation. The recipient gets a best-effort Resend email (`EmailService.sendNewMessageEmail`) linking to `/messages/{id}`; the message body is not included in the email and a send failure never rolls back the saved message.
+
 ## API Principles
 
 - REST API from Spring Boot backend.

@@ -84,6 +84,37 @@ public class EmailService {
 		}
 	}
 
+	/**
+	 * Notifies a recipient that they received a new private message. Best-effort:
+	 * a Resend outage or timeout is logged, never thrown, so it can never roll back
+	 * the message that was just saved. The message body is intentionally not included
+	 * in the email — recipients open the conversation to read it.
+	 */
+	public void sendNewMessageEmail(String toEmail, String recipientDisplayName, String senderDisplayName,
+			String subject, String conversationId) {
+		String link = emailProperties.appBaseUrl() + "/messages/" + conversationId;
+		String apiKey = emailProperties.resendApiKey();
+		if (apiKey == null || apiKey.isBlank()) {
+			log.info("[EMAIL DEV] New-message link for {}: {}", toEmail, link);
+			return;
+		}
+
+		String html = buildNewMessageHtml(recipientDisplayName, senderDisplayName, subject, link);
+
+		try {
+			restClient.post()
+					.uri("/emails")
+					.header("Authorization", "Bearer " + apiKey)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(new ResendRequest(emailProperties.from(), toEmail,
+							"New message from " + senderDisplayName + " on Fat Fitness Community", html))
+					.retrieve()
+					.toBodilessEntity();
+		} catch (RuntimeException ex) {
+			log.error("Failed to send new-message email to {}: {}", toEmail, ex.getMessage());
+		}
+	}
+
 	private static String buildVerificationHtml(String displayName, String link) {
 		return """
 				<!DOCTYPE html>
@@ -142,6 +173,37 @@ public class EmailService {
 				</body>
 				</html>
 				""".formatted(displayName, link);
+	}
+
+	private static String buildNewMessageHtml(String recipientDisplayName, String senderDisplayName,
+			String subject, String link) {
+		return """
+				<!DOCTYPE html>
+				<html lang="en">
+				<head><meta charset="UTF-8"></head>
+				<body style="font-family:sans-serif;background:#fffaf1;margin:0;padding:32px;">
+				  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:40px;">
+				    <h1 style="font-size:22px;font-weight:700;color:#1a1a1a;margin:0 0 16px;">
+				      New message
+				    </h1>
+				    <p style="color:#555;line-height:1.6;margin:0 0 24px;">
+				      Hi %s,<br><br>
+				      %s sent you a new message on Fat Fitness Community:<br>
+				      <strong style="color:#1a1a1a;">%s</strong>
+				    </p>
+				    <a href="%s"
+				       style="display:inline-block;background:#1a1a1a;color:#fff;padding:14px 28px;
+				              border-radius:100px;text-decoration:none;font-weight:600;font-size:14px;">
+				      Read message
+				    </a>
+				    <p style="color:#999;font-size:12px;margin:24px 0 0;line-height:1.6;">
+				      You receive this because someone replied to or started a conversation with you.<br>
+				      Fat Fitness Community — personal journey, beginner-friendly support.
+				    </p>
+				  </div>
+				</body>
+				</html>
+				""".formatted(recipientDisplayName, senderDisplayName, subject, link);
 	}
 
 	private record ResendRequest(String from, String to, String subject, String html) {}

@@ -12,6 +12,7 @@ A personal weight-loss journey site and beginner-friendly peer-support forum.
 |---|---|
 | **Journal** | Personal diet, training, and medical (GLP-1) journey made public |
 | **Community** | Forum-style peer-support for overweight beginners |
+| **Messages** | Private async one-to-one inbox between members, with email notifications |
 | **Accounts** | Registration, email verification, login, profile settings |
 | **Admin** | Moderation dashboard for report review, content hide, thread lock, user ban |
 
@@ -26,7 +27,7 @@ This is not a coaching product or medical advice platform. All content is person
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS v4 |
 | Backend | Spring Boot 4.1, Java 21, Gradle |
 | Database | PostgreSQL 18 via Docker Compose |
-| Migrations | Flyway (V1–V10 applied; next is V11) |
+| Migrations | Flyway (V1–V11 applied; next is V12) |
 | Auth | JWT access tokens + HttpOnly refresh cookie + Resend email |
 | Logging | Logback (backend) · Winston (frontend) · PostgreSQL slow-query log |
 
@@ -151,6 +152,7 @@ npm run build
 | `http://localhost:3000` | Frontend |
 | `http://localhost:3000/journal` | Journal overview |
 | `http://localhost:3000/community` | Forum index |
+| `http://localhost:3000/messages` | Private message inbox |
 | `http://localhost:3000/settings` | Account settings (profile, password, sessions, avatar) |
 | `http://localhost:3000/dashboard` | Signed-in account dashboard |
 | `http://localhost:3000/admin` | Moderation dashboard (OWNER/ADMIN/MODERATOR) |
@@ -165,5 +167,5 @@ npm run build
 - Confirm `RESEND_API_KEY`, `MAIL_FROM`, and `APP_BASE_URL` are set.
 - Do **not** activate the `dev` Spring profile in production.
 - Ensure the process user has write access to the `logs/` directories.
-- Flyway migrations V1–V10 are applied. The next migration must be **V11**.
+- Flyway migrations V1–V11 are applied. The next migration must be **V12**.
 - Review GDPR / data deletion requirements before collecting real user data.
