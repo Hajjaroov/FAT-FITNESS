@@ -10,7 +10,7 @@ import {
 } from "@/app/_components/LocaleProvider";
 import { accountCopy } from "@/content/account";
 import { getCountryOptions } from "@/content/countries";
-import { ApiError, getBookmarkedPosts } from "@/lib/api";
+import { ApiError, bookmarkForumPost, getBookmarkedPosts } from "@/lib/api";
 import type { Locale } from "@/content/site";
 import type { CurrentUser } from "@/types/auth";
 import type { ForumPost } from "@/types/community";
@@ -27,6 +27,7 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
     "loading",
   );
   const [error, setError] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   useEffect(() => {
     let isActive = true;
@@ -53,6 +54,16 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
       isActive = false;
     };
   }, [accessToken, copy.savedPosts.error]);
+
+  async function handleUnsave(postId: string) {
+    setRemovingId(postId);
+    try {
+      await bookmarkForumPost(postId, accessToken);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+    } finally {
+      setRemovingId(null);
+    }
+  }
 
   return (
     <section className="site-card overflow-hidden">
@@ -87,32 +98,61 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
 
       {status === "success" && posts.length > 0 ? (
         <ul className="divide-y divide-(--color-border)">
-          {posts.map((post) => (
-            <li key={post.id} className="flex items-start justify-between gap-4 p-5 sm:p-6">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">{post.title}</p>
-                <p className="site-subtle mt-1 text-xs">
-                  <Link
-                    href={`/users/${post.authorId}`}
-                    className="transition hover:text-(--color-accent-strong)"
-                    onClick={(e) => e.stopPropagation()}
+          {posts.map((post) => {
+            const isDeleted = post.status !== "PUBLISHED";
+            const isRemoving = removingId === post.id;
+
+            return (
+              <li key={post.id} className="flex items-start justify-between gap-4 p-5 sm:p-6">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className={`truncate text-sm font-semibold${isDeleted ? " line-through opacity-50" : ""}`}>
+                      {post.title}
+                    </p>
+                    {isDeleted ? (
+                      <span className="shrink-0 rounded-md border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
+                        {copy.savedPosts.deletedBadge}
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="site-subtle mt-1 text-xs">
+                    <Link
+                      href={`/users/${post.authorId}`}
+                      className="transition hover:text-(--color-accent-strong)"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {post.authorDisplayName}
+                    </Link>
+                    {" · "}
+                    {new Intl.DateTimeFormat(locale, {
+                      dateStyle: "medium",
+                    }).format(new Date(post.createdAt))}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  {!isDeleted ? (
+                    <Link
+                      href={`/community/posts/${post.id}`}
+                      className="min-h-9 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+                    >
+                      {copy.savedPosts.openLabel}
+                    </Link>
+                  ) : null}
+                  <button
+                    type="button"
+                    disabled={isRemoving}
+                    aria-label={copy.savedPosts.unsaveLabel}
+                    onClick={() => handleUnsave(post.id)}
+                    className="flex min-h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground disabled:cursor-wait disabled:opacity-50"
                   >
-                    {post.authorDisplayName}
-                  </Link>
-                  {" · "}
-                  {new Intl.DateTimeFormat(locale, {
-                    dateStyle: "medium",
-                  }).format(new Date(post.createdAt))}
-                </p>
-              </div>
-              <Link
-                href={`/community/posts/${post.id}`}
-                className="shrink-0 min-h-9 rounded-xl border border-(--color-border) bg-(--color-surface) px-3 py-2 text-xs font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
-              >
-                {copy.savedPosts.openLabel}
-              </Link>
-            </li>
-          ))}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-4" aria-hidden="true">
+                      <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                    </svg>
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </section>

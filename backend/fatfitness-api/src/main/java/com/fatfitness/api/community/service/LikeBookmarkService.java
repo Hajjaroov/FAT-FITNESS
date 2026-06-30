@@ -90,15 +90,19 @@ public class LikeBookmarkService {
 	@Transactional
 	public BookmarkToggleResponse togglePostBookmark(UUID postId, String userIdSubject) {
 		UserAccount user = requireActiveUser(userIdSubject);
-		ForumPost post = forumPostRepository.findByIdAndStatus(postId, ForumPostStatus.PUBLISHED)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
 
-		postBookmarkRepository.findByPostIdAndUserId(post.getId(), user.getId())
-				.ifPresentOrElse(
-						postBookmarkRepository::delete,
-						() -> postBookmarkRepository.save(new PostBookmark(user, post)));
+		// Removing an existing bookmark is allowed regardless of post status so users
+		// can unsave posts that have since been hidden or removed by moderation.
+		postBookmarkRepository.findByPostIdAndUserId(postId, user.getId()).ifPresentOrElse(
+				existing -> postBookmarkRepository.delete(existing),
+				() -> {
+					// No existing bookmark — only allow adding one for published posts.
+					ForumPost post = forumPostRepository.findByIdAndStatus(postId, ForumPostStatus.PUBLISHED)
+							.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
+					postBookmarkRepository.save(new PostBookmark(user, post));
+				});
 
-		boolean bookmarked = postBookmarkRepository.findByPostIdAndUserId(post.getId(), user.getId()).isPresent();
+		boolean bookmarked = postBookmarkRepository.findByPostIdAndUserId(postId, user.getId()).isPresent();
 		return new BookmarkToggleResponse(bookmarked);
 	}
 

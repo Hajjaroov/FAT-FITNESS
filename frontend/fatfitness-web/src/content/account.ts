@@ -46,6 +46,8 @@ type AccountCopy = {
     emptyText: string;
     error: string;
     openLabel: string;
+    deletedBadge: string;
+    unsaveLabel: string;
   };
 };
 
@@ -108,6 +110,8 @@ export const accountCopy = {
         "When you save a thread from the community, it will appear here.",
       error: "Could not load saved threads. Please try again.",
       openLabel: "Open thread",
+      deletedBadge: "Post removed",
+      unsaveLabel: "Remove from saved",
     },
   },
   de: {
@@ -170,6 +174,8 @@ export const accountCopy = {
       error:
         "Gespeicherte Threads konnten nicht geladen werden. Bitte versuche es erneut.",
       openLabel: "Thread öffnen",
+      deletedBadge: "Beitrag entfernt",
+      unsaveLabel: "Aus gespeicherten entfernen",
     },
   },
 } satisfies Record<Locale, AccountCopy>;
