@@ -15,6 +15,8 @@ import type {
   ResetPasswordResponse,
   RevokeAllSessionsResponse,
   TokenResponse,
+  UpdateNotificationPreferencesRequest,
+  UpdateNotificationPreferencesResponse,
   UpdateProfileRequest,
   UpdateProfileResponse,
   VerifyEmailResponse,
@@ -557,6 +559,17 @@ export function changePassword(request: ChangePasswordRequest, accessToken: stri
 export function revokeAllSessions(accessToken: string) {
   return apiRequest<RevokeAllSessionsResponse>("/api/users/me/sessions/revoke-all", {
     method: "POST",
+    accessToken,
+  });
+}
+
+export function updateNotificationPreferences(
+  request: UpdateNotificationPreferencesRequest,
+  accessToken: string,
+) {
+  return apiRequest<UpdateNotificationPreferencesResponse>("/api/users/me/notifications", {
+    method: "PATCH",
+    body: request,
     accessToken,
   });
 }

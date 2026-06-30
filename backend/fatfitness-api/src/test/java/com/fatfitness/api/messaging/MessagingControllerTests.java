@@ -268,7 +268,8 @@ class MessagingControllerTests {
 						.content("""
 								{
 								  "subject": "Welcome everyone",
-								  "body": "A community-wide announcement."
+								  "body": "A community-wide announcement.",
+								  "channel": "BOTH"
 								}
 								"""))
 				.andExpect(status().isCreated())
@@ -303,7 +304,8 @@ class MessagingControllerTests {
 						.content("""
 								{
 								  "subject": "Not allowed",
-								  "body": "Regular members cannot do this."
+								  "body": "Regular members cannot do this.",
+								  "channel": "BOTH"
 								}
 								"""))
 				.andExpect(status().isForbidden());

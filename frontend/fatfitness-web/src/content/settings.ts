@@ -33,6 +33,15 @@ export const settingsCopy = {
       tooShortError: "New password must be at least 8 characters.",
       errorFallback: "Could not change password. Please try again.",
     },
+    notifications: {
+      title: "Notifications",
+      pmEmailLabel: "Email me when I receive a private message",
+      pmEmailHint: "When turned off, messages still arrive in your inbox — you just won't get an email alert.",
+      saveLabel: "Save",
+      savingLabel: "Saving…",
+      successMessage: "Notification preferences saved.",
+      errorFallback: "Could not save preferences. Please try again.",
+    },
     sessions: {
       title: "Active sessions",
       body: "Sign out of all devices, including this one. You will need to sign in again.",
@@ -87,6 +96,15 @@ export const settingsCopy = {
       mismatchError: "Passwörter stimmen nicht überein.",
       tooShortError: "Das neue Passwort muss mindestens 8 Zeichen lang sein.",
       errorFallback: "Passwort konnte nicht geändert werden. Bitte versuche es erneut.",
+    },
+    notifications: {
+      title: "Benachrichtigungen",
+      pmEmailLabel: "E-Mail erhalten, wenn ich eine private Nachricht bekomme",
+      pmEmailHint: "Wenn deaktiviert, landen Nachrichten weiterhin in deinem Postfach – du erhältst nur keine E-Mail-Benachrichtigung.",
+      saveLabel: "Speichern",
+      savingLabel: "Wird gespeichert…",
+      successMessage: "Benachrichtigungseinstellungen gespeichert.",
+      errorFallback: "Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.",
     },
     sessions: {
       title: "Aktive Sitzungen",

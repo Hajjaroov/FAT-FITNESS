@@ -272,7 +272,8 @@ public class AuthRegistrationService {
 				user.getRoles(),
 				user.getEmailVerifiedAt(),
 				user.getLastLoginAt(),
-				user.hasAvatar());
+				user.hasAvatar(),
+				user.isEmailNotificationsPm());
 	}
 
 	private static String normalizeEmail(String email) {

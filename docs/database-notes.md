@@ -105,7 +105,8 @@ Current community/forum state:
   - `conversation_participants` — surrogate `id`, `conversation_id`, `user_id`, `last_read_at` (nullable), `deleted` (per-user soft hide). Unique `(conversation_id, user_id)`; index on `(user_id, deleted)`. A surrogate PK is used (not a composite key) for consistency with every other table's single-UUID `id`.
   - `messages` — `id`, `conversation_id`, `sender_user_id`, `body`, `sent_at`. Index on `(conversation_id, sent_at)`.
   - All have FK constraints to `conversations`/`users`. Messages are not soft-deleted; deletion is per-participant via `conversation_participants.deleted`.
-- The latest applied migration is `V11`. The next new migration must be `V12`.
+- The twelfth Flyway migration (`V12__add_email_notifications_pm_to_users.sql`) adds `email_notifications_pm BOOLEAN NOT NULL DEFAULT TRUE` to the `users` table. This flag lets each user opt out of email alerts when they receive a private message. Default is opted-in (true). Existing rows inherit the default on migration.
+- The latest applied migration is `V12`. The next new migration must be `V13`.
 
 ### Moderation audit table
 

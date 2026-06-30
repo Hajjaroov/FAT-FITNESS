@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fatfitness.api.email.EmailService;
+import com.fatfitness.api.messaging.dto.BroadcastChannel;
 import com.fatfitness.api.messaging.dto.BroadcastMessageRequest;
 import com.fatfitness.api.messaging.dto.BroadcastMessageResponse;
 import com.fatfitness.api.messaging.dto.ConversationSummaryResponse;
@@ -102,19 +103,46 @@ public class MessagingService {
 		String subject = cleanSingleLine(request.subject());
 		String body = cleanMultiline(request.body());
 		Instant now = Instant.now();
+		BroadcastChannel channel = request.channel();
+
+		// bypassEmailPreference is an OWNER-only privilege; ignore it for ADMIN.
+		boolean effectiveBypass = Boolean.TRUE.equals(request.bypassEmailPreference())
+				&& sender.getRoles().contains(UserRole.OWNER);
+
+		String senderDisplayName = userPublicDisplayNameService.resolve(sender);
 
 		List<UserAccount> recipients = userAccountRepository.findByStatus(UserStatus.ACTIVE).stream()
 				.filter(user -> !user.getId().equals(sender.getId()))
 				.toList();
 
-		// Each recipient gets their own 1-to-1 conversation, so replies come back only
-		// to the announcing owner/admin rather than to every member.
 		for (UserAccount recipient : recipients) {
-			Conversation conversation = conversationRepository.save(new Conversation(subject));
-			participantRepository.save(new ConversationParticipant(conversation, sender, now));
-			participantRepository.save(new ConversationParticipant(conversation, recipient, null));
-			messageRepository.save(new Message(conversation, sender, body));
-			notifyRecipient(recipient, sender, conversation);
+			boolean shouldEmail = effectiveBypass || recipient.isEmailNotificationsPm();
+
+			if (channel == BroadcastChannel.PM || channel == BroadcastChannel.BOTH) {
+				// Each recipient gets their own 1-to-1 conversation so replies come back
+				// privately to the announcer rather than to every member.
+				Conversation conversation = conversationRepository.save(new Conversation(subject));
+				participantRepository.save(new ConversationParticipant(conversation, sender, now));
+				participantRepository.save(new ConversationParticipant(conversation, recipient, null));
+				messageRepository.save(new Message(conversation, sender, body));
+
+				if (channel == BroadcastChannel.BOTH && shouldEmail) {
+					emailService.sendNewMessageEmail(
+							recipient.getEmail(),
+							recipient.getDisplayName(),
+							senderDisplayName,
+							subject,
+							conversation.getId().toString());
+				}
+			} else if (channel == BroadcastChannel.EMAIL && shouldEmail) {
+				// No inbox conversation — include the body in the email directly.
+				emailService.sendBroadcastAnnouncementEmail(
+						recipient.getEmail(),
+						recipient.getDisplayName(),
+						senderDisplayName,
+						subject,
+						body);
+			}
 		}
 
 		return new BroadcastMessageResponse(recipients.size());
@@ -240,6 +268,9 @@ public class MessagingService {
 	}
 
 	private void notifyRecipient(UserAccount recipient, UserAccount sender, Conversation conversation) {
+		if (!recipient.isEmailNotificationsPm()) {
+			return;
+		}
 		emailService.sendNewMessageEmail(
 				recipient.getEmail(),
 				recipient.getDisplayName(),

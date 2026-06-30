@@ -67,6 +67,9 @@ public class UserAccount {
 	@Column(name = "avatar_jpeg")
 	private byte[] avatarJpeg;
 
+	@Column(name = "email_notifications_pm", nullable = false)
+	private boolean emailNotificationsPm = true;
+
 	protected UserAccount() {
 	}
 
@@ -130,6 +133,10 @@ public class UserAccount {
 		this.avatarJpeg = jpegBytes;
 	}
 
+	public void updateEmailNotificationsPm(boolean value) {
+		this.emailNotificationsPm = value;
+	}
+
 	public UUID getId() {
 		return id;
 	}
@@ -184,6 +191,10 @@ public class UserAccount {
 
 	public boolean hasAvatar() {
 		return avatarJpeg != null;
+	}
+
+	public boolean isEmailNotificationsPm() {
+		return emailNotificationsPm;
 	}
 
 	private static String normalizeEmail(String email) {

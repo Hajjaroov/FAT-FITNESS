@@ -115,6 +115,68 @@ public class EmailService {
 		}
 	}
 
+	/**
+	 * Sends an announcement email for EMAIL-only broadcasts. The message body is
+	 * included directly because there is no inbox conversation to link to.
+	 * Best-effort: failures are logged, never thrown.
+	 */
+	public void sendBroadcastAnnouncementEmail(String toEmail, String recipientDisplayName,
+			String senderDisplayName, String subject, String body) {
+		String apiKey = emailProperties.resendApiKey();
+		if (apiKey == null || apiKey.isBlank()) {
+			log.info("[EMAIL DEV] Broadcast announcement for {}: subject={}", toEmail, subject);
+			return;
+		}
+
+		String html = buildBroadcastAnnouncementHtml(recipientDisplayName, senderDisplayName, subject, body);
+
+		try {
+			restClient.post()
+					.uri("/emails")
+					.header("Authorization", "Bearer " + apiKey)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(new ResendRequest(emailProperties.from(), toEmail,
+							subject + " — Fat Fitness Community", html))
+					.retrieve()
+					.toBodilessEntity();
+		} catch (RuntimeException ex) {
+			log.error("Failed to send broadcast announcement email to {}: {}", toEmail, ex.getMessage());
+		}
+	}
+
+	private static String buildBroadcastAnnouncementHtml(String recipientDisplayName,
+			String senderDisplayName, String subject, String body) {
+		String escapedBody = body
+				.replace("&", "&amp;")
+				.replace("<", "&lt;")
+				.replace(">", "&gt;")
+				.replace("\n", "<br>");
+		return """
+				<!DOCTYPE html>
+				<html lang="en">
+				<head><meta charset="UTF-8"></head>
+				<body style="font-family:sans-serif;background:#fffaf1;margin:0;padding:32px;">
+				  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:40px;">
+				    <p style="color:#999;font-size:12px;margin:0 0 16px;">
+				      Announcement from Fat Fitness Community
+				    </p>
+				    <h1 style="font-size:22px;font-weight:700;color:#1a1a1a;margin:0 0 8px;">
+				      %s
+				    </h1>
+				    <p style="color:#888;font-size:13px;margin:0 0 24px;">From %s</p>
+				    <p style="color:#333;line-height:1.7;margin:0 0 24px;">
+				      Hi %s,
+				    </p>
+				    <div style="color:#333;line-height:1.7;white-space:pre-wrap;">%s</div>
+				    <p style="color:#999;font-size:12px;margin:32px 0 0;line-height:1.6;">
+				      Fat Fitness Community — personal journey, beginner-friendly support.
+				    </p>
+				  </div>
+				</body>
+				</html>
+				""".formatted(subject, senderDisplayName, recipientDisplayName, escapedBody);
+	}
+
 	private static String buildVerificationHtml(String displayName, String link) {
 		return """
 				<!DOCTYPE html>

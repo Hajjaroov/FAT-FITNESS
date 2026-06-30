@@ -16,6 +16,7 @@ export type CurrentUser = {
   emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   hasAvatar: boolean;
+  emailNotificationsPm: boolean;
 };
 
 export type RegisterRequest = {
@@ -109,4 +110,12 @@ export type ChangePasswordResponse = {
 
 export type RevokeAllSessionsResponse = {
   message: string;
+};
+
+export type UpdateNotificationPreferencesRequest = {
+  emailNotificationsPm: boolean;
+};
+
+export type UpdateNotificationPreferencesResponse = {
+  emailNotificationsPm: boolean;
 };

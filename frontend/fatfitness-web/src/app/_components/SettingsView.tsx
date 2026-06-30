@@ -9,7 +9,7 @@ import { PageShell } from "@/app/_components/PageShell";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { settingsCopy } from "@/content/settings";
-import { ApiError, changePassword, revokeAllSessions, updateProfile } from "@/lib/api";
+import { ApiError, changePassword, revokeAllSessions, updateNotificationPreferences, updateProfile } from "@/lib/api";
 
 type SectionStatus = "idle" | "pending" | "success" | "error";
 
@@ -266,6 +266,82 @@ function PasswordSection() {
   );
 }
 
+function NotificationsSection() {
+  const copy = useLocalizedContent(settingsCopy);
+  const { user, accessToken, refreshUser } = useAuth();
+  const [status, setStatus] = useState<SectionStatus>("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [checked, setChecked] = useState<boolean>(user?.emailNotificationsPm ?? true);
+
+  if (!user || !accessToken) {
+    return null;
+  }
+
+  async function handleChange(next: boolean) {
+    if (!accessToken) return;
+    setChecked(next);
+    setStatus("pending");
+    setError(null);
+    try {
+      await updateNotificationPreferences({ emailNotificationsPm: next }, accessToken);
+      await refreshUser();
+      setStatus("success");
+    } catch (caughtError) {
+      setChecked(!next);
+      setError(
+        caughtError instanceof ApiError
+          ? caughtError.message
+          : copy.notifications.errorFallback,
+      );
+      setStatus("error");
+    }
+  }
+
+  return (
+    <section className="site-card p-6 sm:p-7">
+      <h2 className="text-xl font-semibold">{copy.notifications.title}</h2>
+      <div className="mt-5 flex items-start gap-4">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={checked}
+          disabled={status === "pending"}
+          onClick={() => void handleChange(!checked)}
+          className={`relative mt-0.5 h-6 w-11 flex-none rounded-xl border-2 transition focus-visible:ring-2 focus-visible:ring-(--color-accent)/50 disabled:cursor-wait ${
+            checked
+              ? "border-(--color-accent) bg-(--color-accent)"
+              : "border-(--color-border) bg-(--color-border)"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${
+              checked ? "left-[calc(100%-1.25rem)]" : "left-0.5"
+            }`}
+          />
+        </button>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground">
+            {copy.notifications.pmEmailLabel}
+          </p>
+          <p className="mt-1 text-sm leading-6 text-(--color-subtle)">
+            {copy.notifications.pmEmailHint}
+          </p>
+          {status === "success" ? (
+            <p role="status" className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">
+              {copy.notifications.successMessage}
+            </p>
+          ) : null}
+          {status === "error" ? (
+            <p role="alert" className="mt-2 text-xs text-red-800 dark:text-red-300">
+              {error ?? copy.notifications.errorFallback}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function SessionsSection() {
   const copy = useLocalizedContent(settingsCopy);
   const { accessToken, logout } = useAuth();
@@ -363,6 +439,7 @@ export function SettingsView() {
         <>
           <ProfileSection />
           <PasswordSection />
+          <NotificationsSection />
           <SessionsSection />
         </>
       ) : null}

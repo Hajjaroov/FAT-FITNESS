@@ -42,9 +42,13 @@ export type ReplyMessageRequest = {
   body: string;
 };
 
+export type BroadcastChannel = "PM" | "EMAIL" | "BOTH";
+
 export type BroadcastMessageRequest = {
   subject: string;
   body: string;
+  channel: BroadcastChannel;
+  bypassEmailPreference: boolean;
 };
 
 export type BroadcastMessageResponse = {

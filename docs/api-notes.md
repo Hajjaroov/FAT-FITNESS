@@ -300,7 +300,8 @@ Response shape:
   "roles": ["USER"],
   "emailVerifiedAt": "2026-06-11T12:00:00Z",
   "lastLoginAt": "2026-06-11T12:05:00Z",
-  "hasAvatar": false
+  "hasAvatar": false,
+  "emailNotificationsPm": true
 }
 ```
 
@@ -332,6 +333,31 @@ Response shape:
 ```
 
 After success the frontend calls `refreshUser()` to re-fetch `GET /api/auth/me` and update the auth context.
+
+### `PATCH /api/users/me/notifications`
+
+Purpose:
+
+- Update the current user's email notification preference for private messages.
+- Requires an active account and a valid bearer token.
+
+Request shape:
+
+```json
+{
+  "emailNotificationsPm": false
+}
+```
+
+Response shape:
+
+```json
+{
+  "emailNotificationsPm": false
+}
+```
+
+When `false`, no PM-notification emails are sent to this user (by `MessagingService.notifyRecipient` and the broadcast service), but messages still arrive in their inbox. An `OWNER` can still override this preference by setting `bypassEmailPreference: true` in a broadcast. Frontend toggle is in the Notifications section of `/settings`.
 
 ### `POST /api/users/me/change-password`
 
@@ -431,7 +457,12 @@ Async one-to-one inbox backed by `V11__create_private_messaging.sql` (`conversat
 - `GET /api/messages/{id}` — full thread (participants only, else `404`); opening marks it read.
 - `GET /api/messages/unread-count` — `{ "count": N }` for the header badge.
 - `DELETE /api/messages/{id}` — soft-delete the caller's side only (`204`); the other participant still sees it.
-- `POST /api/messages/broadcast` — owner/admin only announcement to every member. Role-checked in the service (`OWNER` or `ADMIN`, else `403`). Creates a separate 1-to-1 conversation with each `ACTIVE` user (except the sender) so replies come back privately to the announcer, sends each a best-effort email, and returns `{ "recipientCount": N }` (`201`). Body shape is `{ "subject", "body" }`.
+- `POST /api/messages/broadcast` — owner/admin only announcement to every member. Role-checked in the service (`OWNER` or `ADMIN`, else `403`). Requires `channel` (`"PM"`, `"EMAIL"`, or `"BOTH"`) and optional `bypassEmailPreference` (`true`/`false`, default `false`). Returns `{ "recipientCount": N }` (`201`).
+  - `PM` — creates a 1-to-1 conversation per member (no email).
+  - `EMAIL` — sends a direct email with the message body per member (no conversation).
+  - `BOTH` — creates a conversation and sends a link email.
+  - All email sends respect each recipient's `email_notifications_pm` preference unless `bypassEmailPreference: true` from an `OWNER` (silently ignored for `ADMIN`).
+  Body shape: `{ "subject", "body", "channel", "bypassEmailPreference" }` (`bypassEmailPreference` can be omitted, treated as `false`).
 
 Start request shape:
 
@@ -842,6 +873,7 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `POST /api/moderation/posts/{id}/lock`
 - `POST /api/moderation/users/{id}/ban`
 - `PATCH /api/users/me/profile`
+- `PATCH /api/users/me/notifications`
 - `POST /api/users/me/change-password`
 - `POST /api/users/me/sessions/revoke-all`
 - `POST /api/users/me/avatar`

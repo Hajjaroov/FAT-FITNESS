@@ -13,6 +13,8 @@ import com.fatfitness.api.auth.service.PasswordHashingService;
 import com.fatfitness.api.user.dto.ChangePasswordRequest;
 import com.fatfitness.api.user.dto.ChangePasswordResponse;
 import com.fatfitness.api.user.dto.RevokeAllSessionsResponse;
+import com.fatfitness.api.user.dto.UpdateNotificationPreferencesRequest;
+import com.fatfitness.api.user.dto.UpdateNotificationPreferencesResponse;
 import com.fatfitness.api.user.dto.UpdateProfileRequest;
 import com.fatfitness.api.user.dto.UpdateProfileResponse;
 import com.fatfitness.api.user.entity.UserAccount;
@@ -65,6 +67,15 @@ public class UserProfileService {
 		refreshSessionRepository.revokeAllByUserId(userId, Instant.now());
 
 		return new ChangePasswordResponse("Password updated. You have been signed out of all devices.");
+	}
+
+	@Transactional
+	public UpdateNotificationPreferencesResponse updateNotificationPreferences(
+			UUID userId, UpdateNotificationPreferencesRequest request) {
+		UserAccount user = requireActiveUser(userId);
+		user.updateEmailNotificationsPm(request.emailNotificationsPm());
+		userAccountRepository.save(user);
+		return new UpdateNotificationPreferencesResponse(user.isEmailNotificationsPm());
 	}
 
 	@Transactional

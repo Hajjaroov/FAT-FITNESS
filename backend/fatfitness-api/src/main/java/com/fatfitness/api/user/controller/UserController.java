@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fatfitness.api.user.dto.ChangePasswordRequest;
 import com.fatfitness.api.user.dto.ChangePasswordResponse;
 import com.fatfitness.api.user.dto.RevokeAllSessionsResponse;
+import com.fatfitness.api.user.dto.UpdateNotificationPreferencesRequest;
+import com.fatfitness.api.user.dto.UpdateNotificationPreferencesResponse;
 import com.fatfitness.api.user.dto.UpdateProfileRequest;
 import com.fatfitness.api.user.dto.UpdateProfileResponse;
 import com.fatfitness.api.user.service.AvatarService;
@@ -34,6 +36,13 @@ public class UserController {
 	public UserController(UserProfileService userProfileService, AvatarService avatarService) {
 		this.userProfileService = userProfileService;
 		this.avatarService = avatarService;
+	}
+
+	@PatchMapping("/notifications")
+	public UpdateNotificationPreferencesResponse updateNotificationPreferences(
+			@AuthenticationPrincipal Jwt jwt,
+			@Valid @RequestBody UpdateNotificationPreferencesRequest request) {
+		return userProfileService.updateNotificationPreferences(UUID.fromString(jwt.getSubject()), request);
 	}
 
 	@PatchMapping("/profile")
