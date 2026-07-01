@@ -54,6 +54,7 @@ import type {
   StartConversationRequest,
   UnreadCount,
 } from "@/types/messaging";
+import type { WeightEntry, WeightGoal } from "@/types/myplan";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
@@ -649,4 +650,36 @@ export async function uploadAvatar(blob: Blob, accessToken: string): Promise<voi
       payload,
     );
   }
+}
+
+export function getWeightGoals(accessToken: string) {
+  return apiRequest<WeightGoal>("/api/myplan/weight/goals", { accessToken });
+}
+
+export function updateWeightGoals(
+  startWeight: number,
+  goalWeight: number,
+  accessToken: string,
+) {
+  return apiRequest<WeightGoal>("/api/myplan/weight/goals", {
+    method: "PATCH",
+    body: { startWeight, goalWeight },
+    accessToken,
+  });
+}
+
+export function getWeightEntries(accessToken: string) {
+  return apiRequest<WeightEntry[]>("/api/myplan/weight/entries", { accessToken });
+}
+
+export function addWeightEntry(
+  entryDate: string,
+  weightKg: number,
+  accessToken: string,
+) {
+  return apiRequest<WeightEntry>("/api/myplan/weight/entries", {
+    method: "POST",
+    body: { entryDate, weightKg },
+    accessToken,
+  });
 }

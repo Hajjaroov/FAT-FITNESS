@@ -63,6 +63,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.DELETE, "/api/community/comments/*").authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/community/bookmarks").authenticated()
 						.requestMatchers("/api/messages/**").authenticated()
+						.requestMatchers("/api/myplan/**").authenticated()
 						.requestMatchers("/api/moderation/**").authenticated()
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

@@ -490,6 +490,87 @@ A conversation is unread for a participant when the latest message is newer than
 
 Not all of these should be built now.
 
+### `/myplan` — Personal Tracking Hub (Phase 1 COMPLETE)
+
+Private endpoints — all require a valid bearer token for an active account. Grouped under `/api/myplan/**` (authenticated in `SecurityConfig`).
+
+#### Weight goals
+
+- `GET /api/myplan/weight/goals` — returns the user's start and goal weight. Returns `null` fields if not yet set.
+- `PATCH /api/myplan/weight/goals` — set or update start weight and/or goal weight.
+
+Request shape:
+
+```json
+{
+  "startWeight": 203.0,
+  "goalWeight": 120.0
+}
+```
+
+Response shape:
+
+```json
+{
+  "startWeight": 203.0,
+  "goalWeight": 120.0,
+  "updatedAt": "2026-07-01T10:00:00Z"
+}
+```
+
+#### Weight entries
+
+- `GET /api/myplan/weight/entries` — returns all weight entries for the user, ordered by `entryDate` ascending (for the chart).
+- `POST /api/myplan/weight/entries` — add a new entry. Rejects duplicate dates (`409`).
+
+Request shape:
+
+```json
+{
+  "entryDate": "2026-07-01",
+  "weightKg": 157.0
+}
+```
+
+Response shape (single entry):
+
+```json
+{
+  "id": "uuid",
+  "entryDate": "2026-07-01",
+  "weightKg": 157.0,
+  "createdAt": "2026-07-01T10:00:00Z"
+}
+```
+
+List response is an array of the same shape. The frontend computes the "change from previous" column client-side from the ordered list.
+
+#### Chart behaviour driven by this data
+
+- No goals set → no chart rendered (frontend prompt to set start/goal first)
+- Goals set, zero entries → chart frame with Y-axis (start weight top → goal weight bottom) and dashed goal `ReferenceLine`; no data points
+- 1 entry → single dot; no line
+- 2+ entries → line chart; X-axis from first to last `entryDate`
+
+#### Future phases (do not build until approved)
+
+**Phase 2 — Diet (`/myplan/diet`)**
+- User sets personal daily calorie + macro targets (not a generic target — calculated per person)
+- Food database: user adds own foods (name, calories, macros per 100g or unit)
+- Meal logging: pick food from personal database, enter portion, assign meal type (breakfast/lunch/dinner/snack) + date
+- API areas: `user_diet_targets`, `user_foods`, `meal_log_entries`
+
+**Phase 3 — Workout (`/myplan/workout`)**
+- Exercise library: owner-curated (name + optional photo); users can add custom exercises (no photo required)
+- Weekly plan: user assigns exercises to days of the week with sets/reps or duration
+- Session log: mark a planned day as done for a given week (week-based, not individual-set logging)
+- API areas: `exercises`, `user_workout_plans`, `user_workout_plan_days`, `user_workout_sessions`
+
+**Phase 4 — GLP-1 / Medication (`/myplan/glp1`)**
+- Log entries: date, dose, medication name/brand (free text), optional notes
+- Timeline view, no medical advice or dosing suggestions
+- API areas: `user_medication_log`
+
 ### Public Content
 
 Likely later endpoints:
@@ -736,7 +817,9 @@ Backed by the `V7__likes_and_bookmarks.sql` migration (`post_likes`, `comment_li
 }
 ```
 
-`GET /api/community/bookmarks` returns the current user's bookmarked posts as a list of post objects (same shape as `GET /api/community/posts`). This backs the saved-threads list on `/dashboard`.
+Toggle behavior is split by direction: **removing** an existing bookmark works regardless of post status (so users can unsave a post that was later hidden or removed by moderation); **adding** a new bookmark is still restricted to `PUBLISHED` posts (→ `404` otherwise).
+
+`GET /api/community/bookmarks` returns the current user's bookmarked posts as a list of post objects (same shape as `GET /api/community/posts`), **including posts with non-`PUBLISHED` status**. The `status` field in each response object lets the frontend distinguish live from removed posts. This backs the saved-threads list on `/dashboard`.
 
 ### Moderation
 
@@ -879,11 +962,15 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `POST /api/users/me/avatar`
 - `GET /api/avatars/{id}`
 - `GET /api/users/{id}/profile`
+- `GET /api/myplan/weight/goals`
+- `PATCH /api/myplan/weight/goals`
+- `GET /api/myplan/weight/entries`
+- `POST /api/myplan/weight/entries`
 
 Next slices:
 
-- Content work (Learn pages, homepage journal) — frontend-only.
-- Weight tracking — new migration (next is V11) + backend endpoint + private weight log UI.
+- `/myplan` Phase 2 (Diet), Phase 3 (Workout), Phase 4 (GLP-1) — not yet approved; see Planned API Areas above for the full design.
+- Content work (Learn pages) — owner-driven, deferred until web platform is feature-complete.
 
 Planned registration shape when auth is approved:
 

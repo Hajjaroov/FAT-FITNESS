@@ -114,6 +114,7 @@ export function SiteHeader() {
             {/* Nav pill */}
             <nav aria-label="Main navigation" className={pillClass}>
               {siteNavigation.map((item) => {
+                if ("requiresAuth" in item && item.requiresAuth && !user) return null;
                 const isActive = isActiveRoute(pathname, item.href);
                 return (
                   <Link
@@ -264,6 +265,7 @@ export function SiteHeader() {
             <div className="border-b border-(--color-border) px-4 py-4">
               <nav aria-label="Mobile navigation" className="flex flex-col gap-1">
                 {siteNavigation.map((item) => {
+                  if ("requiresAuth" in item && item.requiresAuth && !user) return null;
                   const isActive = isActiveRoute(pathname, item.href);
                   return (
                     <Link
