@@ -113,6 +113,21 @@ Backend rules:
 - Add real transactional email later through a provider such as Resend, using environment variables for secrets and a verified sending domain or subdomain.
 - Remove dev-only raw verification token responses before production launch.
 
+## Testing
+
+Backend (in place):
+
+- MockMvc-based integration tests — every feature gets its own `*ControllerTests` class hitting the real Spring context and a real Postgres transaction (rolled back per test via class-level `@Transactional`), not isolated unit tests of services/repositories.
+- Run with `.\gradlew.bat test --no-daemon` from `backend/fatfitness-api/`. 203 tests passing as of `/myplan` Phase 2 (Diet, V14) — see `docs/dev-agent-plan.md`'s "Backend Test Coverage" section for what each class covers.
+- Auth helper pattern: a private `registerVerifyAndLogin(email)` (and `registerVerifyAddRoleAndLogin(email, role)` for moderator/owner-role tests) drives the real register → verify-email → login endpoints to get a bearer token, rather than mocking authentication.
+
+Frontend (planned, not started):
+
+- No test framework exists yet — no Jest/Vitest/Playwright, no `test` script in `package.json`.
+- Agreed direction: **Vitest + React Testing Library** first, for component-level tests (fast, Vite-native tooling, officially supported for Next.js App Router, does not change Next's own Turbopack build). **Playwright** later, for full browser end-to-end flows (e.g. login → add a meal → see totals update).
+- Start with component tests for the `/myplan` Diet phase (`MyPlanDietView.tsx`, `FoodCombobox.tsx`, `AdminMacroChecksView.tsx`) once picked up, then expand coverage to the rest of the frontend.
+- Deliberately deferred to its own separate session/commit rather than bundled into the Diet feature commit. Do not set this up proactively — wait for it to be explicitly requested.
+
 ## Database
 
 Use:
@@ -127,6 +142,7 @@ Database rules:
 - Do not use MongoDB for this app by default.
 - Do not store images in PostgreSQL.
 - Store image metadata in PostgreSQL and files in object storage later.
+- The `/myplan/diet` shared food catalog starts empty and grows only from user-added custom foods — no bulk/external data import. A USDA SR Legacy bulk import was researched and built, then rolled back after manual testing showed poor suggestion quality; see `docs/dev-agent-plan.md` for the full history.
 
 ## Content
 

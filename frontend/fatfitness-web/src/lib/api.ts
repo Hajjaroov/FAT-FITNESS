@@ -55,6 +55,13 @@ import type {
   UnreadCount,
 } from "@/types/messaging";
 import type { WeightEntry, WeightGoal } from "@/types/myplan";
+import type {
+  DietMeal,
+  DietMealItem,
+  Food,
+  FoodMacroCheck,
+  FoodMacroCheckStatus,
+} from "@/types/diet";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
@@ -682,4 +689,195 @@ export function addWeightEntry(
     body: { entryDate, weightKg },
     accessToken,
   });
+}
+
+export type FoodMacrosInput = {
+  name: string;
+  nameDe?: string;
+  unitLabel: string;
+  caloriesPerUnit: number;
+  proteinPerUnit: number;
+  carbsPerUnit: number;
+  fatPerUnit: number;
+};
+
+export type DietMealItemInput = {
+  foodId?: string;
+  name: string;
+  nameDe?: string;
+  unitLabel?: string;
+  quantity: number;
+  caloriesPerUnit: number;
+  proteinPerUnit: number;
+  carbsPerUnit: number;
+  fatPerUnit: number;
+};
+
+export function getFoods(accessToken: string) {
+  return apiRequest<Food[]>("/api/myplan/diet/foods", { accessToken });
+}
+
+export function updateFood(
+  foodId: string,
+  input: FoodMacrosInput,
+  accessToken: string,
+) {
+  return apiRequest<Food>(`/api/myplan/diet/foods/${foodId}`, {
+    method: "PATCH",
+    body: input,
+    accessToken,
+  });
+}
+
+export function deleteFood(foodId: string, accessToken: string) {
+  return apiRequest<void>(`/api/myplan/diet/foods/${foodId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
+export function getDietMeals(accessToken: string) {
+  return apiRequest<DietMeal[]>("/api/myplan/diet/meals", { accessToken });
+}
+
+export function addDietMeal(title: string | undefined, accessToken: string) {
+  return apiRequest<DietMeal>("/api/myplan/diet/meals", {
+    method: "POST",
+    body: { title },
+    accessToken,
+  });
+}
+
+export function updateDietMeal(
+  mealId: string,
+  title: string,
+  accessToken: string,
+) {
+  return apiRequest<DietMeal>(`/api/myplan/diet/meals/${mealId}`, {
+    method: "PATCH",
+    body: { title },
+    accessToken,
+  });
+}
+
+export function deleteDietMeal(mealId: string, accessToken: string) {
+  return apiRequest<void>(`/api/myplan/diet/meals/${mealId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
+export function reorderDietMeals(
+  orderedMealIds: string[],
+  accessToken: string,
+) {
+  return apiRequest<DietMeal[]>("/api/myplan/diet/meals/reorder", {
+    method: "PATCH",
+    body: { orderedMealIds },
+    accessToken,
+  });
+}
+
+export function addDietMealItem(
+  mealId: string,
+  input: DietMealItemInput,
+  accessToken: string,
+) {
+  return apiRequest<DietMealItem>(`/api/myplan/diet/meals/${mealId}/items`, {
+    method: "POST",
+    body: input,
+    accessToken,
+  });
+}
+
+export function updateDietMealItem(
+  mealId: string,
+  itemId: string,
+  input: Omit<DietMealItemInput, "foodId">,
+  accessToken: string,
+) {
+  return apiRequest<DietMealItem>(
+    `/api/myplan/diet/meals/${mealId}/items/${itemId}`,
+    {
+      method: "PATCH",
+      body: input,
+      accessToken,
+    },
+  );
+}
+
+export function deleteDietMealItem(
+  mealId: string,
+  itemId: string,
+  accessToken: string,
+) {
+  return apiRequest<void>(`/api/myplan/diet/meals/${mealId}/items/${itemId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
+export type SubmitMacroCheckInput = {
+  targetFoodId: string;
+  proposedName?: string;
+  proposedUnitLabel?: string;
+  proposedCaloriesPerUnit: number;
+  proposedProteinPerUnit: number;
+  proposedCarbsPerUnit: number;
+  proposedFatPerUnit: number;
+  comment?: string;
+};
+
+export function submitMacroCheck(
+  input: SubmitMacroCheckInput,
+  accessToken: string,
+) {
+  return apiRequest<FoodMacroCheck>("/api/myplan/diet/macro-checks", {
+    method: "POST",
+    body: input,
+    accessToken,
+  });
+}
+
+export function getMacroChecks(
+  status: FoodMacroCheckStatus | "ALL" | undefined,
+  accessToken: string,
+) {
+  const params = new URLSearchParams();
+  if (status) {
+    params.set("status", status);
+  }
+  const query = params.toString();
+
+  return apiRequest<FoodMacroCheck[]>(
+    `/api/myplan/diet/macro-checks${query ? `?${query}` : ""}`,
+    { accessToken },
+  );
+}
+
+export type ResolveMacroCheckInput = {
+  action: "APPLY" | "DISMISS";
+  finalName?: string;
+  finalNameDe?: string;
+  finalUnitLabel?: string;
+  finalCaloriesPerUnit?: number;
+  finalProteinPerUnit?: number;
+  finalCarbsPerUnit?: number;
+  finalFatPerUnit?: number;
+  resolutionNote?: string;
+};
+
+export function resolveMacroCheck(
+  checkId: string,
+  input: ResolveMacroCheckInput,
+  accessToken: string,
+) {
+  return apiRequest<FoodMacroCheck>(
+    `/api/myplan/diet/macro-checks/${checkId}/resolve`,
+    {
+      method: "POST",
+      body: input,
+      accessToken,
+    },
+  );
 }

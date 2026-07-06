@@ -552,13 +552,22 @@ List response is an array of the same shape. The frontend computes the "change f
 - 1 entry → single dot; no line
 - 2+ entries → line chart; X-axis from first to last `entryDate`
 
-#### Future phases (do not build until approved)
+#### Future phases
 
-**Phase 2 — Diet (`/myplan/diet`)**
-- User sets personal daily calorie + macro targets (not a generic target — calculated per person)
-- Food database: user adds own foods (name, calories, macros per 100g or unit)
-- Meal logging: pick food from personal database, enter portion, assign meal type (breakfast/lunch/dinner/snack) + date
-- API areas: `user_diet_targets`, `user_foods`, `meal_log_entries`
+**Phase 2 — Diet (`/myplan/diet`) — COMPLETE (V14)**
+
+No dates, no daily targets. A personal, ordered list of titled Meals (default "Meal N", renamable), each holding food line-items (name, quantity, per-unit macros, snapshotted at add-time). Adding an item either picks a shared suggestion (macros multiply by quantity) or types a custom entry (which also auto-adds to the shared catalog). Meal/day totals are always computed client-side from the fetched data, never stored server-side. The shared catalog **starts empty** and grows only from user-added custom foods (a USDA SR Legacy bulk import was built and then rolled back — see `docs/dev-agent-plan.md`). Each food has a `name` (English, required) and an optional `nameDe` (German); `FoodCombobox` search matches either and ranks prefix/word-boundary matches ahead of a query merely appearing mid-string.
+
+Implemented endpoints, all under `/api/myplan/diet/**` (inherits the existing blanket-authenticated `/api/myplan/**` rule in `SecurityConfig`, no config change needed):
+
+- `GET /api/myplan/diet/foods` — list the full shared food catalog (any active user). `FoodResponse` includes `name`, `nameDe` (nullable), `unitLabel`, and the four macros.
+- `PATCH /api/myplan/diet/foods/{id}` / `DELETE /api/myplan/diet/foods/{id}` — moderator-only (`OWNER`/`ADMIN`/`MODERATOR`), regardless of who created the entry. `UpdateFoodRequest` accepts an optional `nameDe` alongside the required `name`/`unitLabel`/macros.
+- `GET/POST /api/myplan/diet/meals`, `PATCH/DELETE /api/myplan/diet/meals/{id}`, `PATCH /api/myplan/diet/meals/reorder` — personal, private
+- `POST /api/myplan/diet/meals/{mealId}/items`, `PATCH/DELETE /api/myplan/diet/meals/{mealId}/items/{itemId}` — personal, private; adding an item with no `foodId` reuses an existing shared food if one already matches by case-insensitive `name`+`unitLabel`, otherwise creates a new `Food` row (any active user can do this — open add). `AddDietMealItemRequest.nameDe` is optional (no `@NotBlank`) and only takes effect when creating a brand-new shared food (ignored when `foodId` is set, and ignored when an existing food is reused by name+unit); `name` stays the required/primary field, English-first by design (see `docs/dev-agent-plan.md`, "Custom food entry: bilingual naming"). All diet request DTOs validate field length/range (`@Size`/`@DecimalMax`) against the underlying column widths, so oversized or out-of-range input is a clean `400` rather than a database-constraint `500`.
+- `POST /api/myplan/diet/macro-checks` — any active user flags an existing shared food with proposed corrected macros + optional comment. **One *open* flag per user per food** — a user can flag the same food again later once their prior flag on it has been resolved/dismissed (`409` only while a flag from them on that food is still `OPEN`).
+- `GET /api/myplan/diet/macro-checks` / `POST /api/myplan/diet/macro-checks/{id}/resolve` — moderator-only; resolve = `APPLY` (edits the target food with final values, including an optional `finalNameDe` to correct the German name) or `DISMISS`; requires the check to be `OPEN` (`409` otherwise, same rule as existing forum report resolution). For a bad food name/entry that isn't worth correcting, a moderator can instead call the existing `DELETE /api/myplan/diet/foods/{id}` directly from the Macro Checks admin page — this cascades to remove every check referencing that food, including the one being viewed.
+
+API areas: `foods` (shared), `diet_meals` + `diet_meal_items` (private), `food_macro_checks` (moderator review queue, mirrors `forum_post_reports`' `ForumReportStatus` pattern rather than extending the existing moderation system). See `docs/database-notes.md` for the full schema and `docs/dev-agent-plan.md` for the full design rationale (including the rejected fully-autonomous-AI-moderator idea in favor of a lightweight "look this up" web-search link for human moderators).
 
 **Phase 3 — Workout (`/myplan/workout`)**
 - Exercise library: owner-curated (name + optional photo); users can add custom exercises (no photo required)
@@ -966,10 +975,24 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `PATCH /api/myplan/weight/goals`
 - `GET /api/myplan/weight/entries`
 - `POST /api/myplan/weight/entries`
+- `GET /api/myplan/diet/foods`
+- `PATCH /api/myplan/diet/foods/{id}` (moderator-only)
+- `DELETE /api/myplan/diet/foods/{id}` (moderator-only)
+- `GET /api/myplan/diet/meals`
+- `POST /api/myplan/diet/meals`
+- `PATCH /api/myplan/diet/meals/{id}`
+- `DELETE /api/myplan/diet/meals/{id}`
+- `PATCH /api/myplan/diet/meals/reorder`
+- `POST /api/myplan/diet/meals/{mealId}/items`
+- `PATCH /api/myplan/diet/meals/{mealId}/items/{itemId}`
+- `DELETE /api/myplan/diet/meals/{mealId}/items/{itemId}`
+- `POST /api/myplan/diet/macro-checks`
+- `GET /api/myplan/diet/macro-checks` (moderator-only)
+- `POST /api/myplan/diet/macro-checks/{id}/resolve` (moderator-only)
 
 Next slices:
 
-- `/myplan` Phase 2 (Diet), Phase 3 (Workout), Phase 4 (GLP-1) — not yet approved; see Planned API Areas above for the full design.
+- `/myplan` Phase 3 (Workout), Phase 4 (GLP-1) — not yet approved.
 - Content work (Learn pages) — owner-driven, deferred until web platform is feature-complete.
 
 Planned registration shape when auth is approved:

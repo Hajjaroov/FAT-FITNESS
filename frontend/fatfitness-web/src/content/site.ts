@@ -48,6 +48,7 @@ export const siteCopy = {
     },
     links: {
       backToJournal: "Back to Journal",
+      backToMyPlan: "Back to My Plan",
       open: "Open",
     },
     footer: {
@@ -90,6 +91,7 @@ export const siteCopy = {
     },
     links: {
       backToJournal: "Zurück zum Journal",
+      backToMyPlan: "Zurück zu meinem Plan",
       open: "Öffnen",
     },
     footer: {

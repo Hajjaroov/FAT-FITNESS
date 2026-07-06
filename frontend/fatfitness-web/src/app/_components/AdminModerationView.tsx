@@ -196,6 +196,9 @@ export function AdminModerationView() {
         <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
           {copy.title}
         </h1>
+        <Link href="/admin/macro-checks" className="site-text-link mt-4 inline-block text-sm">
+          {copy.macroChecks.navLabel}
+        </Link>
       </section>
 
       {authStatus === "checking" ? (
