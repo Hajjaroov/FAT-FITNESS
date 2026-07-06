@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -123,13 +125,28 @@ public class ForumPostService {
 		ForumPost post = forumPostRepository.findByIdAndStatus(postId, ForumPostStatus.PUBLISHED)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
 
-		return forumPostReportRepository.findByPostIdAndReporterId(post.getId(), reporter.getId())
-				.map(ForumPostService::toReportResponse)
-				.orElseGet(() -> toReportResponse(forumPostReportRepository.save(new ForumPostReport(
-						post,
-						reporter,
-						cleanSingleLine(request.reason()),
-						cleanOptionalSingleLine(request.details())))));
+		Optional<ForumPostReport> existing = forumPostReportRepository.findByPostIdAndReporterId(
+				post.getId(), reporter.getId());
+		if (existing.isPresent()) {
+			return toReportResponse(existing.get());
+		}
+
+		try {
+			// saveAndFlush so a concurrent duplicate-report insert surfaces here
+			// rather than at commit time, where this catch could no longer help.
+			return toReportResponse(forumPostReportRepository.saveAndFlush(new ForumPostReport(
+					post,
+					reporter,
+					cleanSingleLine(request.reason()),
+					cleanOptionalSingleLine(request.details()))));
+		}
+		catch (DataIntegrityViolationException ex) {
+			// Another concurrent request already created this report; same
+			// idempotent contract as the sequential case above.
+			return forumPostReportRepository.findByPostIdAndReporterId(post.getId(), reporter.getId())
+					.map(ForumPostService::toReportResponse)
+					.orElseThrow(() -> ex);
+		}
 	}
 
 	public List<ForumPostResponse> enrichAndMap(List<ForumPost> posts, UUID currentUserId) {

@@ -2,10 +2,11 @@ package com.fatfitness.api.myplan.dto;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateWeightGoalsRequest(
-		@NotNull @DecimalMin("1") BigDecimal startWeight,
-		@NotNull @DecimalMin("1") BigDecimal goalWeight) {
+		@NotNull @DecimalMin("1") @DecimalMax("9999.99") BigDecimal startWeight,
+		@NotNull @DecimalMin("1") @DecimalMax("9999.99") BigDecimal goalWeight) {
 }

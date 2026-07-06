@@ -3,9 +3,10 @@ package com.fatfitness.api.messaging.service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -181,19 +182,26 @@ public class MessagingService {
 	public List<ConversationSummaryResponse> listInbox(String userIdSubject) {
 		UserAccount user = requireActiveUser(userIdSubject);
 		List<ConversationParticipant> mine = participantRepository.findByUserIdAndDeletedFalse(user.getId());
+		List<UUID> conversationIds = mine.stream().map(p -> p.getConversation().getId()).toList();
+
+		// Batch both the latest-message-per-conversation and other-participant
+		// lookups instead of one query each per conversation in the loop below.
+		Map<UUID, Message> latestByConversationId = latestMessagesByConversationId(conversationIds);
+		Map<UUID, List<ConversationParticipant>> participantsByConversationId = participantRepository
+				.findByConversationIdIn(conversationIds)
+				.stream()
+				.collect(Collectors.groupingBy(p -> p.getConversation().getId()));
 
 		List<ConversationSummaryResponse> summaries = new ArrayList<>();
 		for (ConversationParticipant participant : mine) {
 			Conversation conversation = participant.getConversation();
-			Optional<Message> latest = messageRepository
-					.findTopByConversationIdOrderBySentAtDesc(conversation.getId());
-			if (latest.isEmpty()) {
+			Message latestMessage = latestByConversationId.get(conversation.getId());
+			if (latestMessage == null) {
 				continue;
 			}
 
-			Message latestMessage = latest.get();
-			ConversationParticipant other = otherParticipant(conversation.getId(), user.getId());
-			UserAccount otherUser = other != null ? other.getUser() : user;
+			UserAccount otherUser = otherUserIn(
+					participantsByConversationId.getOrDefault(conversation.getId(), List.of()), user.getId(), user);
 
 			summaries.add(new ConversationSummaryResponse(
 					conversation.getId(),
@@ -247,11 +255,15 @@ public class MessagingService {
 	@Transactional(readOnly = true)
 	public UnreadCountResponse unreadCount(String userIdSubject) {
 		UserAccount user = requireActiveUser(userIdSubject);
-		long count = participantRepository.findByUserIdAndDeletedFalse(user.getId()).stream()
-				.filter(participant -> messageRepository
-						.findTopByConversationIdOrderBySentAtDesc(participant.getConversation().getId())
-						.map(latest -> isUnread(participant, latest, user.getId()))
-						.orElse(false))
+		List<ConversationParticipant> mine = participantRepository.findByUserIdAndDeletedFalse(user.getId());
+		Map<UUID, Message> latestByConversationId = latestMessagesByConversationId(
+				mine.stream().map(p -> p.getConversation().getId()).toList());
+
+		long count = mine.stream()
+				.filter(participant -> {
+					Message latest = latestByConversationId.get(participant.getConversation().getId());
+					return latest != null && isUnread(participant, latest, user.getId());
+				})
 				.count();
 		return new UnreadCountResponse(count);
 	}
@@ -284,6 +296,29 @@ public class MessagingService {
 				.filter(p -> !p.getUser().getId().equals(excludeUserId))
 				.findFirst()
 				.orElse(null);
+	}
+
+	private static UserAccount otherUserIn(
+			List<ConversationParticipant> conversationParticipants, UUID excludeUserId, UserAccount fallback) {
+		return conversationParticipants.stream()
+				.map(p -> p.getUser())
+				.filter(participantUser -> !participantUser.getId().equals(excludeUserId))
+				.findFirst()
+				.orElse(fallback);
+	}
+
+	private Map<UUID, Message> latestMessagesByConversationId(List<UUID> conversationIds) {
+		if (conversationIds.isEmpty()) {
+			return Map.of();
+		}
+		// Ordered conversation-then-newest-first, so the first row kept per key by
+		// the (a, b) -> a merge function below is each conversation's latest message.
+		return messageRepository.findByConversationIdInOrderByConversationIdAscSentAtDesc(conversationIds)
+				.stream()
+				.collect(Collectors.toMap(
+						m -> m.getConversation().getId(),
+						m -> m,
+						(first, second) -> first));
 	}
 
 	private static boolean isUnread(ConversationParticipant participant, Message latestMessage, UUID userId) {

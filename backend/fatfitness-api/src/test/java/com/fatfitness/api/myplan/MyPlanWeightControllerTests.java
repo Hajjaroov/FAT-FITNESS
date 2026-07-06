@@ -179,6 +179,19 @@ class MyPlanWeightControllerTests {
 	}
 
 	@Test
+	void patchGoalsRejectsOutOfRangeWeight() throws Exception {
+		String token = registerVerifyAndLogin("goals-max-weight@example.com");
+
+		mockMvc.perform(patch("/api/myplan/weight/goals")
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "startWeight": 10000, "goalWeight": 120.0 }
+								"""))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void goalsAreIsolatedPerUser() throws Exception {
 		String tokenA = registerVerifyAndLogin("goals-isolation-a@example.com");
 		String tokenB = registerVerifyAndLogin("goals-isolation-b@example.com");
@@ -326,6 +339,19 @@ class MyPlanWeightControllerTests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{ "entryDate": "2026-07-01", "weightKg": 0.5 }
+								"""))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void addEntryRejectsOutOfRangeWeight() throws Exception {
+		String token = registerVerifyAndLogin("entry-max-weight@example.com");
+
+		mockMvc.perform(post("/api/myplan/weight/entries")
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "entryDate": "2026-07-01", "weightKg": 10000 }
 								"""))
 				.andExpect(status().isBadRequest());
 	}

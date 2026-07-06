@@ -3,6 +3,7 @@ package com.fatfitness.api.myplan.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +69,21 @@ public class MyPlanWeightService {
 			throw new ResponseStatusException(HttpStatus.CONFLICT,
 					"An entry for " + request.entryDate() + " already exists");
 		}
-		WeightEntry entry = weightEntryRepository.save(new WeightEntry(user, request.entryDate(), request.weightKg()));
+
+		WeightEntry entry;
+		try {
+			// saveAndFlush (not save) so a unique-constraint violation surfaces here,
+			// synchronously, rather than later at transaction commit where this catch
+			// block could no longer intercept it - same pattern as submitMacroCheck.
+			entry = weightEntryRepository.saveAndFlush(new WeightEntry(user, request.entryDate(), request.weightKg()));
+		}
+		catch (DataIntegrityViolationException ex) {
+			// Two concurrent submissions both passed the exists-check above; the
+			// DB-level unique constraint on (user_id, entry_date) is the backstop.
+			throw new ResponseStatusException(HttpStatus.CONFLICT,
+					"An entry for " + request.entryDate() + " already exists");
+		}
+
 		return new WeightEntryResponse(entry.getId(), entry.getEntryDate(), entry.getWeightKg(), entry.getCreatedAt());
 	}
 

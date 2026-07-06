@@ -3,10 +3,12 @@ package com.fatfitness.api.community.service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -115,13 +117,28 @@ public class ForumCommentService {
 		ForumComment comment = forumCommentRepository.findByIdAndStatus(commentId, ForumCommentStatus.PUBLISHED)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum comment not found"));
 
-		return forumCommentReportRepository.findByCommentIdAndReporterId(comment.getId(), reporter.getId())
-				.map(ForumCommentService::toReportResponse)
-				.orElseGet(() -> toReportResponse(forumCommentReportRepository.save(new ForumCommentReport(
-						comment,
-						reporter,
-						cleanSingleLine(request.reason()),
-						cleanOptionalSingleLine(request.details())))));
+		Optional<ForumCommentReport> existing = forumCommentReportRepository.findByCommentIdAndReporterId(
+				comment.getId(), reporter.getId());
+		if (existing.isPresent()) {
+			return toReportResponse(existing.get());
+		}
+
+		try {
+			// saveAndFlush so a concurrent duplicate-report insert surfaces here
+			// rather than at commit time, where this catch could no longer help.
+			return toReportResponse(forumCommentReportRepository.saveAndFlush(new ForumCommentReport(
+					comment,
+					reporter,
+					cleanSingleLine(request.reason()),
+					cleanOptionalSingleLine(request.details()))));
+		}
+		catch (DataIntegrityViolationException ex) {
+			// Another concurrent request already created this report; same
+			// idempotent contract as the sequential case above.
+			return forumCommentReportRepository.findByCommentIdAndReporterId(comment.getId(), reporter.getId())
+					.map(ForumCommentService::toReportResponse)
+					.orElseThrow(() -> ex);
+		}
 	}
 
 	private static final Set<UserRole> EDITOR_ROLES = Set.of(UserRole.OWNER, UserRole.ADMIN, UserRole.MODERATOR);

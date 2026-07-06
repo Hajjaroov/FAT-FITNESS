@@ -497,7 +497,7 @@ Private endpoints — all require a valid bearer token for an active account. Gr
 #### Weight goals
 
 - `GET /api/myplan/weight/goals` — returns the user's start and goal weight. Returns `null` fields if not yet set.
-- `PATCH /api/myplan/weight/goals` — set or update start weight and/or goal weight.
+- `PATCH /api/myplan/weight/goals` — sets start weight and goal weight. Both fields are required on every call (`UpdateWeightGoalsRequest` has `@NotNull` on both) — this is a full replace, not a partial update; the frontend always sends both values together.
 
 Request shape:
 

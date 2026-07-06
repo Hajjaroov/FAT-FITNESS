@@ -79,6 +79,11 @@ public class ModerationReportService {
 		ForumPost post = forumPostRepository.findById(postId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Forum post not found"));
 
+		if (post.isLocked()) {
+			// Already locked - avoid a no-op save and a duplicate audit row.
+			return;
+		}
+
 		post.lock();
 		forumPostRepository.save(post);
 		moderationActionRepository.save(ModerationAction.lock(moderator, postId, null));
