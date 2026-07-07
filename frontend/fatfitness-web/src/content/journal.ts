@@ -52,7 +52,9 @@ const loggedEntries = [
   ["10", "2026-05-31", "160.5 kg", "-1.0 kg"],
   ["10", "2026-06-07", "158.5 kg", "-2.0 kg"],
   ["10", "2026-06-14", "158.0 kg", "-0.5 kg"],
-  ["10", "2026-06-21", "157.0 kg", "-1.0 kg"],
+  ["10", "2026-06-21", "157.2 kg", "-0.8 kg"],
+  ["10", "2026-06-28", "156.0 kg", "-1.2 kg"],
+  ["10", "2026-07-05", "154.5 kg", "-1.5 kg"],
 ] as const;
 
 const warmupItems: WarmupItem[] = [
@@ -273,7 +275,7 @@ export const learnCopy = {
           summary:
             "Personal diet structure, meal ideas, supplements, and what is being learned from the current routine.",
           startsWith: [
-            "Current diet example around 1790 kcal, 173 g protein, 132 g carbs, and 47 g fat.",
+            "Current diet example around 1810 kcal, 182 g protein, 131 g carbs, and 49 g fat.",
             "Meal structure, simple foods, supplements, and product notes.",
             "Later, a tool can help build similar meal structures for selected nutrition targets.",
           ],
@@ -295,7 +297,7 @@ export const learnCopy = {
           summary:
             "Personal medical context, including GLP-1 history and other medical decisions, documented carefully.",
           startsWith: [
-            "GLP-1 timeline from 203 kg on 16 November 2025 to 158 kg on 7 June 2026.",
+            "GLP-1 timeline from 203 kg on 16 November 2025 to 154.5 kg on 5 July 2026.",
             "Shot and weight logs as personal records, not dosing instructions.",
             "Doctor-discussion topics and personal reflections, not medical advice.",
           ],
@@ -308,16 +310,16 @@ export const learnCopy = {
       intro:
         "This page documents the current personal diet , it is not a plan everyone should follow.",
       dailyTotals: [
-        { label: "Calories", value: "1790 kcal" },
-        { label: "Protein", value: "173 g" },
-        { label: "Carbs", value: "132 g" },
-        { label: "Fat", value: "47 g" },
+        { label: "Calories", value: "1810 kcal" },
+        { label: "Protein", value: "182 g" },
+        { label: "Carbs", value: "131 g" },
+        { label: "Fat", value: "49 g" },
       ],
       mealsTitle: "Meals",
       meals: [
         {
           name: "Shake",
-          summary: "320 kcal | 44 g protein | 16.5 g carbs | 7 g fat",
+          summary: "312 kcal | 44 g protein | 16.5 g carbs | 7 g fat",
           items: [
             { label: "30 g whey", detail: "120 kcal | 22.8 g protein | 1.5 g carbs | 2 g fat" },
             { label: "10 g collagen + vitamin C + zinc", detail: "40 kcal | 10 g protein | 0 g carbs | 0 g fat" },
@@ -327,23 +329,35 @@ export const learnCopy = {
         },
         {
           name: "Meal 1",
-          summary: "350 kcal | 33 g protein | 8 g carbs | 21 g fat",
+          summary: "305 kcal | 29 g protein | 7 g carbs | 18 g fat",
           items: [
-            { label: "3 eggs M, boiled", detail: "234 kcal | 21 g protein | 1.5 g carbs | 16.2 g fat" },
+            { label: "3 eggs M, boiled", detail: "190 kcal | 17 g protein | 1 g carbs | 13 g fat" },
             { label: "1 tomato, 83 g", detail: "17 kcal | 0.7 g protein | 3.2 g carbs | 0.2 g fat" },
             { label: "Körniger Frischkäse, 100 g", detail: "98 kcal | 11.5 g protein | 2.8 g carbs | 4.5 g fat" },
           ],
         },
         {
-          name: "Meal 2 and Meal 3",
-          summary: "2 meals, each around 560 kcal | 48 g protein | 54 g carbs | 9.5 g fat",
+          name: "Meal 2",
+          summary: "597 kcal | 54 g protein | 54 g carbs | 12 g fat",
           items: [
-            { label: "333 g chicken breast", detail: "403 kcal | 77.5 g protein | 0 g carbs | 5 g fat" },
-            { label: "Sauce: olive oil, mustard, tomato paste, 3.5 % yogurt", detail: "116 kcal | 1.4 g protein | 3.2 g carbs | 7.75 g fat" },
-            { label: "250 g frozen vegetables, Italian style", detail: "125 kcal | 4 g protein | 7.25 g carbs | 4.75 g fat" },
-            { label: "160 g broccoli / Kaisergemüse", detail: "66 kcal | 4 g protein | 8 g carbs | 0.7 g fat" },
-            { label: "150 g potato", detail: "116 kcal | 3 g protein | 25 g carbs | 0.2 g fat" },
-            { label: "80 g rice", detail: "290 kcal | 6 g protein | 64 g carbs | 0.5 g fat" },
+            { label: "200 g chicken breast", detail: "240 kcal | 45 g protein | 0 g carbs | 5.2 g fat" },
+            { label: "Sauce: mustard, tomato paste, 3.5 % yogurt", detail: "58 kcal | 0.7 g protein | 1.6 g carbs | 3.9 g fat" },
+            { label: "125 g frozen vegetables, Italian style", detail: "62.5 kcal | 2 g protein | 3.6 g carbs | 2.4 g fat" },
+            { label: "80 g broccoli / Kaisergemüse", detail: "33 kcal | 2 g protein | 4 g carbs | 0.35 g fat" },
+            { label: "75 g potato", detail: "58 kcal | 1.5 g protein | 12.5 g carbs | 0.1 g fat" },
+            { label: "40 g rice", detail: "145 kcal | 3 g protein | 32 g carbs | 0.25 g fat" },
+          ],
+        },
+        {
+          name: "Meal 3",
+          summary: "597 kcal | 54 g protein | 54 g carbs | 12 g fat",
+          items: [
+            { label: "200 g chicken breast", detail: "240 kcal | 45 g protein | 0 g carbs | 5.2 g fat" },
+            { label: "Sauce: mustard, tomato paste, 3.5 % yogurt", detail: "58 kcal | 0.7 g protein | 1.6 g carbs | 3.9 g fat" },
+            { label: "125 g frozen vegetables, Italian style", detail: "62.5 kcal | 2 g protein | 3.6 g carbs | 2.4 g fat" },
+            { label: "80 g broccoli / Kaisergemüse", detail: "33 kcal | 2 g protein | 4 g carbs | 0.35 g fat" },
+            { label: "75 g potato", detail: "58 kcal | 1.5 g protein | 12.5 g carbs | 0.1 g fat" },
+            { label: "40 g rice", detail: "145 kcal | 3 g protein | 32 g carbs | 0.25 g fat" },
           ],
         },
       ],
@@ -498,8 +512,8 @@ export const learnCopy = {
         "A personal Mounjaro log, shared for transparency. Not medication advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional.",
       summary: [
         { label: "Starting point", value: "203.0 kg", detail: "2025-11-16" },
-        { label: "Latest logged point", value: "157.0 kg", detail: "2026-06-21" },
-        { label: "Logged change", value: "-46.0 kg", detail: "Personal log" },
+        { label: "Latest logged point", value: "154.5 kg", detail: "2026-07-05" },
+        { label: "Logged change", value: "-48.5 kg", detail: "Personal log" },
       ],
       entriesTitle: "Logged Entries",
       tableHeaders: ["Dose (mg)", "Date", "Weight", "Change"],
@@ -521,7 +535,7 @@ export const learnCopy = {
           summary:
             "Persönliche Ernährungsstruktur, Mahlzeitenideen, Supplements und was aus der aktuellen Routine gelernt wird.",
           startsWith: [
-            "Aktuelles Ernährungsbeispiel mit etwa 1790 kcal, 173 g Eiweiß, 132 g Kohlenhydrate und 47 g Fett.",
+            "Aktuelles Ernährungsbeispiel mit etwa 1810 kcal, 182 g Eiweiß, 131 g Kohlenhydrate und 49 g Fett.",
             "Mahlzeitenstruktur, einfache Lebensmittel, Supplements und Produktnotizen.",
             "Später kann ein Tool helfen, ähnliche Mahlzeitenstrukturen für bestimmte Nährwerte zu bauen.",
           ],
@@ -543,7 +557,7 @@ export const learnCopy = {
           summary:
             "Persönlicher medizinischer Kontext, inklusive GLP-1 Historie und andere Entscheidungen, vorsichtig dokumentiert.",
           startsWith: [
-            "GLP-1 Timeline von 203 kg am 16. November 2025 bis 158 kg am 7. Juni 2026.",
+            "GLP-1 Timeline von 203 kg am 16. November 2025 bis 154.5 kg am 5. Juli 2026.",
             "Shot- und Gewichtslogs als persönliche Aufzeichnungen, nicht als Dosierungsanleitung.",
             "Themen für Ärztegespräche und persönliche Reflexionen, keine medizinische Beratung.",
           ],
@@ -556,16 +570,16 @@ export const learnCopy = {
       intro:
         "Diese Seite zeigt ein persönliches Ernährungsbeispiel und ist kein Plan, den alle befolgen sollten.",
       dailyTotals: [
-        { label: "Kalorien", value: "1790 kcal" },
-        { label: "Eiweiß", value: "173 g" },
-        { label: "Kohlenhydrate", value: "132 g" },
-        { label: "Fett", value: "47 g" },
+        { label: "Kalorien", value: "1810 kcal" },
+        { label: "Eiweiß", value: "182 g" },
+        { label: "Kohlenhydrate", value: "131 g" },
+        { label: "Fett", value: "49 g" },
       ],
       mealsTitle: "Mahlzeiten",
       meals: [
         {
           name: "Shake",
-          summary: "320 kcal | 44 g Eiweiß | 16,5 g Kohlenhydrate | 7 g Fett",
+          summary: "312 kcal | 44 g Eiweiß | 16,5 g Kohlenhydrate | 7 g Fett",
           items: [
             { label: "30 g Whey", detail: "120 kcal | 22,8 g Eiweiß | 1,5 g Kohlenhydrate | 2 g Fett" },
             { label: "10 g Collagen + Vitamin C + Zink", detail: "40 kcal | 10 g Eiweiß | 0 g Kohlenhydrate | 0 g Fett" },
@@ -575,23 +589,35 @@ export const learnCopy = {
         },
         {
           name: "Mahlzeit 1",
-          summary: "350 kcal | 33 g Eiweiß | 8 g Kohlenhydrate | 21 g Fett",
+          summary: "305 kcal | 29 g Eiweiß | 7 g Kohlenhydrate | 18 g Fett",
           items: [
-            { label: "3 Eier M, gekocht", detail: "234 kcal | 21 g Eiweiß | 1,5 g Kohlenhydrate | 16,2 g Fett" },
+            { label: "3 Eier M, gekocht", detail: "190 kcal | 17 g Eiweiß | 1 g Kohlenhydrate | 13 g Fett" },
             { label: "1 Tomate, 83 g", detail: "17 kcal | 0,7 g Eiweiß | 3,2 g Kohlenhydrate | 0,2 g Fett" },
             { label: "Körniger Frischkäse, 100 g", detail: "98 kcal | 11,5 g Eiweiß | 2,8 g Kohlenhydrate | 4,5 g Fett" },
           ],
         },
         {
-          name: "Mahlzeit 2 und Mahlzeit 3",
-          summary: "2 Mahlzeiten, jeweils etwa 560 kcal | 48 g Eiweiß | 54 g Kohlenhydrate | 9,5 g Fett",
+          name: "Mahlzeit 2",
+          summary: "597 kcal | 54 g Eiweiß | 54 g Kohlenhydrate | 12 g Fett",
           items: [
-            { label: "333 g Hähnchenbrust", detail: "403 kcal | 77,5 g Eiweiß | 0 g Kohlenhydrate | 5 g Fett" },
-            { label: "Sauce: Olivenöl, Senf, Tomatenmark, Joghurt 3,5 %", detail: "116 kcal | 1,4 g Eiweiß | 3,2 g Kohlenhydrate | 7,75 g Fett" },
-            { label: "250 g TK-Gemüse, Italienische Art", detail: "125 kcal | 4 g Eiweiß | 7,25 g Kohlenhydrate | 4,75 g Fett" },
-            { label: "160 g Brokkoli / Kaisergemüse", detail: "66 kcal | 4 g Eiweiß | 8 g Kohlenhydrate | 0,7 g Fett" },
-            { label: "150 g Kartoffel", detail: "116 kcal | 3 g Eiweiß | 25 g Kohlenhydrate | 0,2 g Fett" },
-            { label: "80 g Reis", detail: "290 kcal | 6 g Eiweiß | 64 g Kohlenhydrate | 0,5 g Fett" },
+            { label: "200 g Hähnchenbrust", detail: "240 kcal | 45 g Eiweiß | 0 g Kohlenhydrate | 5.2 g Fett" },
+            { label: "Sauce: Senf, Tomatenmark, Joghurt 3,5 %", detail: "58 kcal | 0,7 g Eiweiß | 1,6 g Kohlenhydrate | 3,9 g Fett" },
+            { label: "125 g TK-Gemüse, Italienische Art", detail: "62,5 kcal | 2 g Eiweiß | 3,6 g Kohlenhydrate | 2,4 g Fett" },
+            { label: "80 g Brokkoli / Kaisergemüse", detail: "33 kcal | 2 g Eiweiß | 4 g Kohlenhydrate | 0,35 g Fett" },
+            { label: "75 g Kartoffel", detail: "58 kcal | 1,5 g Eiweiß | 12,5 g Kohlenhydrate | 0,1 g Fett" },
+            { label: "40 g Reis", detail: "145 kcal | 3 g Eiweiß | 32 g Kohlenhydrate | 0,25 g Fett" },
+          ],
+        },
+        {
+          name: "Mahlzeit 3",
+          summary: "597 kcal | 54 g Eiweiß | 54 g Kohlenhydrate | 12 g Fett",
+          items: [
+            { label: "200 g Hähnchenbrust", detail: "240 kcal | 45 g Eiweiß | 0 g Kohlenhydrate | 5.2 g Fett" },
+            { label: "Sauce: Senf, Tomatenmark, Joghurt 3,5 %", detail: "58 kcal | 0,7 g Eiweiß | 1,6 g Kohlenhydrate | 3,9 g Fett" },
+            { label: "125 g TK-Gemüse, Italienische Art", detail: "62,5 kcal | 2 g Eiweiß | 3,6 g Kohlenhydrate | 2,4 g Fett" },
+            { label: "80 g Brokkoli / Kaisergemüse", detail: "33 kcal | 2 g Eiweiß | 4 g Kohlenhydrate | 0,35 g Fett" },
+            { label: "75 g Kartoffel", detail: "58 kcal | 1,5 g Eiweiß | 12,5 g Kohlenhydrate | 0,1 g Fett" },
+            { label: "40 g Reis", detail: "145 kcal | 3 g Eiweiß | 32 g Kohlenhydrate | 0,25 g Fett" },
           ],
         },
       ],
@@ -747,8 +773,8 @@ export const learnCopy = {
         "Ein persönlicher Mounjaro Log, für Transparenz geteilt. Keine Medikamentenberatung, keine Dosierungsanleitung und keine Methode für andere — medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       summary: [
         { label: "Startpunkt", value: "203.0 kg", detail: "2025-11-16" },
-        { label: "Letzter eingetragener Stand", value: "157.0 kg", detail: "2026-06-21" },
-        { label: "Eingetragene Veränderung", value: "-46.0 kg", detail: "Persönlicher Log" },
+        { label: "Letzter eingetragener Stand", value: "154.5 kg", detail: "2026-07-05" },
+        { label: "Eingetragene Veränderung", value: "-48.5 kg", detail: "Persönlicher Log" },
       ],
       entriesTitle: "Eingetragene Werte",
       tableHeaders: ["Dosis (mg)", "Datum", "Gewicht", "Veränderung"],
