@@ -117,6 +117,15 @@ Current community/forum state:
   - **Known limitation — one fixed `unit_label` per food row, no multi-unit picker.** Real trackers let one food carry several selectable units (e.g. "1 large egg" and "100g" both on the same entry), each converted from one canonical per-100g baseline. This schema only supports one unit per row. Trigger to revisit: the catalog accumulating near-duplicate entries for the same food to cover both a weight- and count-based version, or explicit user requests for a unit-switcher. Fix when needed: additive `food_portions` child table (`food_id`, `label`, `gram_weight`) alongside a single per-100g baseline on `foods` — not a rewrite, and `diet_meal_items` (which snapshot their own macros) are unaffected either way. Full reasoning in `docs/dev-agent-plan.md`'s Phase 2 section.
   - See `docs/dev-agent-plan.md` for the full design rationale (including why a fully autonomous AI moderator was considered and rejected in favor of a lightweight "look this up" search-link assist for human moderators, and why an external food database was tried and rolled back).
 
+### Planned: V15 — `/myplan` Phase 3 (Workout)
+
+Design approved 2026-07-08; not yet built (no migration file exists yet). Sketch, to be refined at the start of the session that builds it:
+
+- `exercises` — shared catalog, mirrors `foods`: starts empty, open add by any active user, edit/delete moderator-only. `id`, `created_by_user_id` nullable FK → users, `name`, optional `photo_src` (path under `public/photos/exercises/`, null for user-added entries), `created_at`, `updated_at`. Owner-curated seeding from the Journal's existing exercise photos is intentionally deferred until the dev DB is stable enough not to need another wipe — see `docs/dev-agent-plan.md`.
+- `workout_plan_days` — **one plan per user** (not several), represented as an ordered, renamable list of days: `id`, `user_id` FK, `title` (default `"Day N"`), `position`. Mirrors `diet_meals`.
+- `workout_plan_day_exercises` — line items within a plan day, belongs to a `workout_plan_days` row (`ON DELETE CASCADE`): `id`, `plan_day_id`, `exercise_id` nullable FK → `exercises` `ON DELETE SET NULL` (traceability only, mirrors `diet_meal_items.food_id`), snapshotted `name`, `sets`, and either `reps` or `duration_seconds` (nullable pair), `position`.
+- `workout_sessions` — the log: `id`, `user_id` FK, `plan_day_id` FK, a week identifier (e.g. `week_start_date DATE`), `completed_at`. Unique `(user_id, plan_day_id, week_start_date)` — one completion mark per day per real week, mirrors `weight_entries`' one-per-day uniqueness at week grain instead. **No notes/free-text field.**
+
 ### Moderation audit table
 
 The `V6__moderation_lock_and_ban.sql` migration creates `moderation_actions` with:

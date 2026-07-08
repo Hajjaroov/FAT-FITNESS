@@ -200,7 +200,12 @@ async function apiRequest<T>(
 
   if (!response.ok) {
     const message = getApiErrorMessage(payload, `API request failed with status ${response.status}`);
-    logger.error("api.request_failed", { path, status: response.status, message });
+    // A 401 from refresh just means there is no valid session (e.g. an anonymous
+    // visitor's page load) — expected, not a real failure worth logging as an error.
+    const isExpectedRefreshRejection = path === "/api/auth/refresh" && response.status === 401;
+    if (!isExpectedRefreshRejection) {
+      logger.error("api.request_failed", { path, status: response.status, message });
+    }
     throw new ApiError(message, response.status, payload);
   }
 
@@ -641,7 +646,11 @@ export function broadcastMessage(
   });
 }
 
-export async function uploadAvatar(blob: Blob, accessToken: string): Promise<void> {
+async function uploadAvatarOnce(
+  blob: Blob,
+  accessToken: string,
+  allowRefreshRetry: boolean,
+): Promise<void> {
   const formData = new FormData();
   formData.append("avatar", blob, "avatar.jpg");
   const response = await fetch(`${apiBaseUrl}/api/users/me/avatar`, {
@@ -649,6 +658,14 @@ export async function uploadAvatar(blob: Blob, accessToken: string): Promise<voi
     headers: { Authorization: `Bearer ${accessToken}` },
     body: formData,
   });
+
+  if (response.status === 401 && allowRefreshRetry) {
+    const nextAccessToken = await refreshAccessToken();
+    if (nextAccessToken) {
+      return uploadAvatarOnce(blob, nextAccessToken, false);
+    }
+  }
+
   if (!response.ok) {
     const payload = await response.json().catch(() => null);
     throw new ApiError(
@@ -657,6 +674,10 @@ export async function uploadAvatar(blob: Blob, accessToken: string): Promise<voi
       payload,
     );
   }
+}
+
+export function uploadAvatar(blob: Blob, accessToken: string): Promise<void> {
+  return uploadAvatarOnce(blob, accessToken, true);
 }
 
 export function getWeightGoals(accessToken: string) {

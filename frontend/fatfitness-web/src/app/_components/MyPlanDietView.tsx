@@ -164,12 +164,20 @@ export function MyPlanDietView() {
     }
   }
 
-  function handleItemAdded(mealId: string, item: DietMealItem, newFood: Food | null) {
+  function handleItemAdded(mealId: string, item: DietMealItem) {
     setMeals((prev) =>
       prev.map((m) => (m.id === mealId ? { ...m, items: [...m.items, item] } : m)),
     );
-    if (newFood) {
-      setFoods((prev) => (prev.some((f) => f.id === newFood.id) ? prev : [...prev, newFood]));
+  }
+
+  async function refetchFoods() {
+    if (!accessToken) return;
+    try {
+      const foodList = await getFoods(accessToken);
+      setFoods(foodList);
+    } catch {
+      // Best-effort: the newly added/reused food simply stays out of local
+      // suggestions until the next full page load.
     }
   }
 
@@ -264,7 +272,8 @@ export function MyPlanDietView() {
                 onRename={(title) => handleRenameMeal(meal.id, title)}
                 onDelete={() => handleDeleteMeal(meal.id)}
                 onMove={(direction) => handleMoveMeal(meal.id, direction)}
-                onItemAdded={(item, newFood) => handleItemAdded(meal.id, item, newFood)}
+                onItemAdded={(item) => handleItemAdded(meal.id, item)}
+                onFoodsRefetchNeeded={refetchFoods}
                 onItemUpdated={(item) => handleItemUpdated(meal.id, item)}
                 onItemDeleted={(itemId) => handleItemDeleted(meal.id, itemId)}
               />
@@ -289,6 +298,7 @@ function DietMealCard({
   onDelete,
   onMove,
   onItemAdded,
+  onFoodsRefetchNeeded,
   onItemUpdated,
   onItemDeleted,
 }: {
@@ -301,7 +311,8 @@ function DietMealCard({
   onRename: (title: string) => void;
   onDelete: () => void;
   onMove: (direction: -1 | 1) => void;
-  onItemAdded: (item: DietMealItem, newFood: Food | null) => void;
+  onItemAdded: (item: DietMealItem) => void;
+  onFoodsRefetchNeeded: () => Promise<void>;
   onItemUpdated: (item: DietMealItem) => void;
   onItemDeleted: (itemId: string) => void;
 }) {
@@ -421,6 +432,7 @@ function DietMealCard({
           accessToken={accessToken}
           copy={copy}
           onAdded={onItemAdded}
+          onFoodsRefetchNeeded={onFoodsRefetchNeeded}
         />
       </div>
     </article>
@@ -566,12 +578,14 @@ function AddFoodToMealRow({
   accessToken,
   copy,
   onAdded,
+  onFoodsRefetchNeeded,
 }: {
   mealId: string;
   foods: Food[];
   accessToken: string;
   copy: DietCopy;
-  onAdded: (item: DietMealItem, newFood: Food | null) => void;
+  onAdded: (item: DietMealItem) => void;
+  onFoodsRefetchNeeded: () => Promise<void>;
 }) {
   const [name, setName] = useState("");
   const [nameDe, setNameDe] = useState("");
@@ -644,20 +658,14 @@ function AddFoodToMealRow({
         },
         accessToken,
       );
-      const newFood =
-        !selectedFood && item.foodId
-          ? {
-              id: item.foodId,
-              name: name.trim(),
-              nameDe: nameDe.trim() || null,
-              unitLabel: unitLabel.trim() || "unit",
-              caloriesPerUnit: cal,
-              proteinPerUnit: pro,
-              carbsPerUnit: carb,
-              fatPerUnit: ft,
-            }
-          : null;
-      onAdded(item, newFood);
+      if (!selectedFood && item.foodId && !foods.some((f) => f.id === item.foodId)) {
+        // The server may have created a brand-new food, or silently reused an
+        // existing catalog entry (dedup by name+unit) that isn't in our locally
+        // loaded list. Either way, re-fetch the real catalog row instead of
+        // fabricating one from the user's typed macros, which may not match it.
+        await onFoodsRefetchNeeded();
+      }
+      onAdded(item);
       resetForm();
     } catch {
       setError(copy.itemAddError);
@@ -836,8 +844,27 @@ function FlagFoodModal({
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const cal = parseFloat(calories);
+    const pro = parseFloat(protein);
+    const carb = parseFloat(carbs);
+    const ft = parseFloat(fat);
+    if (![cal, pro, carb, ft].every(Number.isFinite)) {
+      setError(copy.flagInvalidMacrosError);
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
     try {
@@ -846,10 +873,10 @@ function FlagFoodModal({
           targetFoodId: food.id,
           proposedName: proposedName.trim() || undefined,
           proposedUnitLabel: proposedUnitLabel.trim() || undefined,
-          proposedCaloriesPerUnit: parseFloat(calories) || 0,
-          proposedProteinPerUnit: parseFloat(protein) || 0,
-          proposedCarbsPerUnit: parseFloat(carbs) || 0,
-          proposedFatPerUnit: parseFloat(fat) || 0,
+          proposedCaloriesPerUnit: cal,
+          proposedProteinPerUnit: pro,
+          proposedCarbsPerUnit: carb,
+          proposedFatPerUnit: ft,
           comment: comment.trim() || undefined,
         },
         accessToken,
@@ -864,7 +891,12 @@ function FlagFoodModal({
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4">
+    <div
+      className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="site-card w-full max-w-lg p-6">
         <h3 className="text-lg font-semibold">{copy.flagModalTitle}</h3>
 

@@ -172,17 +172,17 @@ public class MyPlanDietService {
 		List<DietMeal> meals = dietMealRepository.findByUserIdOrderByPositionAsc(user.getId());
 
 		Set<UUID> existingIds = meals.stream().map(meal -> meal.getId()).collect(Collectors.toSet());
-		Set<UUID> requestedIds = new HashSet<>(request.orderedMealIds());
-		if (!existingIds.equals(requestedIds)) {
+		List<UUID> orderedMealIds = request.orderedMealIds();
+		Set<UUID> requestedIds = new HashSet<>(orderedMealIds);
+		if (requestedIds.size() != orderedMealIds.size() || !existingIds.equals(requestedIds)) {
 			throw new ResponseStatusException(
 					HttpStatus.BAD_REQUEST,
 					"Ordered meal list must match your existing meals exactly");
 		}
 
 		Map<UUID, DietMeal> mealsById = meals.stream().collect(Collectors.toMap(meal -> meal.getId(), meal -> meal));
-		List<UUID> orderedIds = request.orderedMealIds();
-		for (int position = 0; position < orderedIds.size(); position++) {
-			mealsById.get(orderedIds.get(position)).updatePosition(position);
+		for (int position = 0; position < orderedMealIds.size(); position++) {
+			mealsById.get(orderedMealIds.get(position)).updatePosition(position);
 		}
 		dietMealRepository.saveAll(mealsById.values());
 

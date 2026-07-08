@@ -1,3 +1,5 @@
+name: fatfitness
+
 services:
   postgres:
     image: postgres:18
@@ -20,3 +22,5 @@ services:
 
 volumes:
   fitness_postgres_data_pg18:
+    external: true
+    name: infrastructure_fitness_postgres_data_pg18

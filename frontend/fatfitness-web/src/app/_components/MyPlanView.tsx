@@ -30,7 +30,11 @@ type EntryFormState =
   | { kind: "error"; message: string };
 
 function todayISODate() {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function MyPlanView() {
@@ -291,10 +295,8 @@ export function MyPlanView() {
       <section className="site-divider mt-10 border-t pt-8">
         <h2 className="text-2xl font-semibold tracking-normal">{copy.workout.title}</h2>
         <p className="site-muted mt-3 max-w-2xl text-sm leading-7">{copy.workout.summary}</p>
-        <p className="mt-4">
-          <Link href="/myplan/workout" className="site-text-link text-sm">
-            {copy.workout.linkLabel}
-          </Link>
+        <p className="site-subtle mt-4 text-sm font-semibold uppercase tracking-wide">
+          {copy.workout.comingSoonLabel}
         </p>
       </section>
 
@@ -302,10 +304,8 @@ export function MyPlanView() {
       <section className="site-divider mt-10 border-t pt-8">
         <h2 className="text-2xl font-semibold tracking-normal">{copy.glp1.title}</h2>
         <p className="site-muted mt-3 max-w-2xl text-sm leading-7">{copy.glp1.summary}</p>
-        <p className="mt-4">
-          <Link href="/myplan/glp1" className="site-text-link text-sm">
-            {copy.glp1.linkLabel}
-          </Link>
+        <p className="site-subtle mt-4 text-sm font-semibold uppercase tracking-wide">
+          {copy.glp1.comingSoonLabel}
         </p>
       </section>
     </PageShell>

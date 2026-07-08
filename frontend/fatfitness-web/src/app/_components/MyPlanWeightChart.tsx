@@ -32,8 +32,9 @@ export function MyPlanWeightChart({
   entries,
   tooltipLabel,
 }: MyPlanWeightChartProps) {
-  const yMin = Math.min(startWeight, goalWeight);
-  const yMax = Math.max(startWeight, goalWeight);
+  const entryWeights = entries.map((e) => e.weightKg);
+  const yMin = Math.min(startWeight, goalWeight, ...entryWeights);
+  const yMax = Math.max(startWeight, goalWeight, ...entryWeights);
   const yDomain: [number, number] = [yMin, yMax];
 
   const data = entries.map((e) => ({ date: e.entryDate, weight: e.weightKg }));

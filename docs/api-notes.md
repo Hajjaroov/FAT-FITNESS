@@ -569,11 +569,14 @@ Implemented endpoints, all under `/api/myplan/diet/**` (inherits the existing bl
 
 API areas: `foods` (shared), `diet_meals` + `diet_meal_items` (private), `food_macro_checks` (moderator review queue, mirrors `forum_post_reports`' `ForumReportStatus` pattern rather than extending the existing moderation system). See `docs/database-notes.md` for the full schema and `docs/dev-agent-plan.md` for the full design rationale (including the rejected fully-autonomous-AI-moderator idea in favor of a lightweight "look this up" web-search link for human moderators).
 
-**Phase 3 — Workout (`/myplan/workout`)**
-- Exercise library: owner-curated (name + optional photo); users can add custom exercises (no photo required)
-- Weekly plan: user assigns exercises to days of the week with sets/reps or duration
-- Session log: mark a planned day as done for a given week (week-based, not individual-set logging)
-- API areas: `exercises`, `user_workout_plans`, `user_workout_plan_days`, `user_workout_sessions`
+**Phase 3 — Workout (`/myplan/workout`) — design approved 2026-07-08, not yet built**
+
+Planning discussion held; scoped and ready to build next session, but no endpoints exist yet.
+
+- Exercise library (`exercises`): shared catalog, starts **empty** and grows only from user-added custom entries — same open-add/moderator-edit-delete pattern as `foods`. Owner-curated seeding (with photos from the Journal) is deliberately deferred until the dev DB is stable enough not to need another wipe; see `docs/dev-agent-plan.md`.
+- Weekly plan (`workout_plan_days` + `workout_plan_day_exercises`): **one plan per user, not several** — same one-resource-per-user shape as weight goals. An ordered, renamable list of days (mirrors `diet_meals`), each holding exercise line-items with sets + either reps or a duration.
+- Session log (`workout_sessions`): marks a planned day done for a given real week (week-based, not individual-set logging); unique per `(user, plan_day, week)`. **No notes/free-text field** — pure done/not-done, matching the Diet feature's own no-per-meal-notes decision.
+- Planned API areas: `exercises` (shared), `workout_plan_days` + `workout_plan_day_exercises` (private), `workout_sessions` (private). See `docs/dev-agent-plan.md` for the full sketch and rationale, and `docs/database-notes.md` for the schema-in-progress.
 
 **Phase 4 — GLP-1 / Medication (`/myplan/glp1`)**
 - Log entries: date, dose, medication name/brand (free text), optional notes

@@ -352,6 +352,21 @@ class MyPlanDietControllerTests {
 				.andExpect(status().isBadRequest());
 	}
 
+	@Test
+	void reorderMealsRejectsDuplicateIds() throws Exception {
+		String token = registerVerifyAndLogin("meal-reorder-duplicate@example.com");
+		String firstMealId = addMeal(token, "First");
+		addMeal(token, "Second");
+
+		mockMvc.perform(patch("/api/myplan/diet/meals/reorder")
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "orderedMealIds": ["%s", "%s"] }
+								""".formatted(firstMealId, firstMealId)))
+				.andExpect(status().isBadRequest());
+	}
+
 	// --- Meal items ---
 
 	@Test

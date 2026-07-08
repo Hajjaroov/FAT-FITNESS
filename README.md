@@ -13,8 +13,9 @@ A personal weight-loss journey site and beginner-friendly peer-support forum.
 | **Journal** | Personal diet, training, and medical (GLP-1) journey made public |
 | **Community** | Forum-style peer-support for overweight beginners |
 | **Messages** | Private async one-to-one inbox between members, with email notifications |
+| **My Plan** | Private per-member tracking hub: weight (goals, entries, chart) and diet (meals, shared food catalog, macro totals) |
 | **Accounts** | Registration, email verification, login, profile settings |
-| **Admin** | Moderation dashboard for report review, content hide, thread lock, user ban |
+| **Admin** | Moderation dashboard for report review, content hide, thread lock, user ban, food macro checks |
 
 This is not a coaching product or medical advice platform. All content is personal experience shared as-is.
 
@@ -27,7 +28,7 @@ This is not a coaching product or medical advice platform. All content is person
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS v4 |
 | Backend | Spring Boot 4.1, Java 21, Gradle |
 | Database | PostgreSQL 18 via Docker Compose |
-| Migrations | Flyway (V1–V11 applied; next is V12) |
+| Migrations | Flyway (V1–V14 applied; next is V15) |
 | Auth | JWT access tokens + HttpOnly refresh cookie + Resend email |
 | Logging | Logback (backend) · Winston (frontend) · PostgreSQL slow-query log |
 
@@ -153,9 +154,12 @@ npm run build
 | `http://localhost:3000/journal` | Journal overview |
 | `http://localhost:3000/community` | Forum index |
 | `http://localhost:3000/messages` | Private message inbox |
+| `http://localhost:3000/myplan` | Personal tracking hub: weight goals + entries + chart (signed-in only) |
+| `http://localhost:3000/myplan/diet` | Personal diet: meals, food catalog, live macro totals (signed-in only) |
 | `http://localhost:3000/settings` | Account settings (profile, password, sessions, avatar) |
 | `http://localhost:3000/dashboard` | Signed-in account dashboard |
 | `http://localhost:3000/admin` | Moderation dashboard (OWNER/ADMIN/MODERATOR) |
+| `http://localhost:3000/admin/macro-checks` | Food macro-check review queue (OWNER/ADMIN/MODERATOR) |
 | `http://localhost:8080/api/status` | Backend health check |
 
 ---
@@ -167,5 +171,5 @@ npm run build
 - Confirm `RESEND_API_KEY`, `MAIL_FROM`, and `APP_BASE_URL` are set.
 - Do **not** activate the `dev` Spring profile in production.
 - Ensure the process user has write access to the `logs/` directories.
-- Flyway migrations V1–V11 are applied. The next migration must be **V12**.
+- Flyway migrations V1–V14 are applied. The next migration must be **V15**.
 - Review GDPR / data deletion requirements before collecting real user data.

@@ -74,6 +74,7 @@ type MyPlanCopy = {
     flagSubmittedMessage: string;
     flagErrorMessage: string;
     flagDuplicateError: string;
+    flagInvalidMacrosError: string;
     mealSubtotalLabel: string;
     dayTotalCaloriesLabel: string;
     dayTotalProteinLabel: string;
@@ -92,11 +93,13 @@ type MyPlanCopy = {
     title: string;
     summary: string;
     linkLabel: string;
+    comingSoonLabel: string;
   };
   glp1: {
     title: string;
     summary: string;
     linkLabel: string;
+    comingSoonLabel: string;
   };
 };
 
@@ -178,6 +181,7 @@ export const myPlanCopy = {
       flagSubmittedMessage: "Thanks — a moderator will review this.",
       flagErrorMessage: "Could not submit. Please try again.",
       flagDuplicateError: "You've already flagged this food.",
+      flagInvalidMacrosError: "Please enter valid numbers for all four macros.",
       mealSubtotalLabel: "Meal total",
       dayTotalCaloriesLabel: "Calories",
       dayTotalProteinLabel: "Protein",
@@ -197,12 +201,14 @@ export const myPlanCopy = {
       summary:
         "Build your weekly training plan, pick exercises from the library, and mark sessions as done. Coming in a future update.",
       linkLabel: "Open Workout",
+      comingSoonLabel: "Coming soon",
     },
     glp1: {
       title: "GLP-1 / Medication",
       summary:
         "Log your injection dates, doses, and personal notes. A private timeline — no medical advice, just your own record. Coming in a future update.",
       linkLabel: "Open GLP-1 Log",
+      comingSoonLabel: "Coming soon",
     },
   },
   de: {
@@ -284,6 +290,7 @@ export const myPlanCopy = {
       flagSubmittedMessage: "Danke — ein Moderator wird das prüfen.",
       flagErrorMessage: "Konnte nicht gesendet werden. Bitte versuche es erneut.",
       flagDuplicateError: "Du hast dieses Lebensmittel bereits gemeldet.",
+      flagInvalidMacrosError: "Bitte gib für alle vier Makros gültige Zahlen ein.",
       mealSubtotalLabel: "Zwischensumme",
       dayTotalCaloriesLabel: "Kalorien",
       dayTotalProteinLabel: "Eiweiß",
@@ -303,12 +310,14 @@ export const myPlanCopy = {
       summary:
         "Erstelle deinen wöchentlichen Trainingsplan, wähle Übungen aus der Bibliothek und markiere Einheiten als erledigt. Kommt in einem zukünftigen Update.",
       linkLabel: "Training öffnen",
+      comingSoonLabel: "Demnächst verfügbar",
     },
     glp1: {
       title: "GLP-1 / Medikamente",
       summary:
         "Dokumentiere deine Injektionsdaten, Dosen und persönliche Notizen. Eine private Zeitlinie — keine medizinische Beratung, nur deine eigene Aufzeichnung. Kommt in einem zukünftigen Update.",
       linkLabel: "GLP-1-Tagebuch öffnen",
+      comingSoonLabel: "Demnächst verfügbar",
     },
   },
 } satisfies Record<Locale, MyPlanCopy>;

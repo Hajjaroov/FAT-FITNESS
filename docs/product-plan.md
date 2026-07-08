@@ -177,7 +177,7 @@ Current state:
 - Rate limiting is applied to login (10/15 min), resend-verification (5/hour), forgot-password (5/hour), and reset-password (10/15 min). Disabled in tests via `fatfitness.auth.rate-limit.enabled=false`.
 - `/settings` page has three sections: Profile (display name + country/region edit), Change password, and Active sessions (sign out all devices). Linked from `/dashboard`.
 - `PATCH /api/users/me/profile`, `POST /api/users/me/change-password`, and `POST /api/users/me/sessions/revoke-all` are authenticated endpoints backing the settings page.
-- Flyway migrations V1–V10 are applied; next new migration is V11.
+- Flyway migrations V1–V14 are applied; next new migration is V15.
 
 Approved auth direction:
 
