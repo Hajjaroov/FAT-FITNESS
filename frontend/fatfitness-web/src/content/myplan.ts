@@ -93,7 +93,50 @@ type MyPlanCopy = {
     title: string;
     summary: string;
     linkLabel: string;
-    comingSoonLabel: string;
+    pageEyebrow: string;
+    pageIntro: string;
+    myWorkoutTitle: string;
+    addDayLabel: string;
+    addDayTitlePlaceholder: string;
+    maxDaysHint: string;
+    weekdayLabel: string;
+    noWeekdayOption: string;
+    weekdays: Record<
+      "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY",
+      string
+    >;
+    renameDayLabel: string;
+    dayTitleLabel: string;
+    deleteDayLabel: string;
+    deleteDayConfirm: string;
+    moveUpLabel: string;
+    moveDownLabel: string;
+    emptyDaysText: string;
+    emptyDayExercisesText: string;
+    addExerciseLabel: string;
+    searchPlaceholder: string;
+    searchHint: string;
+    noResultsLabel: string;
+    nameLabel: string;
+    nameDeLabel: string;
+    nameDePlaceholder: string;
+    nameDeHint: string;
+    setsLabel: string;
+    setsPlaceholder: string;
+    saveLabel: string;
+    savingLabel: string;
+    cancelLabel: string;
+    editLabel: string;
+    deleteLabel: string;
+    deleteExerciseConfirm: string;
+    loadError: string;
+    dayAddError: string;
+    dayRenameError: string;
+    dayDeleteError: string;
+    dayReorderError: string;
+    exerciseAddError: string;
+    exerciseUpdateError: string;
+    exerciseDeleteError: string;
   };
   glp1: {
     title: string;
@@ -199,9 +242,59 @@ export const myPlanCopy = {
     workout: {
       title: "Workout",
       summary:
-        "Build your weekly training plan, pick exercises from the library, and mark sessions as done. Coming in a future update.",
+        "Build your weekly training plan, pick exercises from the library, and mark sessions as done.",
       linkLabel: "Open Workout",
-      comingSoonLabel: "Coming soon",
+      pageEyebrow: "Personal tracking",
+      pageIntro:
+        "This is your own weekly training plan. Add a block for each training day — pick a day of the week and give it a name, or leave the day open for something like a warm-up protocol — then list the exercises with their sets.",
+      myWorkoutTitle: "My Workout",
+      addDayLabel: "Add a day",
+      addDayTitlePlaceholder: "e.g. Upper A or Warm-Up Protocol",
+      maxDaysHint: "A weekly plan can have up to 8 blocks.",
+      weekdayLabel: "Day of the week",
+      noWeekdayOption: "No specific day",
+      weekdays: {
+        MONDAY: "Monday",
+        TUESDAY: "Tuesday",
+        WEDNESDAY: "Wednesday",
+        THURSDAY: "Thursday",
+        FRIDAY: "Friday",
+        SATURDAY: "Saturday",
+        SUNDAY: "Sunday",
+      },
+      renameDayLabel: "Edit",
+      dayTitleLabel: "Day title",
+      deleteDayLabel: "Delete day",
+      deleteDayConfirm: "Delete this day and everything in it?",
+      moveUpLabel: "Move up",
+      moveDownLabel: "Move down",
+      emptyDaysText: "No days yet. Add your first one to start building your weekly plan.",
+      emptyDayExercisesText: "No exercises in this day yet.",
+      addExerciseLabel: "Add exercise",
+      searchPlaceholder: "Search exercises, e.g. squats",
+      searchHint: "Pick a suggestion or keep typing to add your own.",
+      noResultsLabel: "No matches. Fill in the details below to add it yourself.",
+      nameLabel: "Name (English)",
+      nameDeLabel: "German name (optional)",
+      nameDePlaceholder: "e.g. Kniebeugen",
+      nameDeHint:
+        "If you know it, adding this helps other users find this exercise when searching in German.",
+      setsLabel: "Sets / reps",
+      setsPlaceholder: "e.g. 3 x 8-10 or 2 minutes",
+      saveLabel: "Save",
+      savingLabel: "Saving...",
+      cancelLabel: "Cancel",
+      editLabel: "Edit",
+      deleteLabel: "Delete",
+      deleteExerciseConfirm: "Remove this exercise from the day?",
+      loadError: "Could not load your workout plan. Please try again.",
+      dayAddError: "Could not add a day. Please try again.",
+      dayRenameError: "Could not save this day. Please try again.",
+      dayDeleteError: "Could not delete this day. Please try again.",
+      dayReorderError: "Could not reorder days. Please try again.",
+      exerciseAddError: "Could not add this exercise. Please try again.",
+      exerciseUpdateError: "Could not save changes. Please try again.",
+      exerciseDeleteError: "Could not remove this exercise. Please try again.",
     },
     glp1: {
       title: "GLP-1 / Medication",
@@ -308,9 +401,60 @@ export const myPlanCopy = {
     workout: {
       title: "Training",
       summary:
-        "Erstelle deinen wöchentlichen Trainingsplan, wähle Übungen aus der Bibliothek und markiere Einheiten als erledigt. Kommt in einem zukünftigen Update.",
+        "Erstelle deinen wöchentlichen Trainingsplan, wähle Übungen aus der Bibliothek und markiere Einheiten als erledigt.",
       linkLabel: "Training öffnen",
-      comingSoonLabel: "Demnächst verfügbar",
+      pageEyebrow: "Persönliches Tracking",
+      pageIntro:
+        "Das ist dein eigener wöchentlicher Trainingsplan. Füge für jeden Trainingstag einen Block hinzu — wähle einen Wochentag und gib ihm einen Namen, oder lass den Tag offen, z. B. für ein Aufwärmprogramm — und liste dann die Übungen mit ihren Sätzen auf.",
+      myWorkoutTitle: "Mein Training",
+      addDayLabel: "Tag hinzufügen",
+      addDayTitlePlaceholder: "z. B. Oberkörper A oder Aufwärmprogramm",
+      maxDaysHint: "Ein Wochenplan kann bis zu 8 Blöcke haben.",
+      weekdayLabel: "Wochentag",
+      noWeekdayOption: "Kein fester Tag",
+      weekdays: {
+        MONDAY: "Montag",
+        TUESDAY: "Dienstag",
+        WEDNESDAY: "Mittwoch",
+        THURSDAY: "Donnerstag",
+        FRIDAY: "Freitag",
+        SATURDAY: "Samstag",
+        SUNDAY: "Sonntag",
+      },
+      renameDayLabel: "Bearbeiten",
+      dayTitleLabel: "Titel des Tages",
+      deleteDayLabel: "Tag löschen",
+      deleteDayConfirm: "Diesen Tag und alles darin löschen?",
+      moveUpLabel: "Nach oben",
+      moveDownLabel: "Nach unten",
+      emptyDaysText:
+        "Noch keine Tage. Füge deinen ersten hinzu, um deinen Wochenplan aufzubauen.",
+      emptyDayExercisesText: "Noch keine Übungen an diesem Tag.",
+      addExerciseLabel: "Übung hinzufügen",
+      searchPlaceholder: "Übungen suchen, z. B. Kniebeugen",
+      searchHint: "Wähle einen Vorschlag oder tippe weiter, um selbst etwas hinzuzufügen.",
+      noResultsLabel: "Keine Treffer. Fülle die Angaben unten aus, um sie selbst hinzuzufügen.",
+      nameLabel: "Name (Englisch)",
+      nameDeLabel: "Deutscher Name (optional)",
+      nameDePlaceholder: "z. B. Kniebeugen",
+      nameDeHint:
+        "Falls du ihn kennst, hilft dieser Eintrag anderen, diese Übung bei einer deutschen Suche zu finden.",
+      setsLabel: "Sätze / Wiederholungen",
+      setsPlaceholder: "z. B. 3 x 8-10 oder 2 Minuten",
+      saveLabel: "Speichern",
+      savingLabel: "Wird gespeichert...",
+      cancelLabel: "Abbrechen",
+      editLabel: "Bearbeiten",
+      deleteLabel: "Löschen",
+      deleteExerciseConfirm: "Diese Übung aus dem Tag entfernen?",
+      loadError: "Dein Trainingsplan konnte nicht geladen werden. Bitte versuche es erneut.",
+      dayAddError: "Tag konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
+      dayRenameError: "Tag konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      dayDeleteError: "Tag konnte nicht gelöscht werden. Bitte versuche es erneut.",
+      dayReorderError: "Reihenfolge konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      exerciseAddError: "Übung konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
+      exerciseUpdateError: "Änderungen konnten nicht gespeichert werden. Bitte versuche es erneut.",
+      exerciseDeleteError: "Übung konnte nicht entfernt werden. Bitte versuche es erneut.",
     },
     glp1: {
       title: "GLP-1 / Medikamente",

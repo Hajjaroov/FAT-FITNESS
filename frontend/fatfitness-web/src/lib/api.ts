@@ -62,6 +62,7 @@ import type {
   FoodMacroCheck,
   FoodMacroCheckStatus,
 } from "@/types/diet";
+import type { Exercise, Weekday, WorkoutPlanDay, WorkoutPlanDayExercise } from "@/types/workout";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
@@ -836,6 +837,109 @@ export function deleteDietMealItem(
     method: "DELETE",
     accessToken,
   });
+}
+
+export type WorkoutPlanDayInput = {
+  title?: string;
+  weekday?: Weekday;
+};
+
+export type WorkoutPlanDayExerciseInput = {
+  exerciseId?: string;
+  name: string;
+  nameDe?: string;
+  sets: string;
+};
+
+export function getExercises(accessToken: string) {
+  return apiRequest<Exercise[]>("/api/myplan/workout/exercises", { accessToken });
+}
+
+export function getWorkoutPlan(accessToken: string) {
+  return apiRequest<WorkoutPlanDay[]>("/api/myplan/workout/plan", { accessToken });
+}
+
+export function addWorkoutPlanDay(input: WorkoutPlanDayInput, accessToken: string) {
+  return apiRequest<WorkoutPlanDay>("/api/myplan/workout/plan/days", {
+    method: "POST",
+    body: input,
+    accessToken,
+  });
+}
+
+export function updateWorkoutPlanDay(
+  dayId: string,
+  input: { title: string; weekday?: Weekday },
+  accessToken: string,
+) {
+  return apiRequest<WorkoutPlanDay>(`/api/myplan/workout/plan/days/${dayId}`, {
+    method: "PATCH",
+    body: input,
+    accessToken,
+  });
+}
+
+export function deleteWorkoutPlanDay(dayId: string, accessToken: string) {
+  return apiRequest<void>(`/api/myplan/workout/plan/days/${dayId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
+export function reorderWorkoutPlanDays(
+  orderedDayIds: string[],
+  accessToken: string,
+) {
+  return apiRequest<WorkoutPlanDay[]>("/api/myplan/workout/plan/days/reorder", {
+    method: "PATCH",
+    body: { orderedDayIds },
+    accessToken,
+  });
+}
+
+export function addWorkoutPlanDayExercise(
+  dayId: string,
+  input: WorkoutPlanDayExerciseInput,
+  accessToken: string,
+) {
+  return apiRequest<WorkoutPlanDayExercise>(
+    `/api/myplan/workout/plan/days/${dayId}/exercises`,
+    {
+      method: "POST",
+      body: input,
+      accessToken,
+    },
+  );
+}
+
+export function updateWorkoutPlanDayExercise(
+  dayId: string,
+  itemId: string,
+  input: Omit<WorkoutPlanDayExerciseInput, "exerciseId" | "nameDe">,
+  accessToken: string,
+) {
+  return apiRequest<WorkoutPlanDayExercise>(
+    `/api/myplan/workout/plan/days/${dayId}/exercises/${itemId}`,
+    {
+      method: "PATCH",
+      body: input,
+      accessToken,
+    },
+  );
+}
+
+export function deleteWorkoutPlanDayExercise(
+  dayId: string,
+  itemId: string,
+  accessToken: string,
+) {
+  return apiRequest<void>(
+    `/api/myplan/workout/plan/days/${dayId}/exercises/${itemId}`,
+    {
+      method: "DELETE",
+      accessToken,
+    },
+  );
 }
 
 export type SubmitMacroCheckInput = {

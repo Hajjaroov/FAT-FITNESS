@@ -295,8 +295,10 @@ export function MyPlanView() {
       <section className="site-divider mt-10 border-t pt-8">
         <h2 className="text-2xl font-semibold tracking-normal">{copy.workout.title}</h2>
         <p className="site-muted mt-3 max-w-2xl text-sm leading-7">{copy.workout.summary}</p>
-        <p className="site-subtle mt-4 text-sm font-semibold uppercase tracking-wide">
-          {copy.workout.comingSoonLabel}
+        <p className="mt-4">
+          <Link href="/myplan/workout" className="site-text-link text-sm">
+            {copy.workout.linkLabel}
+          </Link>
         </p>
       </section>
 

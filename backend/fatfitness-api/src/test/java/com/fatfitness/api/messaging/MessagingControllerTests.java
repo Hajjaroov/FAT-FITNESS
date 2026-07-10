@@ -167,6 +167,12 @@ class MessagingControllerTests {
 				.andReturn();
 		String conversationId = JsonPath.read(start.getResponse().getContentAsString(), "$.conversationId");
 
+		// Unread is "sent_at strictly after my last_read_at". Starting the
+		// conversation stamps the sender read; on a fast run the reply below can
+		// land in the same clock millisecond, making the timestamps tie and the
+		// reply read — flaking the count assertion. Force strict ordering.
+		Thread.sleep(5);
+
 		// Recipient replies.
 		mockMvc.perform(post("/api/messages/{id}/reply", conversationId)
 						.header("Authorization", "Bearer " + recipientToken)

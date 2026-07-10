@@ -569,14 +569,23 @@ Implemented endpoints, all under `/api/myplan/diet/**` (inherits the existing bl
 
 API areas: `foods` (shared), `diet_meals` + `diet_meal_items` (private), `food_macro_checks` (moderator review queue, mirrors `forum_post_reports`' `ForumReportStatus` pattern rather than extending the existing moderation system). See `docs/database-notes.md` for the full schema and `docs/dev-agent-plan.md` for the full design rationale (including the rejected fully-autonomous-AI-moderator idea in favor of a lightweight "look this up" web-search link for human moderators).
 
-**Phase 3 — Workout (`/myplan/workout`) — design approved 2026-07-08, not yet built**
+**Phase 3 — Workout (`/myplan/workout`) — COMPLETE (V15)**
 
-Planning discussion held; scoped and ready to build next session, but no endpoints exist yet.
+A pure **plan maker, not a log** (no dates, no done-marks, no session tracking — the owner cut the originally built weekly done/not-done toggle after seeing it). One weekly plan per user (not several), as up to 8 ordered blocks, each with a title ("Upper A", "Warm-Up Protocol") and an **optional day of the week** (`weekday`: `MONDAY`–`SUNDAY` or null for a block that isn't pinned to a day, rendered localized — Monday/Montag — like the rest of the UI). Each block holds exercise line-items: a catalog-linked name plus a **free-text `sets` field** ("3 x 8-10", "2 minutes" — same representation as the Journal training pages). The shared `exercises` catalog starts **empty** and grows only from user-added custom entries, exactly like `foods`: open add (auto-created when adding a custom-named exercise to a day, deduplicated by case-insensitive name), edit/delete moderator-only, optional German `nameDe`. Owner-curated seeding (photos from the Journal) stays deferred — see `docs/dev-agent-plan.md`.
 
-- Exercise library (`exercises`): shared catalog, starts **empty** and grows only from user-added custom entries — same open-add/moderator-edit-delete pattern as `foods`. Owner-curated seeding (with photos from the Journal) is deliberately deferred until the dev DB is stable enough not to need another wipe; see `docs/dev-agent-plan.md`.
-- Weekly plan (`workout_plan_days` + `workout_plan_day_exercises`): **one plan per user, not several** — same one-resource-per-user shape as weight goals. An ordered, renamable list of days (mirrors `diet_meals`), each holding exercise line-items with sets + either reps or a duration.
-- Session log (`workout_sessions`): marks a planned day done for a given real week (week-based, not individual-set logging); unique per `(user, plan_day, week)`. **No notes/free-text field** — pure done/not-done, matching the Diet feature's own no-per-meal-notes decision.
-- Planned API areas: `exercises` (shared), `workout_plan_days` + `workout_plan_day_exercises` (private), `workout_sessions` (private). See `docs/dev-agent-plan.md` for the full sketch and rationale, and `docs/database-notes.md` for the schema-in-progress.
+Implemented endpoints, all under `/api/myplan/workout/**` (inherits the blanket-authenticated `/api/myplan/**` rule in `SecurityConfig`):
+
+- `GET /api/myplan/workout/exercises` — list the shared exercise catalog (any active user). `ExerciseResponse`: `id`, `name`, `nameDe` (nullable), `photoSrc` (nullable).
+- `PATCH/DELETE /api/myplan/workout/exercises/{id}` — moderator-only (`OWNER`/`ADMIN`/`MODERATOR`), regardless of creator. Deleting an exercise leaves users' plan items intact (their `exerciseId` becomes null; the item keeps its snapshotted name).
+- `GET /api/myplan/workout/plan` — the user's plan blocks (ordered), each with `id`, `title`, `weekday` (nullable), `position`, `exercises`, `updatedAt`.
+- `POST /api/myplan/workout/plan/days` — add a block: `{ "title"?, "weekday"? }` (title defaults to `"Day N"` from max position; unknown weekday values → `400`). `400` when the plan already has 8 blocks.
+- `PATCH /api/myplan/workout/plan/days/{id}` — update: `{ "title", "weekday"? }` — a full replace; omitting `weekday` clears it (the block goes back to floating free of a day).
+- `DELETE /api/myplan/workout/plan/days/{id}` — delete (cascades the block's items).
+- `PATCH /api/myplan/workout/plan/days/reorder` — `{ "orderedDayIds": [...] }`; must match the user's existing blocks exactly, duplicates rejected with `400`.
+- `POST /api/myplan/workout/plan/days/{dayId}/exercises` — add a line item: `{ exerciseId?, name, nameDe?, sets }` (`sets` is required free text, max 120 chars). No `exerciseId` → reuses a catalog exercise by case-insensitive name or creates one (open add).
+- `PATCH/DELETE /api/myplan/workout/plan/days/{dayId}/exercises/{itemId}` — update (`{ name, sets }`) / remove.
+
+See `docs/database-notes.md` for the V15 schema (including the reshape note) and `docs/dev-agent-plan.md` for the design decisions (plan maker not log, one plan per user, empty catalog, deferred seeding).
 
 **Phase 4 — GLP-1 / Medication (`/myplan/glp1`)**
 - Log entries: date, dose, medication name/brand (free text), optional notes
@@ -992,10 +1001,21 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `POST /api/myplan/diet/macro-checks`
 - `GET /api/myplan/diet/macro-checks` (moderator-only)
 - `POST /api/myplan/diet/macro-checks/{id}/resolve` (moderator-only)
+- `GET /api/myplan/workout/exercises`
+- `PATCH /api/myplan/workout/exercises/{id}` (moderator-only)
+- `DELETE /api/myplan/workout/exercises/{id}` (moderator-only)
+- `GET /api/myplan/workout/plan`
+- `POST /api/myplan/workout/plan/days`
+- `PATCH /api/myplan/workout/plan/days/{id}`
+- `DELETE /api/myplan/workout/plan/days/{id}`
+- `PATCH /api/myplan/workout/plan/days/reorder`
+- `POST /api/myplan/workout/plan/days/{dayId}/exercises`
+- `PATCH /api/myplan/workout/plan/days/{dayId}/exercises/{itemId}`
+- `DELETE /api/myplan/workout/plan/days/{dayId}/exercises/{itemId}`
 
 Next slices:
 
-- `/myplan` Phase 3 (Workout), Phase 4 (GLP-1) — not yet approved.
+- `/myplan` Phase 4 (GLP-1) — needs its own planning discussion first.
 - Content work (Learn pages) — owner-driven, deferred until web platform is feature-complete.
 
 Planned registration shape when auth is approved:
