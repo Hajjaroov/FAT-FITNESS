@@ -63,6 +63,7 @@ import type {
   FoodMacroCheckStatus,
 } from "@/types/diet";
 import type { Exercise, Weekday, WorkoutPlanDay, WorkoutPlanDayExercise } from "@/types/workout";
+import type { MedicationLogEntry } from "@/types/glp1";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
@@ -709,6 +710,46 @@ export function addWeightEntry(
   return apiRequest<WeightEntry>("/api/myplan/weight/entries", {
     method: "POST",
     body: { entryDate, weightKg },
+    accessToken,
+  });
+}
+
+export type MedicationLogEntryInput = {
+  entryDate: string;
+  doseMg: number;
+  notes?: string;
+};
+
+export function getMedicationLogEntries(accessToken: string) {
+  return apiRequest<MedicationLogEntry[]>("/api/myplan/glp1/entries", { accessToken });
+}
+
+export function addMedicationLogEntry(
+  input: MedicationLogEntryInput,
+  accessToken: string,
+) {
+  return apiRequest<MedicationLogEntry>("/api/myplan/glp1/entries", {
+    method: "POST",
+    body: input,
+    accessToken,
+  });
+}
+
+export function updateMedicationLogEntry(
+  entryId: string,
+  input: MedicationLogEntryInput,
+  accessToken: string,
+) {
+  return apiRequest<MedicationLogEntry>(`/api/myplan/glp1/entries/${entryId}`, {
+    method: "PATCH",
+    body: input,
+    accessToken,
+  });
+}
+
+export function deleteMedicationLogEntry(entryId: string, accessToken: string) {
+  return apiRequest<void>(`/api/myplan/glp1/entries/${entryId}`, {
+    method: "DELETE",
     accessToken,
   });
 }

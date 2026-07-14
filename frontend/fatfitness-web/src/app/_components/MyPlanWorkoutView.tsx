@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageShell } from "@/app/_components/PageShell";
 import { ExerciseCombobox } from "@/app/_components/ExerciseCombobox";
+import { IconChevronDown, IconChevronUp, IconPencil, IconPlus, IconXMark } from "@/app/_components/icons";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { myPlanCopy } from "@/content/myplan";
@@ -27,7 +28,7 @@ import type {
   WorkoutPlanDayExercise,
 } from "@/types/workout";
 
-const MAX_PLAN_DAYS = 8;
+const MAX_PLAN_DAYS = 50;
 
 const WEEKDAY_ORDER: Weekday[] = [
   "MONDAY",
@@ -38,50 +39,6 @@ const WEEKDAY_ORDER: Weekday[] = [
   "SATURDAY",
   "SUNDAY",
 ];
-
-function IconPlus() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 shrink-0" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
-  );
-}
-
-function IconPencil() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 shrink-0" aria-hidden="true">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"
-      />
-    </svg>
-  );
-}
-
-function IconXMark() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 shrink-0" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-    </svg>
-  );
-}
-
-function IconChevronUp() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 shrink-0" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-    </svg>
-  );
-}
-
-function IconChevronDown() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 shrink-0" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-    </svg>
-  );
-}
 
 // A plan item shows the shared catalog's German name when the UI is German
 // and the item is still linked to a catalog entry; otherwise the snapshotted
@@ -433,7 +390,7 @@ function WorkoutDayCard({
   const [weekdayInput, setWeekdayInput] = useState<Weekday | "">(day.weekday ?? "");
 
   return (
-    <article className="site-card p-5 sm:p-6">
+    <article className="rounded-xl border border-(--color-border) p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           {isEditing ? (
@@ -529,7 +486,7 @@ function WorkoutDayCard({
             type="button"
             onClick={onDelete}
             aria-label={copy.deleteDayLabel}
-            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-red-500/30 bg-red-600 text-white transition hover:bg-red-700"
+            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong)"
           >
             <IconXMark />
           </button>
@@ -796,7 +753,7 @@ function AddExerciseToDayRow({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-(--color-border) p-4 text-sm font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-(--color-border) bg-background p-4 text-sm font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
       >
         <IconPlus />
         {copy.addExerciseLabel}
@@ -807,7 +764,7 @@ function AddExerciseToDayRow({
   return (
     <form
       onSubmit={(e) => void handleSubmit(e)}
-      className="rounded-xl border border-dashed border-(--color-border) p-4"
+      className="rounded-xl border border-dashed border-(--color-border) bg-background p-4"
     >
       <p className="site-subtle text-xs font-bold uppercase tracking-[0.14em]">
         {copy.addExerciseLabel}

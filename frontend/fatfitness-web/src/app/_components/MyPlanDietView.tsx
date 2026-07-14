@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageShell } from "@/app/_components/PageShell";
 import { FoodCombobox } from "@/app/_components/FoodCombobox";
+import { IconFlag, IconPencil, IconPlus, IconXMark, IconChevronDown, IconChevronUp } from "@/app/_components/icons";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { myPlanCopy } from "@/content/myplan";
@@ -246,8 +247,9 @@ export function MyPlanDietView() {
             type="button"
             disabled={isAddingMeal}
             onClick={() => void handleAddMeal()}
-            className="min-h-11 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+            className="flex min-h-11 items-center gap-2 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
           >
+            <IconPlus />
             {copy.diet.addMealLabel}
           </button>
         </div>
@@ -321,7 +323,7 @@ function DietMealCard({
   const subtotal = mealTotals(meal);
 
   return (
-    <article className="site-card p-5 sm:p-6">
+    <article className="rounded-xl border border-(--color-border) p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           {isRenaming ? (
@@ -375,33 +377,37 @@ function DietMealCard({
             type="button"
             disabled={isFirst}
             onClick={() => onMove(-1)}
-            className="min-h-9 rounded-xl border border-(--color-border) bg-background px-3 text-xs font-semibold text-foreground transition hover:border-(--color-border-strong) disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={copy.moveUpLabel}
+            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong) disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {copy.moveUpLabel}
+            <IconChevronUp />
           </button>
           <button
             type="button"
             disabled={isLast}
             onClick={() => onMove(1)}
-            className="min-h-9 rounded-xl border border-(--color-border) bg-background px-3 text-xs font-semibold text-foreground transition hover:border-(--color-border-strong) disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={copy.moveDownLabel}
+            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong) disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {copy.moveDownLabel}
+            <IconChevronDown />
           </button>
           {!isRenaming ? (
             <button
               type="button"
               onClick={() => setIsRenaming(true)}
-              className="min-h-9 rounded-xl border border-(--color-border) bg-background px-3 text-xs font-semibold text-foreground transition hover:border-(--color-border-strong)"
+              aria-label={copy.renameMealLabel}
+              className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong)"
             >
-              {copy.renameMealLabel}
+              <IconPencil />
             </button>
           ) : null}
           <button
             type="button"
             onClick={onDelete}
-            className="min-h-9 rounded-xl border border-red-500/30 bg-red-600 px-3 text-xs font-semibold text-white transition hover:bg-red-700"
+            aria-label={copy.deleteMealLabel}
+            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong)"
           >
-            {copy.deleteMealLabel}
+            <IconXMark />
           </button>
         </div>
       </div>
@@ -500,7 +506,7 @@ function DietMealItemRow({
   }
 
   return (
-    <div className="rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
+    <div className="rounded-xl border border-(--color-border) px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold">{item.name}</p>
@@ -517,7 +523,7 @@ function DietMealItemRow({
               <input
                 id={`qty-${item.id}`}
                 type="number"
-                step="0.1"
+                step="0.01"
                 min="0.01"
                 value={quantityInput}
                 onChange={(e) => setQuantityInput(e.target.value)}
@@ -530,31 +536,44 @@ function DietMealItemRow({
               >
                 {copy.saveLabel}
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuantityInput(String(item.quantity));
+                  setIsEditing(false);
+                }}
+                className="min-h-9 rounded-xl border border-(--color-border) bg-background px-3 text-xs font-semibold text-foreground transition hover:border-(--color-border-strong)"
+              >
+                {copy.cancelLabel}
+              </button>
             </>
           ) : (
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="min-h-9 rounded-xl border border-(--color-border) bg-background px-3 text-xs font-semibold text-foreground transition hover:border-(--color-border-strong)"
+              aria-label={copy.editLabel}
+              className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong)"
             >
-              {copy.editLabel}
+              <IconPencil />
             </button>
           )}
           {linkedFood ? (
             <button
               type="button"
               onClick={() => setIsFlagging(true)}
-              className="min-h-9 rounded-xl border border-amber-500/30 bg-amber-100 px-3 text-xs font-semibold text-amber-900 transition hover:bg-amber-200 dark:bg-amber-500/15 dark:text-amber-200"
+              aria-label={copy.flagLabel}
+              className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-100 text-amber-900 transition hover:bg-amber-200 dark:bg-amber-500/15 dark:text-amber-200"
             >
-              {copy.flagLabel}
+              <IconFlag />
             </button>
           ) : null}
           <button
             type="button"
             onClick={() => void handleDelete()}
-            className="min-h-9 rounded-xl border border-red-500/30 bg-red-600 px-3 text-xs font-semibold text-white transition hover:bg-red-700"
+            aria-label={copy.deleteLabel}
+            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-(--color-border) bg-background text-foreground transition hover:border-(--color-border-strong)"
           >
-            {copy.deleteLabel}
+            <IconXMark />
           </button>
         </div>
       </div>
@@ -587,6 +606,7 @@ function AddFoodToMealRow({
   onAdded: (item: DietMealItem) => void;
   onFoodsRefetchNeeded: () => Promise<void>;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [nameDe, setNameDe] = useState("");
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
@@ -674,8 +694,21 @@ function AddFoodToMealRow({
     }
   }
 
+  if (!isOpen) {
+    return (
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-(--color-border) bg-background p-4 text-sm font-semibold text-(--color-muted) transition hover:border-(--color-border-strong) hover:text-foreground"
+      >
+        <IconPlus />
+        {copy.addFoodLabel}
+      </button>
+    );
+  }
+
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="rounded-xl border border-dashed border-(--color-border) p-4">
+    <form onSubmit={(e) => void handleSubmit(e)} className="rounded-xl border border-dashed border-(--color-border) bg-background p-4">
       <p className="site-subtle text-xs font-bold uppercase tracking-[0.14em]">{copy.addFoodLabel}</p>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -734,7 +767,7 @@ function AddFoodToMealRow({
           <input
             id={`qty-new-${mealId}`}
             type="number"
-            step="0.1"
+            step="0.01"
             min="0.01"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
@@ -811,13 +844,25 @@ function AddFoodToMealRow({
 
       {error ? <p className="mt-3 text-xs text-red-800 dark:text-red-300">{error}</p> : null}
 
-      <button
-        type="submit"
-        disabled={isSaving}
-        className="mt-4 min-h-10 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
-      >
-        {isSaving ? copy.savingLabel : copy.addFoodLabel}
-      </button>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="min-h-10 rounded-xl border border-(--color-border) bg-foreground px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+        >
+          {isSaving ? copy.savingLabel : copy.addFoodLabel}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            resetForm();
+            setIsOpen(false);
+          }}
+          className="min-h-10 rounded-xl border border-(--color-border) bg-background px-5 text-sm font-semibold text-foreground transition hover:border-(--color-border-strong)"
+        >
+          {copy.cancelLabel}
+        </button>
+      </div>
     </form>
   );
 }

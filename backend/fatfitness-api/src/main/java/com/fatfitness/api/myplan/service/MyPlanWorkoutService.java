@@ -37,9 +37,10 @@ public class MyPlanWorkoutService {
 
 	private static final Set<UserRole> MODERATOR_ROLES = Set.of(UserRole.OWNER, UserRole.ADMIN, UserRole.MODERATOR);
 
-	// Seven weekday blocks plus one weekday-less block (e.g. a warm-up protocol
-	// that applies to every session).
-	private static final int MAX_PLAN_DAYS = 8;
+	// Not a real usage ceiling (a plan isn't limited to one block per weekday —
+	// two sessions a day, plus standing blocks like warm-up/cardio/stretching,
+	// easily exceeds 7) — just a generous backstop against a runaway client.
+	private static final int MAX_PLAN_DAYS = 50;
 
 	private final UserAccountRepository userAccountRepository;
 	private final ExerciseRepository exerciseRepository;

@@ -490,7 +490,7 @@ A conversation is unread for a participant when the latest message is newer than
 
 Not all of these should be built now.
 
-### `/myplan` — Personal Tracking Hub (Phase 1 COMPLETE)
+### `/myplan` — Personal Tracking Hub (Phases 1–3 COMPLETE)
 
 Private endpoints — all require a valid bearer token for an active account. Grouped under `/api/myplan/**` (authenticated in `SecurityConfig`).
 
@@ -578,7 +578,7 @@ Implemented endpoints, all under `/api/myplan/workout/**` (inherits the blanket-
 - `GET /api/myplan/workout/exercises` — list the shared exercise catalog (any active user). `ExerciseResponse`: `id`, `name`, `nameDe` (nullable), `photoSrc` (nullable).
 - `PATCH/DELETE /api/myplan/workout/exercises/{id}` — moderator-only (`OWNER`/`ADMIN`/`MODERATOR`), regardless of creator. Deleting an exercise leaves users' plan items intact (their `exerciseId` becomes null; the item keeps its snapshotted name).
 - `GET /api/myplan/workout/plan` — the user's plan blocks (ordered), each with `id`, `title`, `weekday` (nullable), `position`, `exercises`, `updatedAt`.
-- `POST /api/myplan/workout/plan/days` — add a block: `{ "title"?, "weekday"? }` (title defaults to `"Day N"` from max position; unknown weekday values → `400`). `400` when the plan already has 8 blocks.
+- `POST /api/myplan/workout/plan/days` — add a block: `{ "title"?, "weekday"? }` (title defaults to `"Day N"` from max position; unknown weekday values → `400`). `400` when the plan already has 50 blocks (a generous abuse-guard, not a real usage ceiling).
 - `PATCH /api/myplan/workout/plan/days/{id}` — update: `{ "title", "weekday"? }` — a full replace; omitting `weekday` clears it (the block goes back to floating free of a day).
 - `DELETE /api/myplan/workout/plan/days/{id}` — delete (cascades the block's items).
 - `PATCH /api/myplan/workout/plan/days/reorder` — `{ "orderedDayIds": [...] }`; must match the user's existing blocks exactly, duplicates rejected with `400`.
@@ -587,10 +587,23 @@ Implemented endpoints, all under `/api/myplan/workout/**` (inherits the blanket-
 
 See `docs/database-notes.md` for the V15 schema (including the reshape note) and `docs/dev-agent-plan.md` for the design decisions (plan maker not log, one plan per user, empty catalog, deferred seeding).
 
-**Phase 4 — GLP-1 / Medication (`/myplan/glp1`)**
-- Log entries: date, dose, medication name/brand (free text), optional notes
-- Timeline view, no medical advice or dosing suggestions
-- API areas: `user_medication_log`
+**Phase 4 — GLP-1 / Medication (`/myplan/glp1`) — COMPLETE (V16)**
+
+A private medication log connected to the Weight feature rather than duplicating it. An entry is just **date + dose (mg) + optional notes** — no medication-name field (dropped after being sketched as free text; the page itself is already scoped to "the GLP-1 log", so tagging each entry with a drug name was redundant). No medical advice or dosing suggestions anywhere in the copy.
+
+- Optionally logging a weight alongside a dose does **not** store a weight on this feature's own table — it makes an independent call to the existing `POST /api/myplan/weight/entries` for that date (a `409` if one already exists is caught and ignored client-side; the existing value wins). Displaying weight per entry is a live join by date against the fetched weight history, not a stored copy.
+- "Change since start" is computed client-side per entry, never persisted: reference point is `user_weight_goals.start_weight` if set, else the earliest `weight_entries` row, else no reference exists yet (shown as "First entry", not `0 kg`).
+- Multiple entries per date are allowed (no uniqueness constraint, unlike `weight_entries`) — a log entry is an event, not a single daily measurement.
+- Fully private, no shared/catalog concept, no moderation surface (same privacy model as `weight_entries`/`diet_meals`).
+
+Implemented endpoints, all under `/api/myplan/glp1/**` (inherits the blanket-authenticated `/api/myplan/**` rule in `SecurityConfig`):
+
+- `GET /api/myplan/glp1/entries` — the user's entries, oldest-first (chronological, normal reading order for a dated log). `MedicationLogEntryResponse`: `id`, `entryDate`, `doseMg`, `notes` (nullable), `updatedAt`.
+- `POST /api/myplan/glp1/entries` — add an entry: `{ entryDate, doseMg, notes? }`.
+- `PATCH /api/myplan/glp1/entries/{id}` — full replace of the same fields.
+- `DELETE /api/myplan/glp1/entries/{id}` — remove.
+
+See `docs/database-notes.md` for the V16 schema and `docs/dev-agent-plan.md` for the full design discussion (weight-connection architecture, the "change since start" fallback chain, and the dropped medication-name field).
 
 ### Public Content
 
@@ -1012,10 +1025,14 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `POST /api/myplan/workout/plan/days/{dayId}/exercises`
 - `PATCH /api/myplan/workout/plan/days/{dayId}/exercises/{itemId}`
 - `DELETE /api/myplan/workout/plan/days/{dayId}/exercises/{itemId}`
+- `GET /api/myplan/glp1/entries`
+- `POST /api/myplan/glp1/entries`
+- `PATCH /api/myplan/glp1/entries/{id}`
+- `DELETE /api/myplan/glp1/entries/{id}`
 
 Next slices:
 
-- `/myplan` Phase 4 (GLP-1) — needs its own planning discussion first.
+- `/myplan` is fully built (Phases 1–4). Next roadmap step is PWA (see `docs/dev-agent-plan.md`, "Product Direction").
 - Content work (Learn pages) — owner-driven, deferred until web platform is feature-complete.
 
 Planned registration shape when auth is approved:

@@ -21,9 +21,18 @@ type MyPlanWeightChartProps = {
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function formatDateTick(date: string) {
-  const [year, month, day] = date.split("-");
-  return `${parseInt(day, 10)} ${MONTHS[parseInt(month, 10) - 1]} '${year.slice(2)}`;
+// entryDate is a plain "yyyy-MM-dd" string with no time zone of its own; parse
+// it as a UTC calendar date (Date.UTC, not `new Date(string)`) and format it
+// back out with the matching UTC getters, so the displayed day never shifts
+// depending on the viewer's local time zone.
+function toUtcTimestamp(entryDate: string) {
+  const [year, month, day] = entryDate.split("-").map((part) => parseInt(part, 10));
+  return Date.UTC(year, month - 1, day);
+}
+
+function formatDateTickFromTimestamp(timestamp: number) {
+  const d = new Date(timestamp);
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} '${String(d.getUTCFullYear()).slice(2)}`;
 }
 
 export function MyPlanWeightChart({
@@ -37,7 +46,7 @@ export function MyPlanWeightChart({
   const yMax = Math.max(startWeight, goalWeight, ...entryWeights);
   const yDomain: [number, number] = [yMin, yMax];
 
-  const data = entries.map((e) => ({ date: e.entryDate, weight: e.weightKg }));
+  const data = entries.map((e) => ({ dateValue: toUtcTimestamp(e.entryDate), weight: e.weightKg }));
   const hasLine = entries.length >= 2;
 
   const cartesianGrid = (
@@ -64,7 +73,7 @@ export function MyPlanWeightChart({
         boxShadow: "var(--shadow-card)",
       }}
       formatter={(value) => [`${value} kg`, tooltipLabel]}
-      labelFormatter={(date) => formatDateTick(date as string)}
+      labelFormatter={(value) => formatDateTickFromTimestamp(value as number)}
     />
   );
   const goalLine = (
@@ -96,8 +105,11 @@ export function MyPlanWeightChart({
           <LineChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: 4 }}>
             {cartesianGrid}
             <XAxis
-              dataKey="date"
-              tickFormatter={formatDateTick}
+              dataKey="dateValue"
+              type="number"
+              domain={["auto", "auto"]}
+              scale="time"
+              tickFormatter={formatDateTickFromTimestamp}
               padding={{ right: 20 }}
               tick={{ fontSize: 10, fill: "var(--color-subtle)", textAnchor: "end" }}
               angle={-35}
@@ -119,8 +131,11 @@ export function MyPlanWeightChart({
           <LineChart data={data} margin={{ top: 8, right: 24, bottom: 4, left: 4 }}>
             {cartesianGrid}
             <XAxis
-              dataKey="date"
-              tickFormatter={formatDateTick}
+              dataKey="dateValue"
+              type="number"
+              domain={["auto", "auto"]}
+              scale="time"
+              tickFormatter={formatDateTickFromTimestamp}
               padding={{ right: 60 }}
               tick={{ fontSize: 11, fill: "var(--color-subtle)" }}
               tickLine={false}

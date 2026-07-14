@@ -142,7 +142,31 @@ type MyPlanCopy = {
     title: string;
     summary: string;
     linkLabel: string;
-    comingSoonLabel: string;
+    pageEyebrow: string;
+    pageIntro: string;
+    myGlp1Title: string;
+    entriesTitle: string;
+    emptyEntriesText: string;
+    addEntryLabel: string;
+    dateLabel: string;
+    doseLabel: string;
+    doseUnit: string;
+    weightLabel: string;
+    weightHint: string;
+    notesLabel: string;
+    notesPlaceholder: string;
+    changeLabel: string;
+    firstEntryLabel: string;
+    saveLabel: string;
+    savingLabel: string;
+    cancelLabel: string;
+    editLabel: string;
+    deleteLabel: string;
+    deleteEntryConfirm: string;
+    loadError: string;
+    addError: string;
+    updateError: string;
+    deleteError: string;
   };
 };
 
@@ -250,7 +274,7 @@ export const myPlanCopy = {
       myWorkoutTitle: "My Workout",
       addDayLabel: "Add a day",
       addDayTitlePlaceholder: "e.g. Upper A or Warm-Up Protocol",
-      maxDaysHint: "A weekly plan can have up to 8 blocks.",
+      maxDaysHint: "A weekly plan can have up to 50 blocks.",
       weekdayLabel: "Day of the week",
       noWeekdayOption: "No specific day",
       weekdays: {
@@ -299,9 +323,35 @@ export const myPlanCopy = {
     glp1: {
       title: "GLP-1 / Medication",
       summary:
-        "Log your injection dates, doses, and personal notes. A private timeline — no medical advice, just your own record. Coming in a future update.",
+        "Log your injection dates, doses, and personal notes. A private timeline — no medical advice, just your own record.",
       linkLabel: "Open GLP-1 Log",
-      comingSoonLabel: "Coming soon",
+      pageEyebrow: "Personal tracking",
+      pageIntro:
+        "A private log of your injections — date, dose, and an optional note. Not medical advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional. If you log a weight alongside a dose, it also becomes part of your weight history on the Weight section above.",
+      myGlp1Title: "My GLP-1 Log",
+      entriesTitle: "Logged Entries",
+      emptyEntriesText: "No entries yet. Log your first dose below if you'd like to track it.",
+      addEntryLabel: "Add entry",
+      dateLabel: "Date",
+      doseLabel: "Dose",
+      doseUnit: "mg",
+      weightLabel: "Weight (kg, optional)",
+      weightHint:
+        "If you weigh yourself on injection day, add it here — it's saved to your weight history too, unless you've already logged a weight for this date.",
+      notesLabel: "Notes (optional)",
+      notesPlaceholder: "e.g. injection site, how you felt",
+      changeLabel: "Change",
+      firstEntryLabel: "First entry",
+      saveLabel: "Save",
+      savingLabel: "Saving...",
+      cancelLabel: "Cancel",
+      editLabel: "Edit",
+      deleteLabel: "Delete",
+      deleteEntryConfirm: "Delete this entry?",
+      loadError: "Could not load your GLP-1 log. Please try again.",
+      addError: "Could not add this entry. Please try again.",
+      updateError: "Could not save changes. Please try again.",
+      deleteError: "Could not delete this entry. Please try again.",
     },
   },
   de: {
@@ -409,7 +459,7 @@ export const myPlanCopy = {
       myWorkoutTitle: "Mein Training",
       addDayLabel: "Tag hinzufügen",
       addDayTitlePlaceholder: "z. B. Oberkörper A oder Aufwärmprogramm",
-      maxDaysHint: "Ein Wochenplan kann bis zu 8 Blöcke haben.",
+      maxDaysHint: "Ein Wochenplan kann bis zu 50 Blöcke haben.",
       weekdayLabel: "Wochentag",
       noWeekdayOption: "Kein fester Tag",
       weekdays: {
@@ -459,9 +509,36 @@ export const myPlanCopy = {
     glp1: {
       title: "GLP-1 / Medikamente",
       summary:
-        "Dokumentiere deine Injektionsdaten, Dosen und persönliche Notizen. Eine private Zeitlinie — keine medizinische Beratung, nur deine eigene Aufzeichnung. Kommt in einem zukünftigen Update.",
+        "Dokumentiere deine Injektionsdaten, Dosen und persönliche Notizen. Eine private Zeitlinie — keine medizinische Beratung, nur deine eigene Aufzeichnung.",
       linkLabel: "GLP-1-Tagebuch öffnen",
-      comingSoonLabel: "Demnächst verfügbar",
+      pageEyebrow: "Persönliches Tracking",
+      pageIntro:
+        "Ein privates Protokoll deiner Injektionen — Datum, Dosis und eine optionale Notiz. Keine medizinische Beratung, keine Dosierungsanleitung und kein Vorbild für andere — medizinische Entscheidungen gehören in die Hände einer qualifizierten Fachperson. Wenn du zusammen mit einer Dosis ein Gewicht einträgst, wird es auch Teil deines Gewichtsverlaufs im Bereich Gewicht oben.",
+      myGlp1Title: "Mein GLP-1-Tagebuch",
+      entriesTitle: "Erfasste Einträge",
+      emptyEntriesText:
+        "Noch keine Einträge. Erfasse unten deine erste Dosis, falls du sie verfolgen möchtest.",
+      addEntryLabel: "Eintrag hinzufügen",
+      dateLabel: "Datum",
+      doseLabel: "Dosis",
+      doseUnit: "mg",
+      weightLabel: "Gewicht (kg, optional)",
+      weightHint:
+        "Falls du dich am Injektionstag wiegst, trage es hier ein — es wird auch in deinem Gewichtsverlauf gespeichert, außer für dieses Datum ist bereits ein Gewicht erfasst.",
+      notesLabel: "Notizen (optional)",
+      notesPlaceholder: "z. B. Injektionsstelle, wie du dich gefühlt hast",
+      changeLabel: "Veränderung",
+      firstEntryLabel: "Erster Eintrag",
+      saveLabel: "Speichern",
+      savingLabel: "Wird gespeichert...",
+      cancelLabel: "Abbrechen",
+      editLabel: "Bearbeiten",
+      deleteLabel: "Löschen",
+      deleteEntryConfirm: "Diesen Eintrag löschen?",
+      loadError: "Dein GLP-1-Tagebuch konnte nicht geladen werden. Bitte versuche es erneut.",
+      addError: "Eintrag konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
+      updateError: "Änderungen konnten nicht gespeichert werden. Bitte versuche es erneut.",
+      deleteError: "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut.",
     },
   },
 } satisfies Record<Locale, MyPlanCopy>;

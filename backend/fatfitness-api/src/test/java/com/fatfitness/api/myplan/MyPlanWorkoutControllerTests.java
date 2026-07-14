@@ -202,10 +202,10 @@ class MyPlanWorkoutControllerTests {
 	}
 
 	@Test
-	void addDayRejectsMoreThanEightBlocks() throws Exception {
+	void addDayRejectsMoreThanFiftyBlocks() throws Exception {
 		String token = registerVerifyAndLogin("workout-day-limit@example.com");
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 50; i++) {
 			addDay(token, null, null);
 		}
 
