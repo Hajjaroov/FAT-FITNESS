@@ -144,13 +144,16 @@ public class EmailService {
 		}
 	}
 
-	private static String buildBroadcastAnnouncementHtml(String recipientDisplayName,
-			String senderDisplayName, String subject, String body) {
-		String escapedBody = body
+	static String escapeHtml(String value) {
+		return value
 				.replace("&", "&amp;")
 				.replace("<", "&lt;")
-				.replace(">", "&gt;")
-				.replace("\n", "<br>");
+				.replace(">", "&gt;");
+	}
+
+	private static String buildBroadcastAnnouncementHtml(String recipientDisplayName,
+			String senderDisplayName, String subject, String body) {
+		String escapedBody = escapeHtml(body).replace("\n", "<br>");
 		return """
 				<!DOCTYPE html>
 				<html lang="en">
@@ -177,7 +180,7 @@ public class EmailService {
 				""".formatted(subject, senderDisplayName, recipientDisplayName, escapedBody);
 	}
 
-	private static String buildVerificationHtml(String displayName, String link) {
+	static String buildVerificationHtml(String displayName, String link) {
 		return """
 				<!DOCTYPE html>
 				<html lang="en">
@@ -204,10 +207,10 @@ public class EmailService {
 				  </div>
 				</body>
 				</html>
-				""".formatted(displayName, link);
+				""".formatted(escapeHtml(displayName), link);
 	}
 
-	private static String buildPasswordResetHtml(String displayName, String link) {
+	static String buildPasswordResetHtml(String displayName, String link) {
 		return """
 				<!DOCTYPE html>
 				<html lang="en">
@@ -234,10 +237,10 @@ public class EmailService {
 				  </div>
 				</body>
 				</html>
-				""".formatted(displayName, link);
+				""".formatted(escapeHtml(displayName), link);
 	}
 
-	private static String buildNewMessageHtml(String recipientDisplayName, String senderDisplayName,
+	static String buildNewMessageHtml(String recipientDisplayName, String senderDisplayName,
 			String subject, String link) {
 		return """
 				<!DOCTYPE html>
@@ -265,7 +268,7 @@ public class EmailService {
 				  </div>
 				</body>
 				</html>
-				""".formatted(recipientDisplayName, senderDisplayName, subject, link);
+				""".formatted(escapeHtml(recipientDisplayName), escapeHtml(senderDisplayName), escapeHtml(subject), link);
 	}
 
 	private record ResendRequest(String from, String to, String subject, String html) {}

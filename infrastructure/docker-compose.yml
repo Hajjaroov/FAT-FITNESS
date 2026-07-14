@@ -7,8 +7,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: fitness_db
-      POSTGRES_USER: fitness_user
-      POSTGRES_PASSWORD: fitness_password
+      POSTGRES_USER: ${FATFITNESS_DB_USERNAME:?Set FATFITNESS_DB_USERNAME in infrastructure/.env}
+      POSTGRES_PASSWORD: ${FATFITNESS_DB_PASSWORD:?Set FATFITNESS_DB_PASSWORD in infrastructure/.env}
     ports:
       - "5432:5432"
     volumes:

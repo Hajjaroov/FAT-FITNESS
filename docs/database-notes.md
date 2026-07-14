@@ -7,12 +7,13 @@ Local development uses PostgreSQL through Docker Compose:
 - Service: `postgres`
 - Container: `fitness_postgres`
 - Database: `fitness_db`
-- User: `fitness_user`
 - Version: PostgreSQL 18
 
 Compose file:
 
 - `infrastructure/docker-compose.yml`
+
+DB credentials are env-var only (no committed defaults, in either `docker-compose.yml` or the backend's `application.yml`) — `FATFITNESS_DB_USERNAME` / `FATFITNESS_DB_PASSWORD`. Copy `infrastructure/.env.example` to `infrastructure/.env` (gitignored) before running `docker compose up` from that directory, and set the same two vars in `backend/fatfitness-api/.env` for the backend to connect. Both must match the credentials already baked into the existing named volume — Postgres only applies `POSTGRES_USER`/`POSTGRES_PASSWORD` on first init of an empty data directory, so changing these values will not change an already-initialized DB role.
 
 Current PostgreSQL 18 volume:
 

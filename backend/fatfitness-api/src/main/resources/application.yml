@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/fitness_db
-    username: fitness_user
-    password: fitness_password
+    username: ${FATFITNESS_DB_USERNAME}
+    password: ${FATFITNESS_DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -25,7 +25,7 @@ fatfitness:
   auth:
     jwt:
       issuer: fatfitness-api
-      secret: ${FATFITNESS_JWT_SECRET:dev-only-change-me-secret-keep-at-least-32-characters}
+      secret: ${FATFITNESS_JWT_SECRET}
       access-token-ttl: PT15M
     refresh-token-ttl: P30D
     rate-limit:
@@ -33,7 +33,7 @@ fatfitness:
     refresh-cookie:
       name: fatfitness_refresh_token
       path: /api/auth
-      secure: ${FATFITNESS_REFRESH_COOKIE_SECURE:false}
+      secure: ${FATFITNESS_REFRESH_COOKIE_SECURE:true}
       same-site: Lax
     owner-seed:
       email: ${FATFITNESS_OWNER_EMAIL:}
