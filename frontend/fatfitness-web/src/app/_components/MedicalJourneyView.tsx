@@ -42,11 +42,11 @@ export function MedicalJourneyView() {
         </h2>
 
         <div className="site-divider mt-6 border-y">
-          <table className="w-full border-collapse text-left text-xs sm:text-sm">
+          <table className="w-full table-fixed border-collapse text-center text-xs sm:text-sm">
             <thead className="site-divider border-b site-subtle">
               <tr>
                 {copy.medical.tableHeaders.map((header) => (
-                  <th key={header} className="py-3 pr-3 font-semibold sm:pr-4">
+                  <th key={header} className="px-3 py-3 font-semibold sm:px-4">
                     {header}
                   </th>
                 ))}
@@ -55,10 +55,10 @@ export function MedicalJourneyView() {
             <tbody className="site-divider divide-y site-muted">
               {copy.medical.loggedEntries.map(([mj, date, weight, change]) => (
                 <tr key={`${mj}-${date}`}>
-                  <td className="py-3 pr-3 sm:pr-4">{mj}</td>
-                  <td className="py-3 pr-3 sm:pr-4">{date}</td>
-                  <td className="py-3 pr-3 sm:pr-4">{weight}</td>
-                  <td className="py-3">{change}</td>
+                  <td className="px-3 py-3 sm:px-4">{mj}</td>
+                  <td className="px-3 py-3 sm:px-4">{date}</td>
+                  <td className="px-3 py-3 sm:px-4">{weight}</td>
+                  <td className="px-3 py-3">{change}</td>
                 </tr>
               ))}
             </tbody>

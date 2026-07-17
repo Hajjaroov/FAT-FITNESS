@@ -275,7 +275,7 @@ export const learnCopy = {
           summary:
             "Personal diet structure, meal ideas, supplements, and what is being learned from the current routine.",
           startsWith: [
-            "Current diet example around 1810 kcal, 182 g protein, 131 g carbs, and 49 g fat.",
+            "Current diet example around 1810 kcal, 187 g protein, 128 g carbs, and 50 g fat.",
             "Meal structure, simple foods, supplements, and product notes.",
             "Later, a tool can help build similar meal structures for selected nutrition targets.",
           ],
@@ -311,25 +311,25 @@ export const learnCopy = {
         "This page documents the current personal diet , it is not a plan everyone should follow.",
       dailyTotals: [
         { label: "Calories", value: "1810 kcal" },
-        { label: "Protein", value: "182 g" },
-        { label: "Carbs", value: "131 g" },
-        { label: "Fat", value: "49 g" },
+        { label: "Protein", value: "187 g" },
+        { label: "Carbs", value: "128 g" },
+        { label: "Fat", value: "50 g" },
+        { label: "Fiber", value: "29.4 g" },
       ],
       mealsTitle: "Meals",
       meals: [
         {
           name: "Shake",
-          summary: "312 kcal | 44 g protein | 16.5 g carbs | 7 g fat",
+          summary: "312 kcal | 44 g protein | 16.5 g carbs | 7 g fat | 0 g fiber",
           items: [
             { label: "30 g whey", detail: "120 kcal | 22.8 g protein | 1.5 g carbs | 2 g fat" },
-            { label: "10 g collagen + vitamin C + zinc", detail: "40 kcal | 10 g protein | 0 g carbs | 0 g fat" },
+            { label: "10 g creatine + 10 g collagen", detail: "40 kcal | 10 g protein | 0 g carbs | 0 g fat" },
             { label: "330 ml lactose-free milk, 1.5 %", detail: "152 kcal | 11.2 g protein | 15 g carbs | 5 g fat" },
-            { label: "10 g creatine", detail: "0 kcal" },
           ],
         },
         {
           name: "Meal 1",
-          summary: "305 kcal | 29 g protein | 7 g carbs | 18 g fat",
+          summary: "305 kcal | 29 g protein | 7 g carbs | 18 g fat | 1 g fiber",
           items: [
             { label: "3 eggs M, boiled", detail: "190 kcal | 17 g protein | 1 g carbs | 13 g fat" },
             { label: "1 tomato, 83 g", detail: "17 kcal | 0.7 g protein | 3.2 g carbs | 0.2 g fat" },
@@ -338,26 +338,28 @@ export const learnCopy = {
         },
         {
           name: "Meal 2",
-          summary: "597 kcal | 54 g protein | 54 g carbs | 12 g fat",
+          summary: "595 kcal | 56.8 g protein | 52.3 g carbs | 12.6 g fat | 14.2 g fiber",
           items: [
             { label: "200 g chicken breast", detail: "240 kcal | 45 g protein | 0 g carbs | 5.2 g fat" },
             { label: "Sauce: mustard, tomato paste, 3.5 % yogurt", detail: "58 kcal | 0.7 g protein | 1.6 g carbs | 3.9 g fat" },
             { label: "125 g frozen vegetables, Italian style", detail: "62.5 kcal | 2 g protein | 3.6 g carbs | 2.4 g fat" },
             { label: "80 g broccoli / Kaisergemüse", detail: "33 kcal | 2 g protein | 4 g carbs | 0.35 g fat" },
             { label: "75 g potato", detail: "58 kcal | 1.5 g protein | 12.5 g carbs | 0.1 g fat" },
-            { label: "40 g rice", detail: "145 kcal | 3 g protein | 32 g carbs | 0.25 g fat" },
+            { label: "38 g mushrooms", detail: "6.8 kcal | 0.75 g protein | 0.6 g carbs | 0.1 g fat" },
+            { label: "40 g burgul", detail: "137 kcal | 4.9 g protein | 30 g carbs | 0.5 g fat" },
           ],
         },
         {
           name: "Meal 3",
-          summary: "597 kcal | 54 g protein | 54 g carbs | 12 g fat",
+          summary: "595 kcal | 56.8 g protein | 52.3 g carbs | 12.6 g fat | 14.2 g fiber",
           items: [
             { label: "200 g chicken breast", detail: "240 kcal | 45 g protein | 0 g carbs | 5.2 g fat" },
             { label: "Sauce: mustard, tomato paste, 3.5 % yogurt", detail: "58 kcal | 0.7 g protein | 1.6 g carbs | 3.9 g fat" },
             { label: "125 g frozen vegetables, Italian style", detail: "62.5 kcal | 2 g protein | 3.6 g carbs | 2.4 g fat" },
             { label: "80 g broccoli / Kaisergemüse", detail: "33 kcal | 2 g protein | 4 g carbs | 0.35 g fat" },
             { label: "75 g potato", detail: "58 kcal | 1.5 g protein | 12.5 g carbs | 0.1 g fat" },
-            { label: "40 g rice", detail: "145 kcal | 3 g protein | 32 g carbs | 0.25 g fat" },
+            { label: "38 g mushrooms", detail: "6.8 kcal | 0.75 g protein | 0.6 g carbs | 0.1 g fat" },
+            { label: "40 g burgul", detail: "137 kcal | 4.9 g protein | 30 g carbs | 0.5 g fat" },
           ],
         },
       ],
@@ -535,7 +537,7 @@ export const learnCopy = {
           summary:
             "Persönliche Ernährungsstruktur, Mahlzeitenideen, Supplements und was aus der aktuellen Routine gelernt wird.",
           startsWith: [
-            "Aktuelles Ernährungsbeispiel mit etwa 1810 kcal, 182 g Eiweiß, 131 g Kohlenhydrate und 49 g Fett.",
+            "Aktuelles Ernährungsbeispiel mit etwa 1810 kcal, 187 g Eiweiß, 128 g Kohlenhydrate und 50 g Fett.",
             "Mahlzeitenstruktur, einfache Lebensmittel, Supplements und Produktnotizen.",
             "Später kann ein Tool helfen, ähnliche Mahlzeitenstrukturen für bestimmte Nährwerte zu bauen.",
           ],
@@ -571,25 +573,25 @@ export const learnCopy = {
         "Diese Seite zeigt ein persönliches Ernährungsbeispiel und ist kein Plan, den alle befolgen sollten.",
       dailyTotals: [
         { label: "Kalorien", value: "1810 kcal" },
-        { label: "Eiweiß", value: "182 g" },
-        { label: "Kohlenhydrate", value: "131 g" },
-        { label: "Fett", value: "49 g" },
+        { label: "Eiweiß", value: "187 g" },
+        { label: "Kohlenhydrate", value: "128 g" },
+        { label: "Fett", value: "50 g" },
+        { label: "Ballaststoffe", value: "29,4 g" },
       ],
       mealsTitle: "Mahlzeiten",
       meals: [
         {
           name: "Shake",
-          summary: "312 kcal | 44 g Eiweiß | 16,5 g Kohlenhydrate | 7 g Fett",
+          summary: "312 kcal | 44 g Eiweiß | 16,5 g Kohlenhydrate | 7 g Fett | 0 g Ballaststoffe",
           items: [
             { label: "30 g Whey", detail: "120 kcal | 22,8 g Eiweiß | 1,5 g Kohlenhydrate | 2 g Fett" },
-            { label: "10 g Collagen + Vitamin C + Zink", detail: "40 kcal | 10 g Eiweiß | 0 g Kohlenhydrate | 0 g Fett" },
+            { label: "10 g Creatin + 10 g Collagen", detail: "40 kcal | 10 g Eiweiß | 0 g Kohlenhydrate | 0 g Fett" },
             { label: "330 ml laktosefreie Milch, 1,5 %", detail: "152 kcal | 11,2 g Eiweiß | 15 g Kohlenhydrate | 5 g Fett" },
-            { label: "10 g Creatin", detail: "0 kcal" },
           ],
         },
         {
           name: "Mahlzeit 1",
-          summary: "305 kcal | 29 g Eiweiß | 7 g Kohlenhydrate | 18 g Fett",
+          summary: "305 kcal | 29 g Eiweiß | 7 g Kohlenhydrate | 18 g Fett | 1 g Ballaststoffe",
           items: [
             { label: "3 Eier M, gekocht", detail: "190 kcal | 17 g Eiweiß | 1 g Kohlenhydrate | 13 g Fett" },
             { label: "1 Tomate, 83 g", detail: "17 kcal | 0,7 g Eiweiß | 3,2 g Kohlenhydrate | 0,2 g Fett" },
@@ -598,26 +600,28 @@ export const learnCopy = {
         },
         {
           name: "Mahlzeit 2",
-          summary: "597 kcal | 54 g Eiweiß | 54 g Kohlenhydrate | 12 g Fett",
+          summary: "595 kcal | 56,8 g Eiweiß | 52,3 g Kohlenhydrate | 12,6 g Fett | 14,2 g Ballaststoffe",
           items: [
-            { label: "200 g Hähnchenbrust", detail: "240 kcal | 45 g Eiweiß | 0 g Kohlenhydrate | 5.2 g Fett" },
+            { label: "200 g Hähnchenbrust", detail: "240 kcal | 45 g Eiweiß | 0 g Kohlenhydrate | 5,2 g Fett" },
             { label: "Sauce: Senf, Tomatenmark, Joghurt 3,5 %", detail: "58 kcal | 0,7 g Eiweiß | 1,6 g Kohlenhydrate | 3,9 g Fett" },
             { label: "125 g TK-Gemüse, Italienische Art", detail: "62,5 kcal | 2 g Eiweiß | 3,6 g Kohlenhydrate | 2,4 g Fett" },
             { label: "80 g Brokkoli / Kaisergemüse", detail: "33 kcal | 2 g Eiweiß | 4 g Kohlenhydrate | 0,35 g Fett" },
             { label: "75 g Kartoffel", detail: "58 kcal | 1,5 g Eiweiß | 12,5 g Kohlenhydrate | 0,1 g Fett" },
-            { label: "40 g Reis", detail: "145 kcal | 3 g Eiweiß | 32 g Kohlenhydrate | 0,25 g Fett" },
+            { label: "38 g Pilze", detail: "6,8 kcal | 0,75 g Eiweiß | 0,6 g Kohlenhydrate | 0,1 g Fett" },
+            { label: "40 g Burgul", detail: "137 kcal | 4,9 g Eiweiß | 30 g Kohlenhydrate | 0,5 g Fett" },
           ],
         },
         {
           name: "Mahlzeit 3",
-          summary: "597 kcal | 54 g Eiweiß | 54 g Kohlenhydrate | 12 g Fett",
+          summary: "595 kcal | 56,8 g Eiweiß | 52,3 g Kohlenhydrate | 12,6 g Fett | 14,2 g Ballaststoffe",
           items: [
-            { label: "200 g Hähnchenbrust", detail: "240 kcal | 45 g Eiweiß | 0 g Kohlenhydrate | 5.2 g Fett" },
+            { label: "200 g Hähnchenbrust", detail: "240 kcal | 45 g Eiweiß | 0 g Kohlenhydrate | 5,2 g Fett" },
             { label: "Sauce: Senf, Tomatenmark, Joghurt 3,5 %", detail: "58 kcal | 0,7 g Eiweiß | 1,6 g Kohlenhydrate | 3,9 g Fett" },
             { label: "125 g TK-Gemüse, Italienische Art", detail: "62,5 kcal | 2 g Eiweiß | 3,6 g Kohlenhydrate | 2,4 g Fett" },
             { label: "80 g Brokkoli / Kaisergemüse", detail: "33 kcal | 2 g Eiweiß | 4 g Kohlenhydrate | 0,35 g Fett" },
             { label: "75 g Kartoffel", detail: "58 kcal | 1,5 g Eiweiß | 12,5 g Kohlenhydrate | 0,1 g Fett" },
-            { label: "40 g Reis", detail: "145 kcal | 3 g Eiweiß | 32 g Kohlenhydrate | 0,25 g Fett" },
+            { label: "38 g Pilze", detail: "6,8 kcal | 0,75 g Eiweiß | 0,6 g Kohlenhydrate | 0,1 g Fett" },
+            { label: "40 g Burgul", detail: "137 kcal | 4,9 g Eiweiß | 30 g Kohlenhydrate | 0,5 g Fett" },
           ],
         },
       ],

@@ -42,14 +42,14 @@ export function FoodAndDietView() {
       </section>
 
       <section className="site-divider mt-12 border-y">
-        <div className="grid gap-0 sm:grid-cols-4">
+        <div className="grid gap-0 sm:grid-cols-5">
           {copy.food.dailyTotals.map((total) => (
             <div
               key={total.label}
-              className="site-divider border-b py-5 sm:border-b-0 sm:border-r sm:last:border-r-0"
+              className="site-divider flex items-baseline justify-between gap-4 border-b py-4 sm:block sm:border-b-0 sm:border-r sm:py-5 sm:text-center sm:last:border-r-0"
             >
               <p className="site-subtle text-sm">{total.label}</p>
-              <p className="mt-1 text-2xl font-semibold">{total.value}</p>
+              <p className="text-2xl font-semibold sm:mt-1">{total.value}</p>
             </div>
           ))}
         </div>
@@ -59,19 +59,14 @@ export function FoodAndDietView() {
         <h2 className="text-2xl font-semibold tracking-normal">
           {copy.food.mealsTitle}
         </h2>
-        <div className="site-divider mt-6 divide-y border-y">
+        <div className="site-divider mt-6 divide-y border-y lg:grid lg:grid-cols-2 lg:gap-x-12 lg:divide-y-0 lg:[&>*:nth-child(n+3)]:border-(--color-border) lg:[&>*:nth-child(n+3)]:border-t">
           {copy.food.meals.map((meal) => (
-            <article
-              key={meal.name}
-              className="grid gap-5 py-7 lg:grid-cols-[0.7fr_1.3fr]"
-            >
-              <div>
-                <h3 className="text-xl font-semibold">{meal.name}</h3>
-                <p className="site-muted mt-2 text-sm leading-7">
-                  {meal.summary}
-                </p>
-              </div>
-              <ul className="site-muted space-y-2.5 text-sm leading-6">
+            <article key={meal.name} className="py-7">
+              <h3 className="text-xl font-semibold">{meal.name}</h3>
+              <p className="site-muted mt-2 text-sm leading-7">
+                {meal.summary}
+              </p>
+              <ul className="site-muted mt-4 space-y-2.5 text-sm leading-6">
                 {meal.items.map((item) => (
                   <li key={item.label} className="flex items-start gap-3">
                     <span className="site-dot mt-[0.4rem] shrink-0" />
