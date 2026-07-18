@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Fat Fitness Community",
   description: "Personal fitness journey and peer support platform.",
+  icons: {
+    apple: "/icons/icon-apple-180.png",
+  },
 };
 
 export default function RootLayout({
