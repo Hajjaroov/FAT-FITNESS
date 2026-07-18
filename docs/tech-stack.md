@@ -121,12 +121,12 @@ Backend (in place):
 - Run with `.\gradlew.bat test --no-daemon` from `backend/fatfitness-api/`. 203 tests passing as of `/myplan` Phase 2 (Diet, V14) — see `docs/dev-agent-plan.md`'s "Backend Test Coverage" section for what each class covers.
 - Auth helper pattern: a private `registerVerifyAndLogin(email)` (and `registerVerifyAddRoleAndLogin(email, role)` for moderator/owner-role tests) drives the real register → verify-email → login endpoints to get a bearer token, rather than mocking authentication.
 
-Frontend (planned, not started):
+Frontend (in place, 2026-07-18):
 
-- No test framework exists yet — no Jest/Vitest/Playwright, no `test` script in `package.json`.
-- Agreed direction: **Vitest + React Testing Library** first, for component-level tests (fast, Vite-native tooling, officially supported for Next.js App Router, does not change Next's own Turbopack build). **Playwright** later, for full browser end-to-end flows (e.g. login → add a meal → see totals update).
-- Start with component tests for the `/myplan` Diet phase (`MyPlanDietView.tsx`, `FoodCombobox.tsx`, `AdminMacroChecksView.tsx`) once picked up, then expand coverage to the rest of the frontend.
-- Deliberately deferred to its own separate session/commit rather than bundled into the Diet feature commit. Do not set this up proactively — wait for it to be explicitly requested.
+- **Vitest + React Testing Library** — `npm run test` (30 tests): components with real logic (comboboxes, diet totals, GLP-1 dual-write, auth forms, macro checks, post detail auth gating) plus the real `api.ts` 401-refresh pipeline against a stubbed fetch. Static content views are deliberately untested. Manual API mock in `src/lib/__mocks__/api.ts`; provider-wrapped rendering via `src/test/render.tsx`.
+- **Playwright** — `npm run test:e2e` (4 chromium smoke flows): needs the full local stack; seeds a dedicated `e2e-test@example.com` user (API register + `docker exec psql` activation). Authenticated specs log in via API per spec — shared `storageState` is impossible with single-use rotating refresh tokens.
+- `npm run typecheck` (`tsc --noEmit`) is the only check that type-checks test files — neither Vitest nor `next build` does.
+- See `docs/dev-agent-plan.md`'s "Frontend Testing" section for details.
 
 ## Database
 
