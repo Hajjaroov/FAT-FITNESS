@@ -16,9 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+
 import com.fatfitness.api.user.entity.UserAccount;
+import com.fatfitness.api.user.entity.UserAvatar;
 import com.fatfitness.api.user.entity.UserStatus;
 import com.fatfitness.api.user.repository.UserAccountRepository;
+import com.fatfitness.api.user.repository.UserAvatarRepository;
 
 @Service
 public class AvatarService {
@@ -30,9 +34,11 @@ public class AvatarService {
 	private static final Set<String> ALLOWED_TYPES = Set.of("image/jpeg", "image/png");
 
 	private final UserAccountRepository userAccountRepository;
+	private final UserAvatarRepository userAvatarRepository;
 
-	public AvatarService(UserAccountRepository userAccountRepository) {
+	public AvatarService(UserAccountRepository userAccountRepository, UserAvatarRepository userAvatarRepository) {
 		this.userAccountRepository = userAccountRepository;
+		this.userAvatarRepository = userAvatarRepository;
 	}
 
 	@Transactional
@@ -63,19 +69,25 @@ public class AvatarService {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ImageIO.write(resized, "jpeg", out);
+		byte[] jpegBytes = out.toByteArray();
 
 		UserAccount user = requireActiveUser(userId);
-		user.updateAvatar(out.toByteArray());
+		userAvatarRepository.findById(userId).ifPresentOrElse(
+				existing -> existing.updateImage(jpegBytes),
+				() -> userAvatarRepository.save(new UserAvatar(userId, jpegBytes)));
+		user.markHasAvatar(true);
 	}
 
-	public byte[] getAvatar(UUID userId) {
-		UserAccount user = userAccountRepository.findById(userId)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
-		byte[] avatar = user.getAvatarJpeg();
-		if (avatar == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No avatar set.");
-		}
-		return avatar;
+	public byte[] getAvatarBytes(UUID userId) {
+		UserAvatar avatar = userAvatarRepository.findById(userId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No avatar set."));
+		return avatar.getAvatarJpeg();
+	}
+
+	/** Version stamp for conditional GETs — never loads the image bytes. */
+	public Instant getAvatarVersion(UUID userId) {
+		return userAvatarRepository.findUpdatedAtByUserId(userId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No avatar set."));
 	}
 
 	private UserAccount requireActiveUser(UUID userId) {

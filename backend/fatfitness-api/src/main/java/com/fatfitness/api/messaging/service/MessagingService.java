@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fatfitness.api.email.EmailService;
@@ -47,6 +48,7 @@ public class MessagingService {
 	private final UserAccountRepository userAccountRepository;
 	private final UserPublicDisplayNameService userPublicDisplayNameService;
 	private final EmailService emailService;
+	private final TransactionTemplate transactionTemplate;
 
 	public MessagingService(
 			ConversationRepository conversationRepository,
@@ -54,13 +56,15 @@ public class MessagingService {
 			MessageRepository messageRepository,
 			UserAccountRepository userAccountRepository,
 			UserPublicDisplayNameService userPublicDisplayNameService,
-			EmailService emailService) {
+			EmailService emailService,
+			TransactionTemplate transactionTemplate) {
 		this.conversationRepository = conversationRepository;
 		this.participantRepository = participantRepository;
 		this.messageRepository = messageRepository;
 		this.userAccountRepository = userAccountRepository;
 		this.userPublicDisplayNameService = userPublicDisplayNameService;
 		this.emailService = emailService;
+		this.transactionTemplate = transactionTemplate;
 	}
 
 	@Transactional
@@ -94,7 +98,16 @@ public class MessagingService {
 				List.of(toMessageResponse(message)));
 	}
 
-	@Transactional
+	// A broadcast email queued during the DB phase and sent only after commit.
+	// conversationId is null for announcement-style emails (EMAIL channel).
+	private record PendingBroadcastEmail(String email, String displayName, String conversationId) {
+	}
+
+	/**
+	 * Deliberately NOT annotated @Transactional: the per-recipient conversation
+	 * inserts run in a programmatic transaction that commits before any email is
+	 * sent, so N blocking Resend calls never hold a DB connection/transaction open.
+	 */
 	public BroadcastMessageResponse broadcast(BroadcastMessageRequest request, String userIdSubject) {
 		UserAccount sender = requireActiveUser(userIdSubject);
 		if (sender.getRoles().stream().noneMatch(BROADCAST_ROLES::contains)) {
@@ -112,41 +125,53 @@ public class MessagingService {
 
 		String senderDisplayName = userPublicDisplayNameService.resolve(sender);
 
-		List<UserAccount> recipients = userAccountRepository.findByStatus(UserStatus.ACTIVE).stream()
-				.filter(user -> !user.getId().equals(sender.getId()))
-				.toList();
+		List<PendingBroadcastEmail> pendingEmails = new ArrayList<>();
+		Integer recipientCount = transactionTemplate.execute(status -> {
+			List<UserAccount> recipients = userAccountRepository.findByStatus(UserStatus.ACTIVE).stream()
+					.filter(user -> !user.getId().equals(sender.getId()))
+					.toList();
 
-		for (UserAccount recipient : recipients) {
-			boolean shouldEmail = effectiveBypass || recipient.isEmailNotificationsPm();
+			for (UserAccount recipient : recipients) {
+				boolean shouldEmail = effectiveBypass || recipient.isEmailNotificationsPm();
 
-			if (channel == BroadcastChannel.PM || channel == BroadcastChannel.BOTH) {
-				// Each recipient gets their own 1-to-1 conversation so replies come back
-				// privately to the announcer rather than to every member.
-				Conversation conversation = conversationRepository.save(new Conversation(subject));
-				participantRepository.save(new ConversationParticipant(conversation, sender, now));
-				participantRepository.save(new ConversationParticipant(conversation, recipient, null));
-				messageRepository.save(new Message(conversation, sender, body));
+				if (channel == BroadcastChannel.PM || channel == BroadcastChannel.BOTH) {
+					// Each recipient gets their own 1-to-1 conversation so replies come back
+					// privately to the announcer rather than to every member.
+					Conversation conversation = conversationRepository.save(new Conversation(subject));
+					participantRepository.save(new ConversationParticipant(conversation, sender, now));
+					participantRepository.save(new ConversationParticipant(conversation, recipient, null));
+					messageRepository.save(new Message(conversation, sender, body));
 
-				if (channel == BroadcastChannel.BOTH && shouldEmail) {
-					emailService.sendNewMessageEmail(
+					if (channel == BroadcastChannel.BOTH && shouldEmail) {
+						pendingEmails.add(new PendingBroadcastEmail(
+								recipient.getEmail(),
+								recipient.getDisplayName(),
+								conversation.getId().toString()));
+					}
+				} else if (channel == BroadcastChannel.EMAIL && shouldEmail) {
+					// No inbox conversation — include the body in the email directly.
+					pendingEmails.add(new PendingBroadcastEmail(
 							recipient.getEmail(),
 							recipient.getDisplayName(),
-							senderDisplayName,
-							subject,
-							conversation.getId().toString());
+							null));
 				}
-			} else if (channel == BroadcastChannel.EMAIL && shouldEmail) {
-				// No inbox conversation — include the body in the email directly.
+			}
+
+			return recipients.size();
+		});
+
+		// Transaction has committed; EmailService logs (never throws) on failure.
+		for (PendingBroadcastEmail pending : pendingEmails) {
+			if (pending.conversationId() != null) {
+				emailService.sendNewMessageEmail(
+						pending.email(), pending.displayName(), senderDisplayName, subject, pending.conversationId());
+			} else {
 				emailService.sendBroadcastAnnouncementEmail(
-						recipient.getEmail(),
-						recipient.getDisplayName(),
-						senderDisplayName,
-						subject,
-						body);
+						pending.email(), pending.displayName(), senderDisplayName, subject, body);
 			}
 		}
 
-		return new BroadcastMessageResponse(recipients.size());
+		return new BroadcastMessageResponse(recipientCount != null ? recipientCount : 0);
 	}
 
 	@Transactional
@@ -311,14 +336,9 @@ public class MessagingService {
 		if (conversationIds.isEmpty()) {
 			return Map.of();
 		}
-		// Ordered conversation-then-newest-first, so the first row kept per key by
-		// the (a, b) -> a merge function below is each conversation's latest message.
-		return messageRepository.findByConversationIdInOrderByConversationIdAscSentAtDesc(conversationIds)
+		return messageRepository.findLatestPerConversation(conversationIds)
 				.stream()
-				.collect(Collectors.toMap(
-						m -> m.getConversation().getId(),
-						m -> m,
-						(first, second) -> first));
+				.collect(Collectors.toMap(m -> m.getConversation().getId(), m -> m));
 	}
 
 	private static boolean isUnread(ConversationParticipant participant, Message latestMessage, UUID userId) {

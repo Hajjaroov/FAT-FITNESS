@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { apiBaseUrl } from "@/lib/config";
 
 type UserAvatarProps = {
@@ -15,15 +16,24 @@ export function UserAvatar({
   size = 32,
   className = "",
 }: UserAvatarProps) {
-  const src =
-    hasAvatar && userId
-      ? `${apiBaseUrl}/api/avatars/${userId}`
-      : "/photos/logo/profile-500.jpg";
+  if (hasAvatar && userId) {
+    return (
+      // Backend-served avatar stays a plain <img>: the API already serves it with
+      // ETag revalidation, and the Next optimizer would proxy-cache it on top.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`${apiBaseUrl}/api/avatars/${userId}`}
+        alt={displayName}
+        width={size}
+        height={size}
+        className={`shrink-0 rounded-full object-cover ${className}`}
+      />
+    );
+  }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
+    <Image
+      src="/photos/logo/profile-500.jpg"
       alt={displayName}
       width={size}
       height={size}

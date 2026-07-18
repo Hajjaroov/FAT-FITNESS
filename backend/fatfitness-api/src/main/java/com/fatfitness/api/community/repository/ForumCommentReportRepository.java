@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.fatfitness.api.community.entity.ForumCommentReport;
@@ -14,7 +15,10 @@ public interface ForumCommentReportRepository extends JpaRepository<ForumComment
 
 	Optional<ForumCommentReport> findByCommentIdAndReporterId(UUID commentId, UUID reporterId);
 
+	// The moderation list maps comment, comment.post, comment.author, reporter, and resolvedBy per row.
+	@EntityGraph(attributePaths = {"comment", "comment.post", "comment.author", "reporter", "resolvedBy"})
 	List<ForumCommentReport> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+	@EntityGraph(attributePaths = {"comment", "comment.post", "comment.author", "reporter", "resolvedBy"})
 	List<ForumCommentReport> findByStatusOrderByCreatedAtDesc(ForumReportStatus status, Pageable pageable);
 }

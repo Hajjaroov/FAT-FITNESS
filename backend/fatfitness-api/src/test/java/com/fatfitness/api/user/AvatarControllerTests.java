@@ -66,10 +66,36 @@ class AvatarControllerTests {
 		MvcResult result = mockMvc.perform(get("/api/avatars/{userId}", userId.toString()))
 				.andExpect(status().isOk())
 				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE))
-				.andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-store"))
+				.andExpect(header().string(HttpHeaders.CACHE_CONTROL, "no-cache, private"))
+				.andExpect(header().exists(HttpHeaders.ETAG))
 				.andReturn();
 
 		assertThat(result.getResponse().getContentAsByteArray()).isNotEmpty();
+	}
+
+	@Test
+	void getAvatarReturns304WhenETagMatches() throws Exception {
+		String accessToken = registerVerifyAndLogin("avatar-etag@example.com");
+		UUID userId = userAccountRepository.findByEmail("avatar-etag@example.com").orElseThrow().getId();
+
+		mockMvc.perform(multipart("/api/users/me/avatar")
+						.file(new MockMultipartFile("avatar", "me.png", "image/png", pngBytes()))
+						.header("Authorization", "Bearer " + accessToken))
+				.andExpect(status().isNoContent());
+
+		MvcResult first = mockMvc.perform(get("/api/avatars/{userId}", userId.toString()))
+				.andExpect(status().isOk())
+				.andReturn();
+		String etag = first.getResponse().getHeader(HttpHeaders.ETAG);
+		assertThat(etag).isNotNull();
+
+		MvcResult second = mockMvc.perform(get("/api/avatars/{userId}", userId.toString())
+						.header(HttpHeaders.IF_NONE_MATCH, etag))
+				.andExpect(status().isNotModified())
+				.andExpect(header().string(HttpHeaders.ETAG, etag))
+				.andReturn();
+
+		assertThat(second.getResponse().getContentAsByteArray()).isEmpty();
 	}
 
 	@Test

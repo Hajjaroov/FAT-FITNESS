@@ -407,7 +407,7 @@ Response shape:
 Purpose:
 
 - Accept a multipart `avatar` file (field name `avatar`), JPEG or PNG, max 8 MB.
-- Server-side resize to a 256×256 JPEG and store it as `bytea` in `users.avatar_jpeg`.
+- Server-side resize to a 256×256 JPEG and store it as `bytea` in `user_avatars` (own table since V17; `users.has_avatar` flags existence for response mapping).
 - Requires an active account and a valid bearer token.
 
 Returns `204 No Content` on success. Empty file → `400`; unsupported type (anything but JPEG/PNG) → `415`. WebP is intentionally rejected because the JDK's bundled `ImageIO` cannot decode it.
@@ -417,7 +417,8 @@ Returns `204 No Content` on success. Empty file → `400`; unsupported type (any
 Purpose:
 
 - Serve the stored JPEG bytes for any user who has uploaded an avatar.
-- Public (no auth). `Content-Type: image/jpeg`, `Cache-Control: no-store`.
+- Public (no auth). `Content-Type: image/jpeg`, `Cache-Control: no-cache, private`, plus an `ETag` derived from the avatar's `updated_at`.
+- Conditional GET: a request with a matching `If-None-Match` gets `304 Not Modified` with no body — the version check reads only `updated_at`, never the blob — so browsers revalidate cheaply on every render and a changed avatar still shows immediately.
 
 Returns `404` when the user does not exist or has no avatar.
 

@@ -17,7 +17,9 @@ public interface PostBookmarkRepository extends JpaRepository<PostBookmark, UUID
 
 	Optional<PostBookmark> findByPostIdAndUserId(UUID postId, UUID userId);
 
-	@Query("select pb.post from PostBookmark pb where pb.user.id = :userId order by pb.createdAt desc")
+	// join fetch author/category: the response mapping reads both on every row (N+1 otherwise).
+	@Query("select p from PostBookmark pb join pb.post p join fetch p.author join fetch p.category"
+			+ " where pb.user.id = :userId order by pb.createdAt desc")
 	List<ForumPost> findBookmarkedPostsByUserIdOrderByCreatedAtDesc(@Param("userId") UUID userId);
 
 	@Query("select pb.post.id from PostBookmark pb where pb.post.id in :postIds and pb.user.id = :userId")

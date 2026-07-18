@@ -64,8 +64,10 @@ public class UserAccount {
 	@Column(name = "deleted_at")
 	private Instant deletedAt;
 
-	@Column(name = "avatar_jpeg")
-	private byte[] avatarJpeg;
+	// The avatar image itself lives in user_avatars (see UserAvatar) so user rows
+	// stay light on every author/sender load; this flag is all response mapping needs.
+	@Column(name = "has_avatar", nullable = false)
+	private boolean hasAvatar;
 
 	@Column(name = "email_notifications_pm", nullable = false)
 	private boolean emailNotificationsPm = true;
@@ -129,8 +131,8 @@ public class UserAccount {
 		roles.add(role);
 	}
 
-	public void updateAvatar(byte[] jpegBytes) {
-		this.avatarJpeg = jpegBytes;
+	public void markHasAvatar(boolean value) {
+		this.hasAvatar = value;
 	}
 
 	public void updateEmailNotificationsPm(boolean value) {
@@ -185,12 +187,8 @@ public class UserAccount {
 		return deletedAt;
 	}
 
-	public byte[] getAvatarJpeg() {
-		return avatarJpeg;
-	}
-
 	public boolean hasAvatar() {
-		return avatarJpeg != null;
+		return hasAvatar;
 	}
 
 	public boolean isEmailNotificationsPm() {
