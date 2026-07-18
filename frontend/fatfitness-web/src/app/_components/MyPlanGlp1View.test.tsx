@@ -18,9 +18,18 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/myplan/glp1",
 }));
 
+// The add form defaults its date input to today (local time), so the fixture
+// must match — a hard-coded date made this test fail the day after writing it.
+function todayISODate() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
 const savedEntry: MedicationLogEntry = {
   id: "e1",
-  entryDate: "2026-07-18",
+  entryDate: todayISODate(),
   doseMg: 10,
   notes: null,
   updatedAt: "2026-07-18T08:00:00Z",
@@ -61,7 +70,7 @@ describe("MyPlanGlp1View", () => {
       id: "w1",
       entryDate: savedEntry.entryDate,
       weightKg: 154.5,
-      createdAt: "2026-07-18T08:00:00Z",
+      createdAt: "2026-07-19T08:00:00Z",
     });
 
     renderWithProviders(<MyPlanGlp1View />);
