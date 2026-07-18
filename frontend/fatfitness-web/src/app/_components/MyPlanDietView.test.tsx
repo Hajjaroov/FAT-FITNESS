@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MyPlanDietView } from "@/app/_components/MyPlanDietView";
 import { renderWithProviders } from "@/test/render";
 import { addDietMeal, getDietMeals, getFoods, refreshAuthSession } from "@/lib/api";
+import { testTokens } from "@/lib/__mocks__/api";
 import type { DietMeal } from "@/types/diet";
 
 vi.mock("@/lib/api");
@@ -62,7 +63,7 @@ describe("MyPlanDietView", () => {
   });
 
   it("renders fetched meals and computes the day totals from item macros", async () => {
-    vi.mocked(refreshAuthSession).mockResolvedValue({ accessToken: "test-token" });
+    vi.mocked(refreshAuthSession).mockResolvedValue(testTokens);
     vi.mocked(getDietMeals).mockResolvedValue([breakfast]);
     vi.mocked(getFoods).mockResolvedValue([]);
 
@@ -78,7 +79,7 @@ describe("MyPlanDietView", () => {
 
   it("adds a meal and shows it in the list", async () => {
     const user = userEvent.setup();
-    vi.mocked(refreshAuthSession).mockResolvedValue({ accessToken: "test-token" });
+    vi.mocked(refreshAuthSession).mockResolvedValue(testTokens);
     vi.mocked(getDietMeals).mockResolvedValue([]);
     vi.mocked(getFoods).mockResolvedValue([]);
     vi.mocked(addDietMeal).mockResolvedValue(meal({ id: "m2", title: "Meal 1" }));
@@ -92,7 +93,7 @@ describe("MyPlanDietView", () => {
   });
 
   it("shows the load error when fetching fails", async () => {
-    vi.mocked(refreshAuthSession).mockResolvedValue({ accessToken: "test-token" });
+    vi.mocked(refreshAuthSession).mockResolvedValue(testTokens);
     vi.mocked(getDietMeals).mockRejectedValue(new Error("boom"));
     vi.mocked(getFoods).mockResolvedValue([]);
 

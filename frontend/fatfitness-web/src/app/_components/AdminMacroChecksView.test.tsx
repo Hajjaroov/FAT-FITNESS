@@ -3,7 +3,8 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AdminMacroChecksView } from "@/app/_components/AdminMacroChecksView";
 import { renderWithProviders } from "@/test/render";
-import { getCurrentUser, getMacroChecks, resolveMacroCheck, testUser } from "@/lib/api";
+import { getCurrentUser, getMacroChecks, resolveMacroCheck } from "@/lib/api";
+import { testUser } from "@/lib/__mocks__/api";
 import type { FoodMacroCheck } from "@/types/diet";
 
 vi.mock("@/lib/api");
