@@ -30,6 +30,7 @@ import com.fatfitness.api.messaging.entity.Message;
 import com.fatfitness.api.messaging.repository.ConversationParticipantRepository;
 import com.fatfitness.api.messaging.repository.ConversationRepository;
 import com.fatfitness.api.messaging.repository.MessageRepository;
+import com.fatfitness.api.push.service.PushNotificationService;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserRole;
 import com.fatfitness.api.user.entity.UserStatus;
@@ -48,6 +49,7 @@ public class MessagingService {
 	private final UserAccountRepository userAccountRepository;
 	private final UserPublicDisplayNameService userPublicDisplayNameService;
 	private final EmailService emailService;
+	private final PushNotificationService pushNotificationService;
 	private final TransactionTemplate transactionTemplate;
 
 	public MessagingService(
@@ -57,6 +59,7 @@ public class MessagingService {
 			UserAccountRepository userAccountRepository,
 			UserPublicDisplayNameService userPublicDisplayNameService,
 			EmailService emailService,
+			PushNotificationService pushNotificationService,
 			TransactionTemplate transactionTemplate) {
 		this.conversationRepository = conversationRepository;
 		this.participantRepository = participantRepository;
@@ -64,6 +67,7 @@ public class MessagingService {
 		this.userAccountRepository = userAccountRepository;
 		this.userPublicDisplayNameService = userPublicDisplayNameService;
 		this.emailService = emailService;
+		this.pushNotificationService = pushNotificationService;
 		this.transactionTemplate = transactionTemplate;
 	}
 
@@ -103,6 +107,12 @@ public class MessagingService {
 	private record PendingBroadcastEmail(String email, String displayName, String conversationId) {
 	}
 
+	// A broadcast push queued during the DB phase and sent only after commit,
+	// same reasoning as PendingBroadcastEmail. Only PM/BOTH channels produce a
+	// conversation to push about.
+	private record PendingBroadcastPush(UUID recipientId, UUID conversationId) {
+	}
+
 	/**
 	 * Deliberately NOT annotated @Transactional: the per-recipient conversation
 	 * inserts run in a programmatic transaction that commits before any email is
@@ -126,6 +136,7 @@ public class MessagingService {
 		String senderDisplayName = userPublicDisplayNameService.resolve(sender);
 
 		List<PendingBroadcastEmail> pendingEmails = new ArrayList<>();
+		List<PendingBroadcastPush> pendingPushes = new ArrayList<>();
 		Integer recipientCount = transactionTemplate.execute(status -> {
 			List<UserAccount> recipients = userAccountRepository.findByStatus(UserStatus.ACTIVE).stream()
 					.filter(user -> !user.getId().equals(sender.getId()))
@@ -141,6 +152,9 @@ public class MessagingService {
 					participantRepository.save(new ConversationParticipant(conversation, sender, now));
 					participantRepository.save(new ConversationParticipant(conversation, recipient, null));
 					messageRepository.save(new Message(conversation, sender, body));
+
+					// Push is sent regardless of email preference — subscribing is the opt-in.
+					pendingPushes.add(new PendingBroadcastPush(recipient.getId(), conversation.getId()));
 
 					if (channel == BroadcastChannel.BOTH && shouldEmail) {
 						pendingEmails.add(new PendingBroadcastEmail(
@@ -169,6 +183,10 @@ public class MessagingService {
 				emailService.sendBroadcastAnnouncementEmail(
 						pending.email(), pending.displayName(), senderDisplayName, subject, body);
 			}
+		}
+		for (PendingBroadcastPush pending : pendingPushes) {
+			pushNotificationService.notifyNewMessage(
+					pending.recipientId(), senderDisplayName, subject, pending.conversationId());
 		}
 
 		return new BroadcastMessageResponse(recipientCount != null ? recipientCount : 0);
@@ -305,13 +323,20 @@ public class MessagingService {
 	}
 
 	private void notifyRecipient(UserAccount recipient, UserAccount sender, Conversation conversation) {
+		String senderDisplayName = userPublicDisplayNameService.resolve(sender);
+
+		// Push is sent regardless of emailNotificationsPm — having a subscription
+		// is itself the opt-in.
+		pushNotificationService.notifyNewMessage(
+				recipient.getId(), senderDisplayName, conversation.getSubject(), conversation.getId());
+
 		if (!recipient.isEmailNotificationsPm()) {
 			return;
 		}
 		emailService.sendNewMessageEmail(
 				recipient.getEmail(),
 				recipient.getDisplayName(),
-				userPublicDisplayNameService.resolve(sender),
+				senderDisplayName,
 				conversation.getSubject(),
 				conversation.getId().toString());
 	}

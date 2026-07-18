@@ -85,3 +85,6 @@ export const deleteFood = vi.fn();
 export const submitMacroCheck = vi.fn();
 export const getMacroChecks = vi.fn(async () => []);
 export const resolveMacroCheck = vi.fn();
+
+export const subscribeToPush = vi.fn();
+export const unsubscribeFromPush = vi.fn();

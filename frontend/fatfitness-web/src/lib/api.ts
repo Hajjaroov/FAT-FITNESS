@@ -64,6 +64,7 @@ import type {
 } from "@/types/diet";
 import type { Exercise, Weekday, WorkoutPlanDay, WorkoutPlanDayExercise } from "@/types/workout";
 import type { MedicationLogEntry } from "@/types/glp1";
+import type { SubscribePushRequest } from "@/types/push";
 
 type ApiRequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
@@ -633,6 +634,22 @@ export function replyToConversation(
 export function deleteConversation(conversationId: string, accessToken: string) {
   return apiRequest<void>(`/api/messages/${conversationId}`, {
     method: "DELETE",
+    accessToken,
+  });
+}
+
+export function subscribeToPush(request: SubscribePushRequest, accessToken: string) {
+  return apiRequest<void>("/api/push/subscriptions", {
+    method: "POST",
+    body: request,
+    accessToken,
+  });
+}
+
+export function unsubscribeFromPush(endpoint: string, accessToken: string) {
+  return apiRequest<void>("/api/push/subscriptions", {
+    method: "DELETE",
+    body: { endpoint },
     accessToken,
   });
 }

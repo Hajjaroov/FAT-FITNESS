@@ -46,3 +46,7 @@ fatfitness:
     resend-api-key: ${RESEND_API_KEY:}
     from: ${MAIL_FROM:}
     app-base-url: ${APP_BASE_URL:http://localhost:3000}
+  push:
+    vapid-public-key: ${FATFITNESS_VAPID_PUBLIC_KEY}
+    vapid-private-key: ${FATFITNESS_VAPID_PRIVATE_KEY}
+    vapid-subject: ${FATFITNESS_VAPID_SUBJECT}

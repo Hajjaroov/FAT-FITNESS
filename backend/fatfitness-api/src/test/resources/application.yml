@@ -30,3 +30,7 @@ fatfitness:
       path: /api/auth
       secure: false
       same-site: Lax
+  push:
+    vapid-public-key: BBZNDVytMAjkvm3Ai8rgdxE-4I7Qr9P0JGgP4IEBHgX8KCQcmAG1Q8RN7Co1NsZtoePc3-UfRewWuB7f3Iw_8X8
+    vapid-private-key: eT2OZp3fgzq38wr8fubzFveDJq3asRRZ_2GdI4qJKag
+    vapid-subject: mailto:test@example.com

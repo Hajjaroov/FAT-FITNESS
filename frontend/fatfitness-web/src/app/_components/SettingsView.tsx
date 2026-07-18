@@ -2,14 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { AvatarUpload } from "@/app/_components/AvatarUpload";
 import { CountryCombobox } from "@/app/_components/CountryCombobox";
 import { PageShell } from "@/app/_components/PageShell";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { settingsCopy } from "@/content/settings";
-import { ApiError, changePassword, revokeAllSessions, updateNotificationPreferences, updateProfile } from "@/lib/api";
+import {
+  ApiError,
+  changePassword,
+  revokeAllSessions,
+  subscribeToPush,
+  unsubscribeFromPush,
+  updateNotificationPreferences,
+  updateProfile,
+} from "@/lib/api";
+import { vapidPublicKey } from "@/lib/config";
+import { isIosDevice, isStandaloneDisplayMode, urlBase64ToUint8Array } from "@/lib/push";
 
 type SectionStatus = "idle" | "pending" | "success" | "error";
 
@@ -266,6 +276,171 @@ function PasswordSection() {
   );
 }
 
+type PushSupportState = "checking" | "unsupported" | "ios-not-installed" | "supported";
+
+function PushToggleRow() {
+  const copy = useLocalizedContent(settingsCopy);
+  const { accessToken } = useAuth();
+  const [support, setSupport] = useState<PushSupportState>("checking");
+  const [checked, setChecked] = useState(false);
+  const [status, setStatus] = useState<SectionStatus>("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [permissionDenied, setPermissionDenied] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function checkState() {
+      const apiAvailable =
+        "serviceWorker" in navigator && "PushManager" in window && Boolean(vapidPublicKey);
+
+      if (!apiAvailable) {
+        if (isActive) setSupport("unsupported");
+        return;
+      }
+
+      if (isIosDevice() && !isStandaloneDisplayMode()) {
+        if (isActive) setSupport("ios-not-installed");
+        return;
+      }
+
+      if (isActive) {
+        setSupport("supported");
+        setPermissionDenied(Notification.permission === "denied");
+      }
+
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (isActive) setChecked(Boolean(subscription));
+      } catch {
+        // Leave the toggle unchecked — the user can still try to enable it.
+      }
+    }
+
+    void checkState();
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  async function handleEnable() {
+    if (!accessToken) return;
+    setStatus("pending");
+    setError(null);
+
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        setPermissionDenied(permission === "denied");
+        setStatus("idle");
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      });
+      const json = subscription.toJSON();
+      if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) {
+        throw new Error("Push subscription is missing required fields");
+      }
+
+      await subscribeToPush(
+        { endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth },
+        accessToken,
+      );
+      setChecked(true);
+      setStatus("success");
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof ApiError ? caughtError.message : copy.notifications.pushErrorFallback,
+      );
+      setStatus("error");
+    }
+  }
+
+  async function handleDisable() {
+    if (!accessToken) return;
+    setStatus("pending");
+    setError(null);
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        await unsubscribeFromPush(subscription.endpoint, accessToken);
+        await subscription.unsubscribe();
+      }
+      setChecked(false);
+      setStatus("success");
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof ApiError ? caughtError.message : copy.notifications.pushErrorFallback,
+      );
+      setStatus("error");
+    }
+  }
+
+  if (support === "checking" || support === "unsupported") {
+    return null;
+  }
+
+  if (support === "ios-not-installed") {
+    return (
+      <div className="mt-5 flex items-start gap-4">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground">{copy.notifications.pushLabel}</p>
+          <p className="mt-1 text-sm leading-6 text-(--color-subtle)">
+            {copy.notifications.pushIosHint}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-5 flex items-start gap-4">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={copy.notifications.pushLabel}
+        disabled={status === "pending" || permissionDenied}
+        onClick={() => void (checked ? handleDisable() : handleEnable())}
+        className={`relative mt-0.5 h-6 w-11 flex-none rounded-xl border-2 transition focus-visible:ring-2 focus-visible:ring-(--color-accent)/50 disabled:cursor-not-allowed disabled:opacity-60 ${
+          checked
+            ? "border-(--color-accent) bg-(--color-accent)"
+            : "border-(--color-border) bg-(--color-border)"
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${
+            checked ? "left-[calc(100%-1.25rem)]" : "left-0.5"
+          }`}
+        />
+      </button>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-foreground">{copy.notifications.pushLabel}</p>
+        <p className="mt-1 text-sm leading-6 text-(--color-subtle)">
+          {permissionDenied ? copy.notifications.pushPermissionDeniedHint : copy.notifications.pushHint}
+        </p>
+        {status === "success" ? (
+          <p role="status" className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">
+            {copy.notifications.pushSuccessMessage}
+          </p>
+        ) : null}
+        {status === "error" ? (
+          <p role="alert" className="mt-2 text-xs text-red-800 dark:text-red-300">
+            {error ?? copy.notifications.pushErrorFallback}
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function NotificationsSection() {
   const copy = useLocalizedContent(settingsCopy);
   const { user, accessToken, refreshUser } = useAuth();
@@ -338,6 +513,7 @@ function NotificationsSection() {
           ) : null}
         </div>
       </div>
+      <PushToggleRow />
     </section>
   );
 }

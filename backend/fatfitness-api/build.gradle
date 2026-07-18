@@ -27,6 +27,18 @@ dependencies {
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'org.springframework.security:spring-security-oauth2-jose'
 	implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+	implementation 'nl.martijndwars:web-push:5.1.2'
+	// bcprov is an <optional> dependency in web-push's POM, so it is not pulled
+	// in transitively — declared explicitly (newer jdk18on artifact; same
+	// org.bouncycastle classes web-push expects).
+	implementation 'org.bouncycastle:bcprov-jdk18on:1.85'
+	// web-push declares httpasyncclient (which brings httpcore, exposing the
+	// org.apache.http.HttpResponse type PushService.send() returns) and jose4j
+	// (its checked JoseException, part of send()'s throws clause) as Maven
+	// runtime-scope dependencies, so Gradle does not put them on the compile
+	// classpath — declared explicitly since WebPushSender calls send() directly.
+	implementation 'org.apache.httpcomponents:httpcore:4.4.16'
+	implementation 'org.bitbucket.b_c:jose4j:0.7.9'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
