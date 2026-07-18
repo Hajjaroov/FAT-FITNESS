@@ -266,7 +266,7 @@ export const myPlanCopy = {
     workout: {
       title: "Workout",
       summary:
-        "Build your weekly training plan, pick exercises from the library, and mark sessions as done.",
+        "Build your weekly training plan and pick exercises from the library.",
       linkLabel: "Open Workout",
       pageEyebrow: "Personal tracking",
       pageIntro:
@@ -451,7 +451,7 @@ export const myPlanCopy = {
     workout: {
       title: "Training",
       summary:
-        "Erstelle deinen wöchentlichen Trainingsplan, wähle Übungen aus der Bibliothek und markiere Einheiten als erledigt.",
+        "Erstelle deinen wöchentlichen Trainingsplan und wähle Übungen aus der Bibliothek.",
       linkLabel: "Training öffnen",
       pageEyebrow: "Persönliches Tracking",
       pageIntro:

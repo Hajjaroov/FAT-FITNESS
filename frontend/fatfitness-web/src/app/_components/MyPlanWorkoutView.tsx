@@ -328,7 +328,7 @@ function AddDayForm({
         </label>
         <WeekdaySelect id="add-day-weekday" copy={copy} value={weekday} onChange={setWeekday} />
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:max-w-xs">
+      <div className="flex min-w-56 flex-1 flex-col gap-1.5 sm:max-w-xs">
         <label htmlFor="add-day-title" className="site-subtle text-xs font-semibold uppercase">
           {copy.dayTitleLabel}
         </label>

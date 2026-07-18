@@ -8,7 +8,7 @@ export const homeCopy = {
         "Realistic support for people who do not see themselves in polished fitness culture.",
       paragraphs: [
         "I am not a coach or athlete. I am documenting my own weight-loss journey from 203 kg and building a community for people who want realistic, beginner-friendly support.",
-        "My latest logged point is 157 kg on 21 June 2026. The numbers matter, but the bigger point is that progress does not need to look polished to be real.",
+        "My latest logged point is 154.5 kg on 5 July 2026. The numbers matter, but the bigger point is that progress does not need to look polished to be real.",
         "This page is where the project starts. It brings the core context, the current position, and the journal side of the journey together in one place.",
       ],
     },
@@ -16,9 +16,9 @@ export const homeCopy = {
       eyebrow: "Snapshot",
       items: [
         { label: "Starting point", value: "203 kg" },
-        { label: "Current", value: "157 kg" },
-        { label: "Progress", value: "−46 kg" },
-        { label: "Latest log", value: "21 Jun 2026" },
+        { label: "Current", value: "154.5 kg" },
+        { label: "Progress", value: "−48.5 kg" },
+        { label: "Latest log", value: "5 Jul 2026" },
       ],
       guardrails: [
         "I am not a coach or athlete.",
@@ -58,7 +58,7 @@ export const homeCopy = {
         "Realistische Unterstützung für Menschen, die sich in perfekter Fitness-Kultur nicht wiederfinden.",
       paragraphs: [
         "Ich bin kein Coach und kein Athlet. Ich dokumentiere meine eigene Abnehmreise ab 203 kg und baue eine Community für Menschen auf, die realistische, anfängerfreundliche Unterstützung suchen.",
-        "Mein letzter eingetragener Stand ist 157 kg am 21. Juni 2026. Die Zahlen sind wichtig, aber der größere Punkt ist: Fortschritt muss nicht perfekt aussehen, um echt zu sein.",
+        "Mein letzter eingetragener Stand ist 154,5 kg am 5. Juli 2026. Die Zahlen sind wichtig, aber der größere Punkt ist: Fortschritt muss nicht perfekt aussehen, um echt zu sein.",
         "Diese Seite ist der Startpunkt des Projekts. Sie verbindet den Kern der Geschichte, den aktuellen Stand und die Journal-Seite der Reise an einem Ort.",
       ],
     },
@@ -66,9 +66,9 @@ export const homeCopy = {
       eyebrow: "Momentaufnahme",
       items: [
         { label: "Startpunkt", value: "203 kg" },
-        { label: "Aktuell", value: "157 kg" },
-        { label: "Fortschritt", value: "−46 kg" },
-        { label: "Letzter Eintrag", value: "21. Juni 2026" },
+        { label: "Aktuell", value: "154,5 kg" },
+        { label: "Fortschritt", value: "−48,5 kg" },
+        { label: "Letzter Eintrag", value: "5. Juli 2026" },
       ],
       guardrails: [
         "Ich bin kein Coach und kein Athlet.",

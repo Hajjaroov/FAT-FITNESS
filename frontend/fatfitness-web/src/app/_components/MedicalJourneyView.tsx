@@ -45,8 +45,12 @@ export function MedicalJourneyView() {
           <table className="w-full table-fixed border-collapse text-center text-xs sm:text-sm">
             <thead className="site-divider border-b site-subtle">
               <tr>
-                {copy.medical.tableHeaders.map((header) => (
-                  <th key={header} className="px-3 py-3 font-semibold sm:px-4">
+                {copy.medical.tableHeaders.map((header, index) => (
+                  // Date column gets extra width below sm so ISO dates never wrap.
+                  <th
+                    key={header}
+                    className={`px-3 py-3 font-semibold sm:px-4 ${index === 1 ? "w-[32%] sm:w-1/4" : ""}`}
+                  >
                     {header}
                   </th>
                 ))}
@@ -56,7 +60,7 @@ export function MedicalJourneyView() {
               {copy.medical.loggedEntries.map(([mj, date, weight, change]) => (
                 <tr key={`${mj}-${date}`}>
                   <td className="px-3 py-3 sm:px-4">{mj}</td>
-                  <td className="px-3 py-3 sm:px-4">{date}</td>
+                  <td className="whitespace-nowrap px-3 py-3 sm:px-4">{date}</td>
                   <td className="px-3 py-3 sm:px-4">{weight}</td>
                   <td className="px-3 py-3">{change}</td>
                 </tr>
