@@ -107,7 +107,7 @@ Current community/forum state:
   - `messages` — `id`, `conversation_id`, `sender_user_id`, `body`, `sent_at`. Index on `(conversation_id, sent_at)`.
   - All have FK constraints to `conversations`/`users`. Messages are not soft-deleted; deletion is per-participant via `conversation_participants.deleted`.
 - The twelfth Flyway migration (`V12__add_email_notifications_pm_to_users.sql`) adds `email_notifications_pm BOOLEAN NOT NULL DEFAULT TRUE` to the `users` table. This flag lets each user opt out of email alerts when they receive a private message. Default is opted-in (true). Existing rows inherit the default on migration.
-- The latest applied migration is `V17`. The next new migration must be `V18`.
+- The latest applied migration is `V18`. The next new migration must be `V19`.
 - The thirteenth Flyway migration (`V13__create_myplan_weight.sql`) creates two tables for the `/myplan` weight tracking feature: `user_weight_goals` (one row per user — `id`, `user_id` unique FK → users, `start_weight` DECIMAL(6,2) nullable, `goal_weight` DECIMAL(6,2) nullable, `created_at`, `updated_at`) and `weight_entries` (`id`, `user_id` FK → users, `entry_date` DATE, `weight_kg` DECIMAL(6,2) NOT NULL, `created_at`; unique `(user_id, entry_date)`; index on `(user_id, entry_date)`).
 - The fourteenth Flyway migration (`V14__create_myplan_diet.sql`) is applied — `/myplan` Phase 2 (Diet), implemented end to end:
   - `foods` — shared/global catalog, **starts empty and grows only from user-added custom foods** (open add, any active user; no bulk/external seed — an SR Legacy USDA import was built and then rolled back after manual testing showed poor suggestion quality, see `docs/dev-agent-plan.md`): `id`, `created_by_user_id` **nullable** FK → users (attribution only; nullable to allow a future system-attributed row, though today every row has a real creator), `name` `VARCHAR(160)` NOT NULL (English, primary/required), `name_de` `VARCHAR(220)` nullable (German, optional — see the bilingual-naming note below), `unit_label` (free text, e.g. "100g", "1 egg, 57g" — deliberately holds both count and weight together where useful), `calories_per_unit`/`protein_per_unit`/`carbs_per_unit`/`fat_per_unit` DECIMAL, `created_at`, `updated_at`. Edit/delete is **moderator-only** (`OWNER`/`ADMIN`/`MODERATOR`) regardless of creator — not the creator-or-moderator pattern used elsewhere.
@@ -142,6 +142,13 @@ The seventeenth Flyway migration (`V17__move_avatar_bytes_to_user_avatars.sql`) 
 - `user_avatars` — `user_id` UUID PK + FK → users `ON DELETE CASCADE`, `avatar_jpeg` BYTEA NOT NULL, `updated_at` TIMESTAMPTZ NOT NULL. Existing avatar bytes are copied over from `users.avatar_jpeg` before that column is dropped.
 - `users` gains `has_avatar BOOLEAN NOT NULL DEFAULT FALSE` (backfilled from the old column before the drop), and **loses `avatar_jpeg`**.
 - **Why:** a plain `byte[]` column loads eagerly with the entity, so every author/sender load (forum posts, comments, inbox rows, moderation reports) dragged the full JPEG into heap just to answer `hasAvatar()`. The blob now loads only in the avatar endpoint; response mapping reads the cheap flag. `updated_at` on `user_avatars` doubles as the ETag version for conditional GETs (see `docs/api-notes.md`, `GET /api/avatars/{userId}`).
+
+### V18 — push subscriptions (PWA) — implemented
+
+The eighteenth Flyway migration (`V18__create_push_subscriptions.sql`) is part of the 2026-07-19 PWA milestone (see `docs/dev-agent-plan.md`, "Product Direction"):
+
+- `push_subscriptions` — `id` UUID PK, `user_id` FK → users `ON DELETE CASCADE`, `endpoint` TEXT NOT NULL UNIQUE (one row per browser install), `p256dh`/`auth` VARCHAR(255) NOT NULL (the browser's Web Push encryption keys), `user_agent` VARCHAR(512) nullable, `created_at`. Index on `user_id`.
+- No moderation surface, no soft delete — subscriptions are deleted outright on unsubscribe or when a push send gets a `404`/`410` (expired endpoint).
 
 ### Moderation audit table
 

@@ -606,6 +606,17 @@ Implemented endpoints, all under `/api/myplan/glp1/**` (inherits the blanket-aut
 
 See `docs/database-notes.md` for the V16 schema and `docs/dev-agent-plan.md` for the full design discussion (weight-connection architecture, the "change since start" fallback chain, and the dropped medication-name field).
 
+### Push Notifications (PWA, V18)
+
+Web Push subscriptions backed by `V18__create_push_subscriptions.sql` (`push_subscriptions`). All endpoints live under `/api/push/**` (authenticated in `SecurityConfig`).
+
+- `POST /api/push/subscriptions` — `{ endpoint, p256dh, auth }`. Upserts by `endpoint` (`201`): re-subscribing the same browser replaces its row; an endpoint that moved to another user is reassigned rather than duplicated.
+- `DELETE /api/push/subscriptions` — `{ endpoint }`. Idempotent (`204`); only deletes a row owned by the caller.
+
+`MessagingService.notifyRecipient` (new messages) and `broadcast` (`PM`/`BOTH` channels) call `PushNotificationService.notifyNewMessage`, which sends `{ title, body, conversationId }` to every subscription of the recipient via `nl.martijndwars:web-push`, on a dedicated single-thread executor — never the caller's request thread, and never throws back into a `@Transactional` caller (same reasoning as the after-commit broadcast-email pattern in the 2026-07-18 performance pass). Push fires regardless of `emailNotificationsPm` — having a subscription is itself the opt-in. A `404`/`410` response from the push service deletes the expired subscription row.
+
+Requires `FATFITNESS_VAPID_PUBLIC_KEY`, `FATFITNESS_VAPID_PRIVATE_KEY`, `FATFITNESS_VAPID_SUBJECT` (no committed defaults, fail-fast like `FATFITNESS_JWT_SECRET`) — generate a key pair once with `npx web-push generate-vapid-keys`. Frontend needs the public key as `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (not secret).
+
 ### Public Content
 
 Likely later endpoints:
@@ -1030,10 +1041,12 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `POST /api/myplan/glp1/entries`
 - `PATCH /api/myplan/glp1/entries/{id}`
 - `DELETE /api/myplan/glp1/entries/{id}`
+- `POST /api/push/subscriptions`
+- `DELETE /api/push/subscriptions`
 
 Next slices:
 
-- `/myplan` is fully built (Phases 1–4). Next roadmap step is PWA (see `docs/dev-agent-plan.md`, "Product Direction").
+- `/myplan` (Phases 1–4) and the PWA milestone (installable shell + push notifications) are complete. See `docs/dev-agent-plan.md`, "Product Direction".
 - Content work (Learn pages) — owner-driven, deferred until web platform is feature-complete.
 
 Planned registration shape when auth is approved:
