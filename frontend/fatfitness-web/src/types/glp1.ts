@@ -4,4 +4,5 @@ export type MedicationLogEntry = {
   doseMg: number;
   notes: string | null;
   updatedAt: string;
+  weightKg: number | null;
 };

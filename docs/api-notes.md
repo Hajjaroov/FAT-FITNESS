@@ -522,9 +522,11 @@ Response shape:
 #### Weight entries
 
 - `GET /api/myplan/weight/entries` — returns all weight entries for the user, ordered by `entryDate` ascending (for the chart).
-- `POST /api/myplan/weight/entries` — add a new entry. Rejects duplicate dates (`409`).
+- `POST /api/myplan/weight/entries` — **upserts** by date (V19, 2026-07-20): if an entry already exists for that date, its `weightKg` is updated in place and returned (`201`, not `409` — a same-day re-log or a wrong value is expected to just correct itself, not error). No uniqueness conflict is possible anymore.
+- `PATCH /api/myplan/weight/entries/{id}` — update an existing entry's `weightKg` (ownership-scoped, `404` if not owned). `UpdateWeightEntryRequest`: `{ "weightKg": 158.2 }`. The entry's date is immutable.
+- `DELETE /api/myplan/weight/entries/{id}` — delete an entry (ownership-scoped, `404` if not owned, `204` on success).
 
-Request shape:
+Request shape (POST):
 
 ```json
 {
@@ -592,17 +594,18 @@ See `docs/database-notes.md` for the V15 schema (including the reshape note) and
 
 A private medication log connected to the Weight feature rather than duplicating it. An entry is just **date + dose (mg) + optional notes** — no medication-name field (dropped after being sketched as free text; the page itself is already scoped to "the GLP-1 log", so tagging each entry with a drug name was redundant). No medical advice or dosing suggestions anywhere in the copy.
 
-- Optionally logging a weight alongside a dose does **not** store a weight on this feature's own table — it makes an independent call to the existing `POST /api/myplan/weight/entries` for that date (a `409` if one already exists is caught and ignored client-side; the existing value wins). Displaying weight per entry is a live join by date against the fetched weight history, not a stored copy.
+- Optionally logging a weight alongside a dose does **not** store a weight on this feature's own table. `AddMedicationLogEntryRequest.weightKg` (optional) is passed through to `MyPlanWeightService.upsertEntryForDate` in the **same transaction** as the medication entry — updated 2026-07-20 (V19), replacing the earlier design where the frontend made a second independent `POST /api/myplan/weight/entries` call and silently swallowed a `409`. `MedicationLogEntryResponse.weightKg` (nullable) returns the resulting value so the frontend can update its local weight state without a second fetch — `null` on `GET`/`PATCH` responses (still a live join by date against fetched weight history there), only ever populated on the `POST` that set it.
+- **Ownership link (V19)**: `weight_entries.source_medication_entry_id` (nullable FK → `medication_log_entries`, `ON DELETE CASCADE`) is set **only** when adding a GLP-1 entry *creates* a new weight row for that date — never when it updates a weight row that already existed independently. Deleting a GLP-1 entry (`DELETE /api/myplan/glp1/entries/{id}`) therefore cascades to remove a weight point it created, but never touches a weight logged on its own or via the main `/myplan` weight form. `MyPlanGlp1Service.deleteEntry` also explicitly deletes the linked `WeightEntry` through `MyPlanWeightService.deleteLinkedWeightEntry` *before* deleting the medication entry — the DB-level cascade alone isn't enough because Hibernate's session doesn't know about it, so a stale in-session `WeightEntry` referencing the just-deleted `MedicationLogEntry` throws `TransientPropertyValueException` on the next query in the same transaction (same class of gotcha as `DietMealItem.clearFood()` for the `foods` `ON DELETE SET NULL` case — see `docs/database-notes.md`).
 - "Change since start" is computed client-side per entry, never persisted: reference point is `user_weight_goals.start_weight` if set, else the earliest `weight_entries` row, else no reference exists yet (shown as "First entry", not `0 kg`).
 - Multiple entries per date are allowed (no uniqueness constraint, unlike `weight_entries`) — a log entry is an event, not a single daily measurement.
 - Fully private, no shared/catalog concept, no moderation surface (same privacy model as `weight_entries`/`diet_meals`).
 
 Implemented endpoints, all under `/api/myplan/glp1/**` (inherits the blanket-authenticated `/api/myplan/**` rule in `SecurityConfig`):
 
-- `GET /api/myplan/glp1/entries` — the user's entries, oldest-first (chronological, normal reading order for a dated log). `MedicationLogEntryResponse`: `id`, `entryDate`, `doseMg`, `notes` (nullable), `updatedAt`.
-- `POST /api/myplan/glp1/entries` — add an entry: `{ entryDate, doseMg, notes? }`.
-- `PATCH /api/myplan/glp1/entries/{id}` — full replace of the same fields.
-- `DELETE /api/myplan/glp1/entries/{id}` — remove.
+- `GET /api/myplan/glp1/entries` — the user's entries, oldest-first (chronological, normal reading order for a dated log). `MedicationLogEntryResponse`: `id`, `entryDate`, `doseMg`, `notes` (nullable), `updatedAt`, `weightKg` (nullable — only ever populated on the `POST` response that set/updated it, see V19 above; always `null` here and on `PATCH`).
+- `POST /api/myplan/glp1/entries` — add an entry: `{ entryDate, doseMg, notes?, weightKg? }`. `weightKg` (V19) upserts the weight for that date in the same request instead of the frontend making a second call.
+- `PATCH /api/myplan/glp1/entries/{id}` — full replace of `{ entryDate, doseMg, notes? }` (weight is not editable here — edit it directly via `/myplan/weight-entries` or `PATCH /api/myplan/weight/entries/{id}`).
+- `DELETE /api/myplan/glp1/entries/{id}` — remove. Cascades to a weight entry this GLP-1 entry created (V19), never one logged independently.
 
 See `docs/database-notes.md` for the V16 schema and `docs/dev-agent-plan.md` for the full design discussion (weight-connection architecture, the "change since start" fallback chain, and the dropped medication-name field).
 
@@ -1011,7 +1014,9 @@ Current implemented endpoints (full list; `GET /api/status` is documented separa
 - `GET /api/myplan/weight/goals`
 - `PATCH /api/myplan/weight/goals`
 - `GET /api/myplan/weight/entries`
-- `POST /api/myplan/weight/entries`
+- `POST /api/myplan/weight/entries` (upserts by date)
+- `PATCH /api/myplan/weight/entries/{id}`
+- `DELETE /api/myplan/weight/entries/{id}`
 - `GET /api/myplan/diet/foods`
 - `PATCH /api/myplan/diet/foods/{id}` (moderator-only)
 - `DELETE /api/myplan/diet/foods/{id}` (moderator-only)

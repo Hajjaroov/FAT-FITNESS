@@ -70,6 +70,8 @@ export const getWeightGoals = vi.fn(async () => ({
   updatedAt: null,
 }));
 export const addWeightEntry = vi.fn();
+export const updateWeightEntry = vi.fn();
+export const deleteWeightEntry = vi.fn();
 
 export const getDietMeals = vi.fn(async () => []);
 export const getFoods = vi.fn(async () => []);

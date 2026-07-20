@@ -731,10 +731,30 @@ export function addWeightEntry(
   });
 }
 
+export function updateWeightEntry(
+  entryId: string,
+  weightKg: number,
+  accessToken: string,
+) {
+  return apiRequest<WeightEntry>(`/api/myplan/weight/entries/${entryId}`, {
+    method: "PATCH",
+    body: { weightKg },
+    accessToken,
+  });
+}
+
+export function deleteWeightEntry(entryId: string, accessToken: string) {
+  return apiRequest<void>(`/api/myplan/weight/entries/${entryId}`, {
+    method: "DELETE",
+    accessToken,
+  });
+}
+
 export type MedicationLogEntryInput = {
   entryDate: string;
   doseMg: number;
   notes?: string;
+  weightKg?: number;
 };
 
 export function getMedicationLogEntries(accessToken: string) {

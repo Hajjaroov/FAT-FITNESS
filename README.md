@@ -29,7 +29,7 @@ This is not a coaching product or medical advice platform. All content is person
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS v4 |
 | Backend | Spring Boot 4.1, Java 21, Gradle |
 | Database | PostgreSQL 18 via Docker Compose |
-| Migrations | Flyway (V1–V18 applied; next is V19) |
+| Migrations | Flyway (V1–V19 applied; next is V20) |
 | Auth | JWT access tokens + HttpOnly refresh cookie + Resend email |
 | Logging | Logback (backend) · Winston (frontend) · PostgreSQL slow-query log |
 
@@ -162,6 +162,7 @@ npm run build
 | `http://localhost:3000/myplan` | Personal tracking hub: weight goals + entries + chart (signed-in only) |
 | `http://localhost:3000/myplan/diet` | Personal diet: meals, food catalog, live macro totals (signed-in only) |
 | `http://localhost:3000/myplan/workout` | Weekly workout plan maker (signed-in only) |
+| `http://localhost:3000/myplan/weight-entries` | Full weight entry log — add, edit, delete (signed-in only) |
 | `http://localhost:3000/myplan/glp1` | GLP-1 / medication log (signed-in only) |
 | `http://localhost:3000/settings` | Account settings (profile, password, sessions, avatar, push notifications) |
 | `http://localhost:3000/dashboard` | Signed-in account dashboard |
@@ -179,6 +180,6 @@ npm run build
 - Confirm `FATFITNESS_VAPID_PUBLIC_KEY`/`FATFITNESS_VAPID_PRIVATE_KEY`/`FATFITNESS_VAPID_SUBJECT` (backend) and `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (frontend) are set with a real key pair for push notifications to work.
 - Do **not** activate the `dev` Spring profile in production.
 - Ensure the process user has write access to the `logs/` directories.
-- Flyway migrations V1–V18 are applied. The next migration must be **V19**.
+- Flyway migrations V1–V19 are applied. The next migration must be **V20**.
 - The service worker (`public/sw.js`) only registers when `NODE_ENV=production`; the PWA (installability + push) requires HTTPS in production (or `localhost` in dev) since Service Workers refuse to run over plain HTTP.
 - Review GDPR / data deletion requirements before collecting real user data.

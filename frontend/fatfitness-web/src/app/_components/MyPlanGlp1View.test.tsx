@@ -3,12 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MyPlanGlp1View } from "@/app/_components/MyPlanGlp1View";
 import { renderWithProviders } from "@/test/render";
-import {
-  addMedicationLogEntry,
-  addWeightEntry,
-  ApiError,
-  getMedicationLogEntries,
-} from "@/lib/api";
+import { addMedicationLogEntry, getMedicationLogEntries } from "@/lib/api";
 import type { MedicationLogEntry } from "@/types/glp1";
 
 vi.mock("@/lib/api");
@@ -33,6 +28,7 @@ const savedEntry: MedicationLogEntry = {
   doseMg: 10,
   notes: null,
   updatedAt: "2026-07-18T08:00:00Z",
+  weightKg: null,
 };
 
 async function openFormAndFillDose(user: ReturnType<typeof userEvent.setup>) {
@@ -45,7 +41,7 @@ afterEach(() => {
 });
 
 describe("MyPlanGlp1View", () => {
-  it("logs a dose without touching the weight endpoint when no weight is typed", async () => {
+  it("logs a dose with no weight field sent when no weight is typed", async () => {
     const user = userEvent.setup();
     vi.mocked(addMedicationLogEntry).mockResolvedValue(savedEntry);
 
@@ -56,22 +52,15 @@ describe("MyPlanGlp1View", () => {
 
     await waitFor(() =>
       expect(addMedicationLogEntry).toHaveBeenCalledWith(
-        expect.objectContaining({ doseMg: 10, notes: undefined }),
+        expect.objectContaining({ doseMg: 10, notes: undefined, weightKg: undefined }),
         "test-token",
       ),
     );
-    expect(addWeightEntry).not.toHaveBeenCalled();
   });
 
-  it("also logs an optional weight through the shared weight endpoint", async () => {
+  it("sends an optional weight inline in the same add-entry request", async () => {
     const user = userEvent.setup();
-    vi.mocked(addMedicationLogEntry).mockResolvedValue(savedEntry);
-    vi.mocked(addWeightEntry).mockResolvedValue({
-      id: "w1",
-      entryDate: savedEntry.entryDate,
-      weightKg: 154.5,
-      createdAt: "2026-07-19T08:00:00Z",
-    });
+    vi.mocked(addMedicationLogEntry).mockResolvedValue({ ...savedEntry, weightKg: 154.5 });
 
     renderWithProviders(<MyPlanGlp1View />);
 
@@ -80,28 +69,11 @@ describe("MyPlanGlp1View", () => {
     await user.click(screen.getByRole("button", { name: "Add entry" }));
 
     await waitFor(() =>
-      expect(addWeightEntry).toHaveBeenCalledWith(savedEntry.entryDate, 154.5, "test-token"),
+      expect(addMedicationLogEntry).toHaveBeenCalledWith(
+        expect.objectContaining({ doseMg: 10, weightKg: 154.5 }),
+        "test-token",
+      ),
     );
-  });
-
-  it("silently keeps the dose when the weight write is rejected (already logged that day)", async () => {
-    const user = userEvent.setup();
-    vi.mocked(addMedicationLogEntry).mockResolvedValue(savedEntry);
-    vi.mocked(addWeightEntry).mockRejectedValue(
-      new ApiError("Weight already logged for this date", 409, null),
-    );
-
-    renderWithProviders(<MyPlanGlp1View />);
-
-    await openFormAndFillDose(user);
-    await user.type(screen.getByLabelText("Weight (kg, optional)"), "154.5");
-    await user.click(screen.getByRole("button", { name: "Add entry" }));
-
-    await waitFor(() => expect(addWeightEntry).toHaveBeenCalled());
-    // The 409 must be swallowed: no error text, and the dose entry stays logged.
-    expect(screen.queryByText("Could not add this entry. Please try again.")).not.toBeInTheDocument();
-    expect(screen.queryByText("Weight already logged for this date")).not.toBeInTheDocument();
-    expect(screen.queryByText("No entries yet. Log your first dose below if you'd like to track it.")).not.toBeInTheDocument();
   });
 
   it("shows the load error when fetching the log fails", async () => {

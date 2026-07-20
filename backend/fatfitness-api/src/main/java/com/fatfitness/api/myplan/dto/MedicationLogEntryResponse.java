@@ -10,5 +10,6 @@ public record MedicationLogEntryResponse(
 		LocalDate entryDate,
 		BigDecimal doseMg,
 		String notes,
-		Instant updatedAt) {
+		Instant updatedAt,
+		BigDecimal weightKg) {
 }

@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageShell } from "@/app/_components/PageShell";
 import { MyPlanWeightChart } from "@/app/_components/MyPlanWeightChart";
+import { DatePicker } from "@/app/_components/DatePicker";
+import { formatDateShort } from "@/lib/date";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { myPlanCopy } from "@/content/myplan";
@@ -193,7 +195,7 @@ export function MyPlanView() {
                   entries.length > 0
                     ? formatWeightKg(entries[entries.length - 1].weightKg)
                     : copy.weight.progressNoEntries,
-                detail: entries.length > 0 ? entries[entries.length - 1].entryDate : null,
+                detail: entries.length > 0 ? formatDateShort(entries[entries.length - 1].entryDate) : null,
               },
               {
                 label: copy.weight.progressChangeLabel,
@@ -293,14 +295,9 @@ export function MyPlanView() {
               <label htmlFor="entryDate" className="site-subtle text-xs font-semibold uppercase">
                 {copy.weight.entryDateLabel}
               </label>
-              <input
-                id="entryDate"
-                type="date"
-                value={entryDate}
-                onChange={(e) => setEntryDate(e.target.value)}
-                required
-                className="rounded-xl border border-(--color-border) bg-(--color-surface) px-4 py-2.5 text-sm text-foreground outline-none focus:border-(--color-border-strong)"
-              />
+              <div className="w-44">
+                <DatePicker id="entryDate" value={entryDate} onChange={setEntryDate} />
+              </div>
             </div>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="entryWeight" className="site-subtle text-xs font-semibold uppercase">
@@ -356,6 +353,17 @@ export function MyPlanView() {
         </p>
       </section>
 
+      {/* Weight Entries section */}
+      <section className="site-divider mt-10 border-t pt-8">
+        <h2 className="text-2xl font-semibold tracking-normal">{copy.weightEntries.title}</h2>
+        <p className="site-muted mt-3 max-w-2xl text-sm leading-7">{copy.weightEntries.summary}</p>
+        <p className="mt-4">
+          <Link href="/myplan/weight-entries" className="site-text-link text-sm">
+            {copy.weightEntries.linkLabel}
+          </Link>
+        </p>
+      </section>
+
       {/* GLP-1 section */}
       <section className="site-divider mt-10 border-t pt-8">
         <h2 className="text-2xl font-semibold tracking-normal">{copy.glp1.title}</h2>
@@ -369,3 +377,4 @@ export function MyPlanView() {
     </PageShell>
   );
 }
+

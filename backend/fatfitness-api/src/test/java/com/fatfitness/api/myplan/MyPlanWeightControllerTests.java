@@ -1,6 +1,7 @@
 package com.fatfitness.api.myplan;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -285,7 +286,7 @@ class MyPlanWeightControllerTests {
 	}
 
 	@Test
-	void duplicateDateEntryReturnsConflict() throws Exception {
+	void duplicateDateEntryUpdatesWeightInsteadOfDuplicating() throws Exception {
 		String token = registerVerifyAndLogin("entry-duplicate@example.com");
 
 		mockMvc.perform(post("/api/myplan/weight/entries")
@@ -301,7 +302,15 @@ class MyPlanWeightControllerTests {
 						.content("""
 								{ "entryDate": "2026-07-01", "weightKg": 161.0 }
 								"""))
-				.andExpect(status().isConflict());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.entryDate").value("2026-07-01"))
+				.andExpect(jsonPath("$.weightKg").value(161.0));
+
+		mockMvc.perform(get("/api/myplan/weight/entries")
+						.header("Authorization", "Bearer " + token))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].weightKg").value(161.0));
 	}
 
 	@Test
@@ -374,7 +383,97 @@ class MyPlanWeightControllerTests {
 				.andExpect(jsonPath("$", hasSize(0)));
 	}
 
+	// --- Update / delete ---
+
+	@Test
+	void updateEntryChangesWeight() throws Exception {
+		String token = registerVerifyAndLogin("entry-update@example.com");
+		String entryId = addEntryAndReturnId(token, "2026-07-01", "160.5");
+
+		mockMvc.perform(patch("/api/myplan/weight/entries/{id}", entryId)
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "weightKg": 158.2 }
+								"""))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.entryDate").value("2026-07-01"))
+				.andExpect(jsonPath("$.weightKg").value(158.2));
+	}
+
+	@Test
+	void updateEntryRejectsMissingWeight() throws Exception {
+		String token = registerVerifyAndLogin("entry-update-missing@example.com");
+		String entryId = addEntryAndReturnId(token, "2026-07-01", "160.5");
+
+		mockMvc.perform(patch("/api/myplan/weight/entries/{id}", entryId)
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{}"))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updateEntryOnUnknownIdReturnsNotFound() throws Exception {
+		String token = registerVerifyAndLogin("entry-update-unknown@example.com");
+
+		mockMvc.perform(patch("/api/myplan/weight/entries/{id}", "00000000-0000-0000-0000-000000000000")
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "weightKg": 158.2 }
+								"""))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void deleteEntryRemovesIt() throws Exception {
+		String token = registerVerifyAndLogin("entry-delete@example.com");
+		String entryId = addEntryAndReturnId(token, "2026-07-01", "160.5");
+
+		mockMvc.perform(delete("/api/myplan/weight/entries/{id}", entryId)
+						.header("Authorization", "Bearer " + token))
+				.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/myplan/weight/entries")
+						.header("Authorization", "Bearer " + token))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(0)));
+	}
+
+	@Test
+	void updateAndDeleteAreIsolatedPerUser() throws Exception {
+		String tokenA = registerVerifyAndLogin("entry-update-delete-isolation-a@example.com");
+		String tokenB = registerVerifyAndLogin("entry-update-delete-isolation-b@example.com");
+		String entryId = addEntryAndReturnId(tokenA, "2026-07-01", "160.5");
+
+		mockMvc.perform(patch("/api/myplan/weight/entries/{id}", entryId)
+						.header("Authorization", "Bearer " + tokenB)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "weightKg": 100.0 }
+								"""))
+				.andExpect(status().isNotFound());
+
+		mockMvc.perform(delete("/api/myplan/weight/entries/{id}", entryId)
+						.header("Authorization", "Bearer " + tokenB))
+				.andExpect(status().isNotFound());
+	}
+
 	// --- Helpers ---
+
+	private String addEntryAndReturnId(String token, String entryDate, String weightKg) throws Exception {
+		MvcResult result = mockMvc.perform(post("/api/myplan/weight/entries")
+						.header("Authorization", "Bearer " + token)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{ "entryDate": "%s", "weightKg": %s }
+								""".formatted(entryDate, weightKg)))
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		return JsonPath.read(result.getResponse().getContentAsString(), "$.id");
+	}
 
 	private String registerVerifyAndLogin(String email) throws Exception {
 		mockMvc.perform(post("/api/auth/register")

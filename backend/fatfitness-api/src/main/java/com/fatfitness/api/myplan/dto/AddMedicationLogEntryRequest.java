@@ -11,5 +11,6 @@ import jakarta.validation.constraints.Size;
 public record AddMedicationLogEntryRequest(
 		@NotNull LocalDate entryDate,
 		@NotNull @DecimalMin("0.01") @DecimalMax("9999.99") BigDecimal doseMg,
-		@Size(max = 1000) String notes) {
+		@Size(max = 1000) String notes,
+		@DecimalMin("1") @DecimalMax("9999.99") BigDecimal weightKg) {
 }

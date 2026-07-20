@@ -1,5 +1,6 @@
 import type { Locale } from "@/content/site";
 import { getWeightLogTable, getWeightSummary } from "@/lib/weightLog";
+import { formatDateShort } from "@/lib/date";
 
 type Exercise = {
   name: string;
@@ -482,8 +483,8 @@ export const learnCopy = {
       intro:
         "A personal Mounjaro log, shared for transparency. Not medication advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional.",
       summary: [
-        { label: "Starting point", value: enWeightSummary.startWeight, detail: enWeightSummary.startDateIso },
-        { label: "Latest logged point", value: enWeightSummary.latestWeight, detail: enWeightSummary.latestDateIso },
+        { label: "Starting point", value: enWeightSummary.startWeight, detail: formatDateShort(enWeightSummary.startDateIso) },
+        { label: "Latest logged point", value: enWeightSummary.latestWeight, detail: formatDateShort(enWeightSummary.latestDateIso) },
         { label: "Logged change", value: enWeightSummary.change, detail: "Personal log" },
       ],
       entriesTitle: "Logged Entries",
@@ -745,8 +746,8 @@ export const learnCopy = {
       intro:
         "Ein persönlicher Mounjaro Log, für Transparenz geteilt. Keine Medikamentenberatung, keine Dosierungsanleitung und keine Methode für andere — medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       summary: [
-        { label: "Startpunkt", value: deWeightSummary.startWeight, detail: deWeightSummary.startDateIso },
-        { label: "Letzter eingetragener Stand", value: deWeightSummary.latestWeight, detail: deWeightSummary.latestDateIso },
+        { label: "Startpunkt", value: deWeightSummary.startWeight, detail: formatDateShort(deWeightSummary.startDateIso) },
+        { label: "Letzter eingetragener Stand", value: deWeightSummary.latestWeight, detail: formatDateShort(deWeightSummary.latestDateIso) },
         { label: "Eingetragene Veränderung", value: deWeightSummary.change, detail: "Persönlicher Log" },
       ],
       entriesTitle: "Eingetragene Werte",

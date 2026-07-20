@@ -168,13 +168,18 @@ export function SiteHeader() {
               ) : user ? (
                 <>
                   {canOpenAdmin && (
-                    <Link href="/admin" className="site-nav-link">
+                    <Link
+                      href="/admin"
+                      className={isActiveRoute(pathname, "/admin") ? "site-nav-link-active" : "site-nav-link"}
+                    >
                       {copy.account.admin}
                     </Link>
                   )}
                   <Link
                     href="/messages"
-                    className="site-nav-link relative inline-flex items-center"
+                    className={`relative inline-flex items-center ${
+                      isActiveRoute(pathname, "/messages") ? "site-nav-link-active" : "site-nav-link"
+                    }`}
                     aria-label={copy.account.messages}
                     title={copy.account.messages}
                   >
@@ -188,12 +193,17 @@ export function SiteHeader() {
                       </span>
                     ) : null}
                   </Link>
-                  <Link href="/myplan" className="site-nav-link">
+                  <Link
+                    href="/myplan"
+                    className={isActiveRoute(pathname, "/myplan") ? "site-nav-link-active" : "site-nav-link"}
+                  >
                     {copy.nav.myplan}
                   </Link>
                   <Link
                     href="/dashboard"
-                    className="site-nav-link inline-flex items-center gap-1.5"
+                    className={`inline-flex items-center gap-1.5 ${
+                      isActiveRoute(pathname, "/dashboard") ? "site-nav-link-active" : "site-nav-link"
+                    }`}
                     title={user.email}
                   >
                     <UserAvatar displayName={user.displayName} userId={user.userId} hasAvatar={user.hasAvatar} size={16} />
@@ -338,7 +348,11 @@ export function SiteHeader() {
                     <Link
                       href="/admin"
                       onClick={() => setMenuOpen(false)}
-                      className="rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                      className={`rounded-lg px-4 py-2.5 text-sm transition ${
+                        isActiveRoute(pathname, "/admin")
+                          ? "bg-foreground font-semibold text-background"
+                          : "text-(--color-muted) hover:bg-(--color-surface-raised) hover:text-foreground"
+                      }`}
                     >
                       {copy.account.admin}
                     </Link>
@@ -346,7 +360,11 @@ export function SiteHeader() {
                   <Link
                     href="/messages"
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-between rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                    className={`flex items-center justify-between rounded-lg px-4 py-2.5 text-sm transition ${
+                      isActiveRoute(pathname, "/messages")
+                        ? "bg-foreground font-semibold text-background"
+                        : "text-(--color-muted) hover:bg-(--color-surface-raised) hover:text-foreground"
+                    }`}
                   >
                     {copy.account.messages}
                     {unreadMessages > 0 ? (
@@ -358,14 +376,22 @@ export function SiteHeader() {
                   <Link
                     href="/myplan"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                    className={`rounded-lg px-4 py-2.5 text-sm transition ${
+                      isActiveRoute(pathname, "/myplan")
+                        ? "bg-foreground font-semibold text-background"
+                        : "text-(--color-muted) hover:bg-(--color-surface-raised) hover:text-foreground"
+                    }`}
                   >
                     {copy.nav.myplan}
                   </Link>
                   <Link
                     href="/dashboard"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                    className={`rounded-lg px-4 py-2.5 text-sm transition ${
+                      isActiveRoute(pathname, "/dashboard")
+                        ? "bg-foreground font-semibold text-background"
+                        : "text-(--color-muted) hover:bg-(--color-surface-raised) hover:text-foreground"
+                    }`}
                   >
                     Account
                   </Link>

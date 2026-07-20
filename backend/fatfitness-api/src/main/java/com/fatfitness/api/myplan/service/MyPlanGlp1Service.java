@@ -1,5 +1,6 @@
 package com.fatfitness.api.myplan.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ import com.fatfitness.api.myplan.dto.AddMedicationLogEntryRequest;
 import com.fatfitness.api.myplan.dto.MedicationLogEntryResponse;
 import com.fatfitness.api.myplan.dto.UpdateMedicationLogEntryRequest;
 import com.fatfitness.api.myplan.entity.MedicationLogEntry;
+import com.fatfitness.api.myplan.entity.WeightEntry;
 import com.fatfitness.api.myplan.repository.MedicationLogEntryRepository;
 import com.fatfitness.api.user.entity.UserAccount;
 import com.fatfitness.api.user.entity.UserStatus;
@@ -22,19 +24,22 @@ public class MyPlanGlp1Service {
 
 	private final UserAccountRepository userAccountRepository;
 	private final MedicationLogEntryRepository medicationLogEntryRepository;
+	private final MyPlanWeightService myPlanWeightService;
 
 	public MyPlanGlp1Service(
 			UserAccountRepository userAccountRepository,
-			MedicationLogEntryRepository medicationLogEntryRepository) {
+			MedicationLogEntryRepository medicationLogEntryRepository,
+			MyPlanWeightService myPlanWeightService) {
 		this.userAccountRepository = userAccountRepository;
 		this.medicationLogEntryRepository = medicationLogEntryRepository;
+		this.myPlanWeightService = myPlanWeightService;
 	}
 
 	public List<MedicationLogEntryResponse> getEntries(String userIdSubject) {
 		UserAccount user = requireActiveUser(userIdSubject);
 		return medicationLogEntryRepository.findByUserIdOrderByEntryDateAsc(user.getId())
 				.stream()
-				.map(MyPlanGlp1Service::toResponse)
+				.map(entry -> toResponse(entry, null))
 				.toList();
 	}
 
@@ -46,7 +51,15 @@ public class MyPlanGlp1Service {
 				request.entryDate(),
 				request.doseMg(),
 				cleanOptional(request.notes())));
-		return toResponse(entry);
+
+		BigDecimal weightKg = null;
+		if (request.weightKg() != null) {
+			WeightEntry weightEntry =
+					myPlanWeightService.upsertEntryForDate(user, request.entryDate(), request.weightKg(), entry);
+			weightKg = weightEntry.getWeightKg();
+		}
+
+		return toResponse(entry, weightKg);
 	}
 
 	@Transactional
@@ -58,13 +71,14 @@ public class MyPlanGlp1Service {
 		MedicationLogEntry entry = requireOwnedEntry(entryId, user.getId());
 		entry.update(request.entryDate(), request.doseMg(), cleanOptional(request.notes()));
 		entry = medicationLogEntryRepository.save(entry);
-		return toResponse(entry);
+		return toResponse(entry, null);
 	}
 
 	@Transactional
 	public void deleteEntry(UUID entryId, String userIdSubject) {
 		UserAccount user = requireActiveUser(userIdSubject);
 		MedicationLogEntry entry = requireOwnedEntry(entryId, user.getId());
+		myPlanWeightService.deleteLinkedWeightEntry(entry);
 		medicationLogEntryRepository.delete(entry);
 	}
 
@@ -93,13 +107,14 @@ public class MyPlanGlp1Service {
 		return cleaned.isEmpty() ? null : cleaned;
 	}
 
-	private static MedicationLogEntryResponse toResponse(MedicationLogEntry entry) {
+	private static MedicationLogEntryResponse toResponse(MedicationLogEntry entry, BigDecimal weightKg) {
 		return new MedicationLogEntryResponse(
 				entry.getId(),
 				entry.getEntryDate(),
 				entry.getDoseMg(),
 				entry.getNotes(),
-				entry.getUpdatedAt());
+				entry.getUpdatedAt(),
+				weightKg);
 	}
 
 	private static UUID parseUserIdSubject(String subject) {

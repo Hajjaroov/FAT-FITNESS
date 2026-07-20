@@ -1,4 +1,5 @@
 import type { Locale } from "@/content/site";
+import { formatDateLong } from "@/lib/date";
 
 type WeightLogRow = readonly [dose: string, date: string, weightKg: number];
 
@@ -43,17 +44,6 @@ const weightLog: WeightLogRow[] = [
   ["10", "2026-07-19", 152.5],
 ];
 
-const MONTHS: Record<Locale, string[]> = {
-  en: [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ],
-  de: [
-    "Januar", "Februar", "März", "April", "Mai", "Juni",
-    "Juli", "August", "September", "Oktober", "November", "Dezember",
-  ],
-};
-
 function round1(value: number): number {
   return Math.round(value * 10) / 10;
 }
@@ -71,13 +61,6 @@ function formatChangeKg(deltaKg: number, locale: Locale): string {
   const rounded = round1(deltaKg);
   const sign = rounded > 0 ? "+" : rounded < 0 ? "-" : "";
   return `${sign}${formatDecimal(Math.abs(rounded), locale)} kg`;
-}
-
-function formatDate(iso: string, locale: Locale): string {
-  const [year, month, day] = iso.split("-").map(Number);
-  return locale === "de"
-    ? `${day}. ${MONTHS.de[month - 1]} ${year}`
-    : `${day} ${MONTHS.en[month - 1]} ${year}`;
 }
 
 // Table display always uses plain period decimals regardless of site locale,
@@ -100,10 +83,10 @@ export function getWeightSummary(locale: Locale) {
   return {
     startWeight: formatWeightKg(first[2], locale),
     startDateIso: first[1],
-    startDateFormatted: formatDate(first[1], locale),
+    startDateFormatted: formatDateLong(first[1], locale),
     latestWeight: formatWeightKg(last[2], locale),
     latestDateIso: last[1],
-    latestDateFormatted: formatDate(last[1], locale),
+    latestDateFormatted: formatDateLong(last[1], locale),
     change: formatChangeKg(last[2] - first[2], locale),
   };
 }

@@ -29,6 +29,14 @@ type MyPlanCopy = {
     progressLatestLabel: string;
     progressChangeLabel: string;
     progressNoEntries: string;
+    entriesTitle: string;
+    saveLabel: string;
+    cancelLabel: string;
+    editLabel: string;
+    deleteLabel: string;
+    deleteEntryConfirm: string;
+    updateError: string;
+    deleteError: string;
   };
   diet: {
     title: string;
@@ -142,6 +150,14 @@ type MyPlanCopy = {
     exerciseUpdateError: string;
     exerciseDeleteError: string;
   };
+  weightEntries: {
+    title: string;
+    summary: string;
+    linkLabel: string;
+    pageEyebrow: string;
+    pageIntro: string;
+    myWeightEntriesTitle: string;
+  };
   glp1: {
     title: string;
     summary: string;
@@ -205,6 +221,14 @@ export const myPlanCopy = {
       progressLatestLabel: "Latest logged point",
       progressChangeLabel: "Logged change",
       progressNoEntries: "No entries yet",
+      entriesTitle: "Logged entries",
+      saveLabel: "Save",
+      cancelLabel: "Cancel",
+      editLabel: "Edit",
+      deleteLabel: "Delete",
+      deleteEntryConfirm: "Delete this entry?",
+      updateError: "Could not save changes. Please try again.",
+      deleteError: "Could not delete this entry. Please try again.",
     },
     diet: {
       title: "Diet",
@@ -328,6 +352,15 @@ export const myPlanCopy = {
       exerciseUpdateError: "Could not save changes. Please try again.",
       exerciseDeleteError: "Could not remove this exercise. Please try again.",
     },
+    weightEntries: {
+      title: "Weight Entries",
+      summary: "Every logged weigh-in in one place — add, edit, or delete any entry.",
+      linkLabel: "Open Weight Entries",
+      pageEyebrow: "Personal tracking",
+      pageIntro:
+        "Every weight you've logged, oldest first. Add a new one below, or edit and delete existing entries here.",
+      myWeightEntriesTitle: "My Weight Entries",
+    },
     glp1: {
       title: "GLP-1 / Medication",
       summary:
@@ -392,6 +425,14 @@ export const myPlanCopy = {
       progressLatestLabel: "Letzter eingetragener Stand",
       progressChangeLabel: "Eingetragene Veränderung",
       progressNoEntries: "Noch keine Einträge",
+      entriesTitle: "Eingetragene Werte",
+      saveLabel: "Speichern",
+      cancelLabel: "Abbrechen",
+      editLabel: "Bearbeiten",
+      deleteLabel: "Löschen",
+      deleteEntryConfirm: "Diesen Eintrag löschen?",
+      updateError: "Änderungen konnten nicht gespeichert werden. Bitte versuche es erneut.",
+      deleteError: "Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut.",
     },
     diet: {
       title: "Ernährung",
@@ -517,6 +558,15 @@ export const myPlanCopy = {
       exerciseAddError: "Übung konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
       exerciseUpdateError: "Änderungen konnten nicht gespeichert werden. Bitte versuche es erneut.",
       exerciseDeleteError: "Übung konnte nicht entfernt werden. Bitte versuche es erneut.",
+    },
+    weightEntries: {
+      title: "Gewichtseinträge",
+      summary: "Alle erfassten Gewichtswerte an einem Ort — hinzufügen, bearbeiten oder löschen.",
+      linkLabel: "Gewichtseinträge öffnen",
+      pageEyebrow: "Persönliches Tracking",
+      pageIntro:
+        "Alle deine erfassten Gewichtswerte, älteste zuerst. Füge unten einen neuen hinzu oder bearbeite bzw. lösche bestehende Einträge.",
+      myWeightEntriesTitle: "Meine Gewichtseinträge",
     },
     glp1: {
       title: "GLP-1 / Medikamente",

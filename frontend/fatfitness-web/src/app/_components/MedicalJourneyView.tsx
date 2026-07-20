@@ -5,6 +5,7 @@ import { PageShell } from "@/app/_components/PageShell";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { learnCopy } from "@/content/journal";
 import { siteCopy } from "@/content/site";
+import { formatDateShort } from "@/lib/date";
 
 export function MedicalJourneyView() {
   const copy = useLocalizedContent(learnCopy);
@@ -60,7 +61,7 @@ export function MedicalJourneyView() {
               {copy.medical.loggedEntries.map(([mj, date, weight, change]) => (
                 <tr key={`${mj}-${date}`}>
                   <td className="px-3 py-3 sm:px-4">{mj}</td>
-                  <td className="whitespace-nowrap px-3 py-3 sm:px-4">{date}</td>
+                  <td className="whitespace-nowrap px-3 py-3 sm:px-4">{formatDateShort(date)}</td>
                   <td className="px-3 py-3 sm:px-4">{weight}</td>
                   <td className="px-3 py-3">{change}</td>
                 </tr>

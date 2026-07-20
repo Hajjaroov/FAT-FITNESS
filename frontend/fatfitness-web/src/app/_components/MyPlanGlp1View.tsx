@@ -4,14 +4,15 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageShell } from "@/app/_components/PageShell";
+import { DatePicker } from "@/app/_components/DatePicker";
 import { IconPencil, IconPlus, IconXMark } from "@/app/_components/icons";
+import { formatDateShort } from "@/lib/date";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { myPlanCopy } from "@/content/myplan";
 import { siteCopy } from "@/content/site";
 import {
   addMedicationLogEntry,
-  addWeightEntry,
   ApiError,
   deleteMedicationLogEntry,
   getMedicationLogEntries,
@@ -118,19 +119,18 @@ export function MyPlanGlp1View() {
 
   function handleEntryAdded(entry: MedicationLogEntry) {
     setEntries((prev) => [...prev, entry].sort((a, b) => a.entryDate.localeCompare(b.entryDate)));
-  }
 
-  async function handleWeightAlsoLogged(entryDate: string, weightKg: number) {
-    if (!accessToken) return;
-    try {
-      const weightEntry = await addWeightEntry(entryDate, weightKg, accessToken);
-      setWeightEntries((prev) =>
-        [...prev, weightEntry].sort((a, b) => a.entryDate.localeCompare(b.entryDate)),
-      );
-    } catch {
-      // A weight already exists for this date (409) or the write otherwise
-      // failed — the shot itself is already saved either way, and the
-      // existing weight (if any) stays authoritative. Best-effort, silent.
+    // The backend upserts the weight entry for this date in the same request
+    // and returns its resulting value, so local weight state can be updated
+    // directly without a second round trip.
+    if (entry.weightKg !== null) {
+      setWeightEntries((prev) => {
+        const withoutDate = prev.filter((w) => w.entryDate !== entry.entryDate);
+        return [
+          ...withoutDate,
+          { id: entry.id, entryDate: entry.entryDate, weightKg: entry.weightKg!, createdAt: entry.updatedAt },
+        ].sort((a, b) => a.entryDate.localeCompare(b.entryDate));
+      });
     }
   }
 
@@ -203,7 +203,6 @@ export function MyPlanGlp1View() {
             accessToken={accessToken}
             copy={copy.glp1}
             onAdded={handleEntryAdded}
-            onWeightAlsoLogged={handleWeightAlsoLogged}
           />
         </div>
       </section>
@@ -276,7 +275,7 @@ function Glp1EntryRow({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 text-sm sm:justify-between">
-              <span className="font-semibold">{entry.entryDate}</span>
+              <span className="font-semibold">{formatDateShort(entry.entryDate)}</span>
               <span>
                 {entry.doseMg} {copy.doseUnit}
               </span>
@@ -325,14 +324,9 @@ function Glp1EntryRow({
           <label htmlFor={`edit-date-${entry.id}`} className="text-sm font-semibold">
             {copy.dateLabel}
           </label>
-          <input
-            id={`edit-date-${entry.id}`}
-            type="date"
-            value={entryDate}
-            onChange={(e) => setEntryDate(e.target.value)}
-            required
-            className="mt-2 min-h-11 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-sm text-foreground outline-none focus:border-(--color-accent)"
-          />
+          <div className="mt-2">
+            <DatePicker id={`edit-date-${entry.id}`} value={entryDate} onChange={setEntryDate} />
+          </div>
         </div>
         <div>
           <label htmlFor={`edit-dose-${entry.id}`} className="text-sm font-semibold">
@@ -396,12 +390,10 @@ function AddGlp1EntryForm({
   accessToken,
   copy,
   onAdded,
-  onWeightAlsoLogged,
 }: {
   accessToken: string;
   copy: Glp1Copy;
   onAdded: (entry: MedicationLogEntry) => void;
-  onWeightAlsoLogged: (entryDate: string, weightKg: number) => Promise<void>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [entryDate, setEntryDate] = useState(todayISODate());
@@ -430,13 +422,15 @@ function AddGlp1EntryForm({
     setError(null);
     try {
       const entry = await addMedicationLogEntry(
-        { entryDate, doseMg: dose, notes: notes.trim() || undefined },
+        {
+          entryDate,
+          doseMg: dose,
+          notes: notes.trim() || undefined,
+          weightKg: weightValue ?? undefined,
+        },
         accessToken,
       );
       onAdded(entry);
-      if (weightValue !== null) {
-        await onWeightAlsoLogged(entryDate, weightValue);
-      }
       resetForm();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : copy.addError);
@@ -472,14 +466,9 @@ function AddGlp1EntryForm({
           <label htmlFor="glp1-date" className="text-sm font-semibold">
             {copy.dateLabel}
           </label>
-          <input
-            id="glp1-date"
-            type="date"
-            value={entryDate}
-            onChange={(e) => setEntryDate(e.target.value)}
-            required
-            className="mt-2 min-h-11 w-full rounded-xl border border-(--color-border) bg-(--color-surface) px-4 text-sm text-foreground outline-none focus:border-(--color-accent)"
-          />
+          <div className="mt-2">
+            <DatePicker id="glp1-date" value={entryDate} onChange={setEntryDate} />
+          </div>
         </div>
         <div>
           <label htmlFor="glp1-dose" className="text-sm font-semibold">
