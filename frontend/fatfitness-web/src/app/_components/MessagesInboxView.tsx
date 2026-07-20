@@ -7,7 +7,7 @@ import { UserAvatar } from "@/app/_components/UserAvatar";
 import { BroadcastComposer } from "@/app/_components/BroadcastComposer";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { formatForumPostDate } from "@/app/_components/CommunityForumPosts";
-import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { messagesCopy } from "@/content/messages";
 import { ApiError, deleteConversation, getConversations } from "@/lib/api";
 import type { ConversationSummary } from "@/types/messaging";
@@ -19,7 +19,6 @@ type LoadState =
 
 export function MessagesInboxView() {
   const copy = useLocalizedContent(messagesCopy);
-  const { locale } = useLocale();
   const { status, accessToken } = useAuth();
   const [state, setState] = useState<LoadState>({ kind: "loading" });
   const [reloadKey, setReloadKey] = useState(0);
@@ -167,7 +166,7 @@ export function MessagesInboxView() {
                       </div>
                       <p className="site-subtle mt-0.5 truncate text-xs">
                         {conversation.otherParticipantDisplayName} ·{" "}
-                        {formatForumPostDate(conversation.lastMessageAt, locale)}
+                        {formatForumPostDate(conversation.lastMessageAt)}
                       </p>
                       <p
                         className={`mt-1 truncate text-sm ${

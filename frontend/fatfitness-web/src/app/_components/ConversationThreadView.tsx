@@ -6,7 +6,7 @@ import { PageShell } from "@/app/_components/PageShell";
 import { UserAvatar } from "@/app/_components/UserAvatar";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { formatForumPostDate } from "@/app/_components/CommunityForumPosts";
-import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { messagesCopy } from "@/content/messages";
 import { ApiError, getConversation, replyToConversation } from "@/lib/api";
 import type { ConversationThread } from "@/types/messaging";
@@ -22,7 +22,6 @@ type LoadState =
 
 export function ConversationThreadView({ conversationId }: Props) {
   const copy = useLocalizedContent(messagesCopy);
-  const { locale } = useLocale();
   const { status, accessToken, user } = useAuth();
   const [state, setState] = useState<LoadState>({ kind: "loading" });
   const [replyBody, setReplyBody] = useState("");
@@ -159,7 +158,7 @@ export function ConversationThreadView({ conversationId }: Props) {
                   </div>
                   <span className="site-subtle mt-1 text-[11px]">
                     {mine ? copy.thread.youLabel : message.senderDisplayName} ·{" "}
-                    {formatForumPostDate(message.sentAt, locale)}
+                    {formatForumPostDate(message.sentAt)}
                   </span>
                 </div>
               );

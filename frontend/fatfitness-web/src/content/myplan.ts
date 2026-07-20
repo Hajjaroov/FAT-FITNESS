@@ -21,7 +21,6 @@ type MyPlanCopy = {
     addingLabel: string;
     entryAdded: string;
     entryError: string;
-    entryDuplicateError: string;
     entriesLoadError: string;
     goalsLoadError: string;
     tooltipLabel: string;
@@ -213,7 +212,6 @@ export const myPlanCopy = {
       addingLabel: "Adding...",
       entryAdded: "Entry added.",
       entryError: "Could not add entry. Please try again.",
-      entryDuplicateError: "An entry for this date already exists.",
       entriesLoadError: "Could not load weight entries.",
       goalsLoadError: "Could not load weight goals.",
       tooltipLabel: "Weight",
@@ -417,7 +415,6 @@ export const myPlanCopy = {
       addingLabel: "Wird hinzugefügt...",
       entryAdded: "Eintrag hinzugefügt.",
       entryError: "Eintrag konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
-      entryDuplicateError: "Für dieses Datum existiert bereits ein Eintrag.",
       entriesLoadError: "Gewichtseinträge konnten nicht geladen werden.",
       goalsLoadError: "Gewichtsziele konnten nicht geladen werden.",
       tooltipLabel: "Gewicht",

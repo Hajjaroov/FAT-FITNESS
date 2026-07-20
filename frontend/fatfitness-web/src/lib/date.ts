@@ -46,3 +46,28 @@ export function monthName(month: number, locale: Locale): string {
 export function weekdayShortLabels(locale: Locale): string[] {
   return WEEKDAYS_SHORT[locale];
 }
+
+function pad2(value: number): string {
+  return String(value).padStart(2, "0");
+}
+
+// Formats a full ISO timestamp (e.g. createdAt/updatedAt, with time and a
+// time zone) in the viewer's local time zone, day-first "DD/MM/YYYY" - no
+// locale parameter, because the point is that it no longer varies by
+// language. Intl.DateTimeFormat's dateStyle/timeStyle defaults read
+// day-first for "de" but month-first for "en" ("20.07.2026" vs "Jul 20,
+// 2026") - same inconsistency class as raw ISO, just less severe since the
+// month is spelled out.
+export function formatTimestampShort(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return `${pad2(date.getDate())}/${pad2(date.getMonth() + 1)}/${date.getFullYear()}`;
+}
+
+// Same as formatTimestampShort but with 24-hour time appended, for contexts
+// that need it (account activity, admin logs, forum post metadata).
+export function formatTimestampWithTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return `${formatTimestampShort(value)}, ${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+}

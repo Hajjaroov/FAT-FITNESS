@@ -7,6 +7,7 @@ import { UserAvatar } from "@/app/_components/UserAvatar";
 import { MessageComposeButton } from "@/app/_components/MessageComposeButton";
 import { useLocale } from "@/app/_components/LocaleProvider";
 import { ApiError, getPublicUserProfile } from "@/lib/api";
+import { formatTimestampShort } from "@/lib/date";
 import { getCountryOptions } from "@/content/countries";
 import type { Locale } from "@/content/site";
 import type { UserPublicProfile } from "@/types/user";
@@ -26,10 +27,9 @@ function formatJoinDate(value: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(date);
 }
 
-function formatDate(value: string, locale: Locale) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+function formatDate(value: string) {
+  const formatted = formatTimestampShort(value);
+  return formatted || value;
 }
 
 function countryLabel(code: string | null, locale: Locale) {
@@ -169,7 +169,7 @@ export function UserProfileView({ userId }: Props) {
                       >
                         <p className="truncate text-sm font-semibold">{thread.title}</p>
                         <p className="site-subtle mt-1 text-xs">
-                          {thread.categoryName} · {formatDate(thread.createdAt, locale)}
+                          {thread.categoryName} · {formatDate(thread.createdAt)}
                         </p>
                       </Link>
                     </li>
@@ -198,7 +198,7 @@ export function UserProfileView({ userId }: Props) {
                           &ldquo;{c.excerpt}&rdquo;
                         </p>
                         <p className="site-subtle mt-1.5 text-xs">
-                          in {c.postTitle} · {formatDate(c.createdAt, locale)}
+                          in {c.postTitle} · {formatDate(c.createdAt)}
                         </p>
                       </Link>
                     </li>

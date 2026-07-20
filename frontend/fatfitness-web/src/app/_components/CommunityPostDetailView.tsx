@@ -8,10 +8,7 @@ import { useAuth } from "@/app/_components/AuthProvider";
 import { CommunityComments } from "@/app/_components/CommunityComments";
 import { PageShell } from "@/app/_components/PageShell";
 import { CommunityPostReportForm } from "@/app/_components/CommunityPostReportForm";
-import {
-  useLocale,
-  useLocalizedContent,
-} from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { formatForumPostDate } from "@/app/_components/CommunityForumPosts";
 import { communityCopy } from "@/content/community";
 import {
@@ -49,7 +46,6 @@ export function CommunityPostDetailView({
   postId,
 }: CommunityPostDetailViewProps) {
   const copy = useLocalizedContent(communityCopy);
-  const { locale } = useLocale();
   const { accessToken, status: authStatus, user } = useAuth();
   const router = useRouter();
   const [state, setState] = useState<LoadState>({ kind: "loading" });
@@ -238,11 +234,11 @@ export function CommunityPostDetailView({
                   </Link>
                   <span aria-hidden="true">/</span>
                   <time dateTime={state.post.createdAt}>
-                    {formatForumPostDate(state.post.createdAt, locale)}
+                    {formatForumPostDate(state.post.createdAt)}
                   </time>
                   {state.post.editedAt ? (
                     <span className="italic">
-                      · {copy.posts.editedLabel} {formatForumPostDate(state.post.editedAt, locale)}
+                      · {copy.posts.editedLabel} {formatForumPostDate(state.post.editedAt)}
                     </span>
                   ) : null}
                 </div>

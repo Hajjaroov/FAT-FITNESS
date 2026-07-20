@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
-import { useLocale, useLocalizedContent } from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { PageShell } from "@/app/_components/PageShell";
 import { adminCopy } from "@/content/admin";
 import { ApiError, deleteFood, getMacroChecks, resolveMacroCheck } from "@/lib/api";
+import { formatTimestampWithTime } from "@/lib/date";
 import type { UserRole } from "@/types/auth";
 import type { FoodMacroCheck, FoodMacroCheckStatus } from "@/types/diet";
 
@@ -26,15 +27,8 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-function formatDateTime(value: string, locale: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(date);
-}
-
 export function AdminMacroChecksView() {
   const copy = useLocalizedContent(adminCopy);
-  const { locale } = useLocale();
   const { status: authStatus, user, accessToken } = useAuth();
   const [checks, setChecks] = useState<FoodMacroCheck[]>([]);
   const [loadState, setLoadState] = useState<LoadState>("idle");
@@ -180,7 +174,6 @@ export function AdminMacroChecksView() {
                 <MacroCheckCard
                   key={check.id}
                   check={check}
-                  locale={locale}
                   onResolved={(updated) => {
                     setChecks((prev) =>
                       prev
@@ -206,12 +199,10 @@ export function AdminMacroChecksView() {
 
 function MacroCheckCard({
   check,
-  locale,
   onResolved,
   onFoodDeleted,
 }: {
   check: FoodMacroCheck;
-  locale: string;
   onResolved: (check: FoodMacroCheck) => void;
   onFoodDeleted: (foodId: string) => void;
 }) {
@@ -295,7 +286,7 @@ function MacroCheckCard({
           <h2 className="text-xl font-semibold">{check.targetFood.name}</h2>
           <p className="site-muted mt-1 text-xs">
             {copy.macroChecks.submittedByLabel}: {check.submittedByDisplayName} ·{" "}
-            {copy.macroChecks.createdLabel}: {formatDateTime(check.createdAt, locale)}
+            {copy.macroChecks.createdLabel}: {formatTimestampWithTime(check.createdAt)}
           </p>
         </div>
         <a

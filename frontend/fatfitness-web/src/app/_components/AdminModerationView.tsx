@@ -3,12 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
-import {
-  useLocale,
-  useLocalizedContent,
-} from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { PageShell } from "@/app/_components/PageShell";
 import { adminCopy } from "@/content/admin";
+import { formatTimestampWithTime } from "@/lib/date";
 import {
   ApiError,
   getModerationReports,
@@ -55,21 +53,13 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-function formatDateTime(value: string | null, locale: string, fallback = "-") {
+function formatDateTime(value: string | null, fallback = "-") {
   if (!value) {
     return fallback;
   }
 
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return fallback;
-  }
-
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  const formatted = formatTimestampWithTime(value);
+  return formatted || fallback;
 }
 
 function reportStatusClass(status: ModerationReportStatus) {
@@ -95,7 +85,6 @@ function reportReasonLabel(reason: string) {
 
 export function AdminModerationView() {
   const copy = useLocalizedContent(adminCopy);
-  const { locale } = useLocale();
   const { status: authStatus, user, accessToken } = useAuth();
   const [reports, setReports] = useState<ModerationReport[]>([]);
   const [loadState, setLoadState] = useState<LoadState>("idle");
@@ -317,7 +306,6 @@ export function AdminModerationView() {
             reports={reports}
             status={loadState}
             error={loadError}
-            locale={locale}
             onResolved={(updatedReport) => {
               setReports((currentReports) =>
                 currentReports.map((report) =>
@@ -339,13 +327,11 @@ function ModerationReportList({
   reports,
   status,
   error,
-  locale,
   onResolved,
 }: {
   reports: ModerationReport[];
   status: LoadState;
   error: string | null;
-  locale: string;
   onResolved: (report: ModerationReport) => void;
 }) {
   const copy = useLocalizedContent(adminCopy);
@@ -386,7 +372,6 @@ function ModerationReportList({
         <ModerationReportCard
           key={`${report.targetType}-${report.id}`}
           report={report}
-          locale={locale}
           onResolved={onResolved}
         />
       ))}
@@ -396,11 +381,9 @@ function ModerationReportList({
 
 function ModerationReportCard({
   report,
-  locale,
   onResolved,
 }: {
   report: ModerationReport;
-  locale: string;
   onResolved: (report: ModerationReport) => void;
 }) {
   const copy = useLocalizedContent(adminCopy);
@@ -445,7 +428,7 @@ function ModerationReportCard({
               {copy.targetTypes[report.targetType]}
             </ReportMetaItem>
             <ReportMetaItem label={copy.list.createdLabel}>
-              {formatDateTime(report.createdAt, locale)}
+              {formatDateTime(report.createdAt)}
             </ReportMetaItem>
             <ReportMetaItem label={copy.list.authorLabel}>
               {report.contentAuthorDisplayName}
@@ -458,10 +441,7 @@ function ModerationReportCard({
             </ReportMetaItem>
             <ReportMetaItem label={copy.list.resolvedLabel}>
               {report.resolvedByDisplayName
-                ? `${report.resolvedByDisplayName} / ${formatDateTime(
-                    report.resolvedAt,
-                    locale,
-                  )}`
+                ? `${report.resolvedByDisplayName} / ${formatDateTime(report.resolvedAt)}`
                 : "-"}
             </ReportMetaItem>
           </dl>

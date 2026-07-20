@@ -11,6 +11,7 @@ import {
 import { accountCopy } from "@/content/account";
 import { getCountryOptions } from "@/content/countries";
 import { ApiError, bookmarkForumPost, getBookmarkedPosts } from "@/lib/api";
+import { formatTimestampShort, formatTimestampWithTime } from "@/lib/date";
 import type { Locale } from "@/content/site";
 import type { CurrentUser } from "@/types/auth";
 import type { ForumPost } from "@/types/community";
@@ -21,7 +22,6 @@ type SavedPostsSectionProps = {
 
 function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
   const copy = useLocalizedContent(accountCopy);
-  const { locale } = useLocale();
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
@@ -124,9 +124,7 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
                       {post.authorDisplayName}
                     </Link>
                     {" · "}
-                    {new Intl.DateTimeFormat(locale, {
-                      dateStyle: "medium",
-                    }).format(new Date(post.createdAt))}
+                    {formatTimestampShort(post.createdAt)}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
@@ -159,21 +157,13 @@ function SavedPostsSection({ accessToken }: SavedPostsSectionProps) {
   );
 }
 
-function formatDateTime(value: string | null, locale: Locale, fallback: string) {
+function formatDateTime(value: string | null, fallback: string) {
   if (!value) {
     return fallback;
   }
 
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return fallback;
-  }
-
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  const formatted = formatTimestampWithTime(value);
+  return formatted || fallback;
 }
 
 function getCountryLabel(user: CurrentUser, locale: Locale, fallback: string) {
@@ -309,7 +299,7 @@ export function AccountDashboardView() {
                   {copy.labels.emailVerifiedAt}
                 </dt>
                 <dd className="mt-2 text-base font-semibold">
-                  {formatDateTime(user.emailVerifiedAt, locale, copy.empty.date)}
+                  {formatDateTime(user.emailVerifiedAt, copy.empty.date)}
                 </dd>
               </div>
               <div className="rounded-xl border border-(--color-border) bg-(--color-surface-raised) p-4 sm:col-span-2">
@@ -317,7 +307,7 @@ export function AccountDashboardView() {
                   {copy.labels.lastLoginAt}
                 </dt>
                 <dd className="mt-2 text-base font-semibold">
-                  {formatDateTime(user.lastLoginAt, locale, copy.empty.date)}
+                  {formatDateTime(user.lastLoginAt, copy.empty.date)}
                 </dd>
               </div>
             </dl>

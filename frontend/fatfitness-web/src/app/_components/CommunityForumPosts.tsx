@@ -12,12 +12,10 @@ import {
   type SetStateAction,
 } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
-import {
-  useLocale,
-  useLocalizedContent,
-} from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { communityCopy } from "@/content/community";
 import { ApiError, createForumPost, getForumPosts } from "@/lib/api";
+import { formatTimestampWithTime } from "@/lib/date";
 import type { ForumPost } from "@/types/community";
 
 export type CommunityCategoryOption = {
@@ -91,17 +89,9 @@ function postPreview(body: string) {
   return `${compact.slice(0, 180)}...`;
 }
 
-export function formatForumPostDate(value: string, locale: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+export function formatForumPostDate(value: string) {
+  const formatted = formatTimestampWithTime(value);
+  return formatted || value;
 }
 
 export function useCommunityPosts(
@@ -173,7 +163,6 @@ export function CommunityPostList({
   onRetry,
 }: CommunityPostListProps) {
   const copy = useLocalizedContent(communityCopy);
-  const { locale } = useLocale();
   const [isRefreshing, startRefreshing] = useTransition();
 
   return (
@@ -239,7 +228,7 @@ export function CommunityPostList({
                 </span>
                 <span aria-hidden="true">/</span>
                 <time dateTime={post.createdAt}>
-                  {formatForumPostDate(post.createdAt, locale)}
+                  {formatForumPostDate(post.createdAt)}
                 </time>
               </div>
               <h3 className="mt-3 text-xl font-semibold">

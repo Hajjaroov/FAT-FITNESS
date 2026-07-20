@@ -8,10 +8,7 @@ import {
   useCommunityPosts,
 } from "@/app/_components/CommunityForumPosts";
 import { PageShell } from "@/app/_components/PageShell";
-import {
-  useLocale,
-  useLocalizedContent,
-} from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { communityCopy } from "@/content/community";
 
 type CommunityCategoryViewProps = {
@@ -20,7 +17,6 @@ type CommunityCategoryViewProps = {
 
 export function CommunityCategoryView({ slug }: CommunityCategoryViewProps) {
   const copy = useLocalizedContent(communityCopy);
-  const { locale } = useLocale();
   const category = copy.categories.items.find((item) => item.slug === slug);
   const { posts, status, error, setPosts, refresh } = useCommunityPosts(slug);
   const latestPost = posts[0];
@@ -67,7 +63,7 @@ export function CommunityCategoryView({ slug }: CommunityCategoryViewProps) {
                       {latestPost.title}
                     </span>
                     <time dateTime={latestPost.createdAt}>
-                      {formatForumPostDate(latestPost.createdAt, locale)}
+                      {formatForumPostDate(latestPost.createdAt)}
                     </time>
                   </span>
                 ) : (

@@ -10,10 +10,7 @@ import {
 } from "react";
 import { useAuth } from "@/app/_components/AuthProvider";
 import { formatForumPostDate } from "@/app/_components/CommunityForumPosts";
-import {
-  useLocale,
-  useLocalizedContent,
-} from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { communityCopy } from "@/content/community";
 import {
   ApiError,
@@ -41,7 +38,6 @@ type CommunityCommentComposerProps = {
 
 type CommunityCommentItemProps = {
   comment: ForumComment;
-  locale: string;
   onUpdated: (updated: ForumComment) => void;
   onDeleted: (commentId: string) => void;
 };
@@ -71,7 +67,6 @@ function formValue(formData: FormData, key: string) {
 
 export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
   const copy = useLocalizedContent(communityCopy);
-  const { locale } = useLocale();
   const { accessToken } = useAuth();
   const [comments, setComments] = useState<ForumComment[]>([]);
   const [status, setStatus] = useState<LoadState>("idle");
@@ -198,7 +193,6 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
             <CommunityCommentItem
               key={comment.id}
               comment={comment}
-              locale={locale}
               onUpdated={(updated) =>
                 setComments((prev) =>
                   prev.map((c) => (c.id === updated.id ? updated : c)),
@@ -226,7 +220,6 @@ export function CommunityComments({ postId, locked }: CommunityCommentsProps) {
 
 function CommunityCommentItem({
   comment,
-  locale,
   onUpdated,
   onDeleted,
 }: CommunityCommentItemProps) {
@@ -314,11 +307,11 @@ function CommunityCommentItem({
         </Link>
         <span aria-hidden="true">/</span>
         <time dateTime={comment.createdAt}>
-          {formatForumPostDate(comment.createdAt, locale)}
+          {formatForumPostDate(comment.createdAt)}
         </time>
         {comment.editedAt ? (
           <span className="italic">
-            · {copy.comments.editedLabel} {formatForumPostDate(comment.editedAt, locale)}
+            · {copy.comments.editedLabel} {formatForumPostDate(comment.editedAt)}
           </span>
         ) : null}
       </div>

@@ -7,15 +7,11 @@ import {
   useCommunityPosts,
 } from "@/app/_components/CommunityForumPosts";
 import { PageShell } from "@/app/_components/PageShell";
-import {
-  useLocale,
-  useLocalizedContent,
-} from "@/app/_components/LocaleProvider";
+import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { communityCopy } from "@/content/community";
 
 export function CommunityView() {
   const copy = useLocalizedContent(communityCopy);
-  const { locale } = useLocale();
   const { posts, status, error, refresh } = useCommunityPosts();
   const categories = copy.categories.items;
 
@@ -146,10 +142,7 @@ export function CommunityView() {
                                 dateTime={latestPost.createdAt}
                                 className="mt-1 block text-xs"
                               >
-                                {formatForumPostDate(
-                                  latestPost.createdAt,
-                                  locale,
-                                )}
+                                {formatForumPostDate(latestPost.createdAt)}
                               </time>
                             </span>
                           ) : (

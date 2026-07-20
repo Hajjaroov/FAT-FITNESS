@@ -12,7 +12,6 @@ import { useLocalizedContent } from "@/app/_components/LocaleProvider";
 import { myPlanCopy } from "@/content/myplan";
 import {
   addWeightEntry,
-  ApiError,
   getWeightEntries,
   getWeightGoals,
   updateWeightGoals,
@@ -142,12 +141,8 @@ export function MyPlanView() {
       setEntryWeight("");
       setEntryDate(todayISODate());
       setEntryForm({ kind: "saved" });
-    } catch (err) {
-      const isDuplicate = err instanceof ApiError && err.status === 409;
-      setEntryForm({
-        kind: "error",
-        message: isDuplicate ? copy.weight.entryDuplicateError : copy.weight.entryError,
-      });
+    } catch {
+      setEntryForm({ kind: "error", message: copy.weight.entryError });
     }
   }
 
