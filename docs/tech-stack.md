@@ -15,7 +15,7 @@ Spring Boot Backend
 PostgreSQL
 ```
 
-Later, a React Native / Expo app can use the same Spring Boot API.
+The installable PWA (manifest, service worker, push notifications) covers the mobile use case; no separate React Native/Expo or native app is planned.
 
 ## Frontend
 
@@ -118,7 +118,7 @@ Backend rules:
 Backend (in place):
 
 - MockMvc-based integration tests — every feature gets its own `*ControllerTests` class hitting the real Spring context and a real Postgres transaction (rolled back per test via class-level `@Transactional`), not isolated unit tests of services/repositories.
-- Run with `.\gradlew.bat test --no-daemon` from `backend/fatfitness-api/`. 203 tests passing as of `/myplan` Phase 2 (Diet, V14) — see `docs/dev-agent-plan.md`'s "Backend Test Coverage" section for what each class covers.
+- Run with `.\gradlew.bat test --no-daemon` from `backend/fatfitness-api/`. 266 tests passing as of the PWA/push milestone (V18) — see `docs/dev-agent-plan.md`'s "Backend Test Coverage" section for what each class covers.
 - Auth helper pattern: a private `registerVerifyAndLogin(email)` (and `registerVerifyAddRoleAndLogin(email, role)` for moderator/owner-role tests) drives the real register → verify-email → login endpoints to get a bearer token, rather than mocking authentication.
 
 Frontend (in place, 2026-07-18):
@@ -142,7 +142,7 @@ Database rules:
 - Do not use MongoDB for this app by default.
 - Do not store images in PostgreSQL.
 - Store image metadata in PostgreSQL and files in object storage later.
-- The `/myplan/diet` shared food catalog starts empty and grows only from user-added custom foods — no bulk/external data import. A USDA SR Legacy bulk import was researched and built, then rolled back after manual testing showed poor suggestion quality; see `docs/dev-agent-plan.md` for the full history.
+- The `/myplan/diet` shared food catalog starts empty and grows only from user-added custom foods — no bulk/external data import (owner decision).
 
 ## Content
 
@@ -196,26 +196,17 @@ Do not add a search engine yet.
 
 ## Notifications
 
-MVP:
+- Email notifications — DONE (Resend: verification, password reset, new-message, broadcast)
+- Push notifications — DONE (Web Push/VAPID for new private messages, V18, part of the PWA milestone)
 
-- No complex notification system.
+Not built, no current plan:
 
-Later:
-
-- In-app notifications
-- Email notifications
-- Push notifications
+- In-app notification center (beyond the header unread-message badge)
 - Weekly digest
 
 ## Mobile
 
-Do not build mobile now.
-
-Recommended path:
-
-1. PWA support in the Next.js app
-2. React Native / Expo later
-3. Native Kotlin/Swift only if there is a strong future reason
+Decision (2026-07-19): the installable PWA is the mobile solution. No React Native/Expo or native Kotlin/Swift app is planned.
 
 ## Deployment Direction
 

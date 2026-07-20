@@ -35,12 +35,11 @@ function matchesQuery(food: Food, normalizedQuery: string) {
   return food.nameDe ? normalizeSearch(food.nameDe).includes(normalizedQuery) : false;
 }
 
-// SR Legacy names are comma-separated descriptions (e.g. "Chicken, breast,
-// raw"), and the shared list is fetched already sorted alphabetically by
-// name. A plain substring filter would let something like "Babyfood, ...,
-// chicken, ..." outrank "Chicken, breast, raw" purely because "B" sorts
-// before "C" — so rank word/phrase-boundary matches ahead of the food name
-// merely containing the query somewhere in the middle.
+// The shared list is fetched already sorted alphabetically by name. A plain
+// substring filter would let an unrelated food whose name happens to sort
+// earlier outrank a better match purely on alphabetical position — so rank
+// word/phrase-boundary matches ahead of the food name merely containing the
+// query somewhere in the middle.
 function matchRank(food: Food, normalizedQuery: string): number {
   const candidates = [food.name, food.nameDe].filter((value): value is string => Boolean(value));
   let best = 3;

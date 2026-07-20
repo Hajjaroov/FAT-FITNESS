@@ -13,11 +13,12 @@ A personal weight-loss journey site and beginner-friendly peer-support forum.
 | **Journal** | Personal diet, training, and medical (GLP-1) journey made public |
 | **Community** | Forum-style peer-support for overweight beginners |
 | **Messages** | Private async one-to-one inbox between members, with email notifications |
-| **My Plan** | Private per-member tracking hub: weight (goals, entries, chart) and diet (meals, shared food catalog, macro totals) |
-| **Accounts** | Registration, email verification, login, profile settings |
+| **My Plan** | Private per-member tracking hub: weight (goals, entries, chart), diet (meals, shared food catalog, macro totals), workout plan maker, and GLP-1/medication log |
+| **Accounts** | Registration, email verification, login, profile settings, avatar upload |
 | **Admin** | Moderation dashboard for report review, content hide, thread lock, user ban, food macro checks |
+| **PWA** | Installable app shell (manifest, service worker, offline fallback) with push notifications for new messages |
 
-This is not a coaching product or medical advice platform. All content is personal experience shared as-is.
+This is not a coaching product or medical advice platform. All content is personal experience shared as-is. The installable PWA is the mobile solution — no separate native or React Native/Expo app is planned.
 
 ---
 
@@ -28,7 +29,7 @@ This is not a coaching product or medical advice platform. All content is person
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS v4 |
 | Backend | Spring Boot 4.1, Java 21, Gradle |
 | Database | PostgreSQL 18 via Docker Compose |
-| Migrations | Flyway (V1–V14 applied; next is V15) |
+| Migrations | Flyway (V1–V18 applied; next is V19) |
 | Auth | JWT access tokens + HttpOnly refresh cookie + Resend email |
 | Logging | Logback (backend) · Winston (frontend) · PostgreSQL slow-query log |
 
@@ -119,6 +120,7 @@ The site will be available at `http://localhost:3000`.
 | `FATFITNESS_OWNER_PASSWORD` | Dev only | Owner password (dev seed only) |
 | `FATFITNESS_CORS_ALLOWED_ORIGINS` | Yes (prod) | Comma-separated allowed origins (default `http://localhost:3000`) |
 | `FATFITNESS_REFRESH_COOKIE_SECURE` | Yes (prod) | Set `true` so refresh cookies are HTTPS-only (default `false`) |
+| `FATFITNESS_VAPID_PUBLIC_KEY` / `FATFITNESS_VAPID_PRIVATE_KEY` / `FATFITNESS_VAPID_SUBJECT` | Yes (for push) | Web Push VAPID key pair + contact subject; no committed defaults, generate with `npx web-push generate-vapid-keys` |
 | `SPRING_PROFILES_ACTIVE` | Optional | Set to `dev` to enable Hibernate SQL logging |
 
 ### Frontend (`frontend/fatfitness-web/.env.local`)
@@ -126,6 +128,7 @@ The site will be available at `http://localhost:3000`.
 | Variable | Description |
 |---|---|
 | `NEXT_PUBLIC_API_BASE_URL` | Backend API base URL (default: `http://localhost:8080`) |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Public VAPID key (not secret) — must match the backend's `FATFITNESS_VAPID_PUBLIC_KEY`, used by the browser to subscribe to push |
 
 ---
 
@@ -141,6 +144,8 @@ cd backend/fatfitness-api
 # Frontend
 cd frontend/fatfitness-web
 npm run lint
+npm run typecheck   # type-checks test files (neither Vitest nor next build does)
+npm run test        # Vitest component/unit suite
 npm run build
 ```
 
@@ -156,7 +161,9 @@ npm run build
 | `http://localhost:3000/messages` | Private message inbox |
 | `http://localhost:3000/myplan` | Personal tracking hub: weight goals + entries + chart (signed-in only) |
 | `http://localhost:3000/myplan/diet` | Personal diet: meals, food catalog, live macro totals (signed-in only) |
-| `http://localhost:3000/settings` | Account settings (profile, password, sessions, avatar) |
+| `http://localhost:3000/myplan/workout` | Weekly workout plan maker (signed-in only) |
+| `http://localhost:3000/myplan/glp1` | GLP-1 / medication log (signed-in only) |
+| `http://localhost:3000/settings` | Account settings (profile, password, sessions, avatar, push notifications) |
 | `http://localhost:3000/dashboard` | Signed-in account dashboard |
 | `http://localhost:3000/admin` | Moderation dashboard (OWNER/ADMIN/MODERATOR) |
 | `http://localhost:3000/admin/macro-checks` | Food macro-check review queue (OWNER/ADMIN/MODERATOR) |
@@ -169,7 +176,9 @@ npm run build
 - Remove or disable the owner seed before public launch.
 - Set `FATFITNESS_REFRESH_COOKIE_SECURE=true` and `FATFITNESS_CORS_ALLOWED_ORIGINS` to the production frontend origin(s).
 - Confirm `RESEND_API_KEY`, `MAIL_FROM`, and `APP_BASE_URL` are set.
+- Confirm `FATFITNESS_VAPID_PUBLIC_KEY`/`FATFITNESS_VAPID_PRIVATE_KEY`/`FATFITNESS_VAPID_SUBJECT` (backend) and `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (frontend) are set with a real key pair for push notifications to work.
 - Do **not** activate the `dev` Spring profile in production.
 - Ensure the process user has write access to the `logs/` directories.
-- Flyway migrations V1–V14 are applied. The next migration must be **V15**.
+- Flyway migrations V1–V18 are applied. The next migration must be **V19**.
+- The service worker (`public/sw.js`) only registers when `NODE_ENV=production`; the PWA (installability + push) requires HTTPS in production (or `localhost` in dev) since Service Workers refuse to run over plain HTTP.
 - Review GDPR / data deletion requirements before collecting real user data.

@@ -177,7 +177,7 @@ Current state:
 - Rate limiting is applied to login (10/15 min), resend-verification (5/hour), forgot-password (5/hour), and reset-password (10/15 min). Disabled in tests via `fatfitness.auth.rate-limit.enabled=false`.
 - `/settings` page has three sections: Profile (display name + country/region edit), Change password, and Active sessions (sign out all devices). Linked from `/dashboard`.
 - `PATCH /api/users/me/profile`, `POST /api/users/me/change-password`, and `POST /api/users/me/sessions/revoke-all` are authenticated endpoints backing the settings page.
-- Flyway migrations V1–V14 are applied; next new migration is V15.
+- Flyway migrations V1–V18 are applied; next new migration is V19. (See `docs/database-notes.md` for the current migration history — this section predates several later milestones.)
 
 Approved auth direction:
 
@@ -277,21 +277,22 @@ Not MVP:
 
 ### Personal Tools
 
-Later, not MVP.
+Built as `/myplan` (see `docs/dev-agent-plan.md` for full implementation detail):
 
-Possible tools:
+- Weight tracker — DONE (goals + entries + chart, V13)
+- Meal log — DONE (`/myplan/diet`, shared food catalog, macro totals, V14)
+- Workout log — DONE, built as a weekly **plan maker**, not a session-by-session log (`/myplan/workout`, V15)
+- GLP-1 injection/side-effect journal — DONE (`/myplan/glp1`, dose + optional weight + notes, V16)
 
-- Weight tracker
+Not built, no current plan (raise as a new planning discussion if wanted):
+
 - Progress photo timeline
-- Workout log
-- Meal log
 - Habit tracker
-- GLP-1 injection/side-effect journal
 - Weekly check-in
 - BMI/weight-loss calculator
-- Goal planner
+- Goal planner (beyond the existing start/goal weight fields)
 
-These tools involve sensitive health-related data, so they should be planned carefully before implementation.
+These tools involve sensitive health-related data, so any of the remaining ones should be planned carefully before implementation.
 
 ## MVP Scope
 
@@ -304,9 +305,8 @@ Build in this order:
 5. Forum categories, posts, and comments
 6. Likes/bookmarks
 7. Reporting and moderation
-8. PWA
-9. Tracking tools
-10. React Native / Expo mobile app later
+8. PWA — DONE (installable shell + push notifications, V18)
+9. Tracking tools — DONE (`/myplan`: weight, diet, workout plan maker, GLP-1 log)
 
 The first useful version is:
 
@@ -394,9 +394,9 @@ The personal story is the strongest asset. The technology should support that, n
 
 ## Current Product Milestone
 
-Auth hardening, profile/account settings, and Journal content work (supplement modals, responsive chart, training carousels) are complete. The next decision point is what to build next — weight tracking (V9 migration) is recommended.
+**This section is a historical snapshot from the auth-hardening milestone and is not maintained per-release.** For current state, always check `docs/dev-agent-plan.md`'s "Current State" and "Next Milestone" sections instead — as of 2026-07-19, PWA (installable shell + push notifications, V18) is complete and `/myplan` (weight, diet, workout, GLP-1) is feature-complete; the project has no open milestone and no mobile app is planned.
 
-Completed-enough checkpoints for now:
+Completed-enough checkpoints for now (as of the auth-hardening milestone; superseded by `docs/dev-agent-plan.md` for anything after):
 
 - Homepage owns the landing, personal story, and journal direction.
 - Learn has static overview and detail pages for `Food & Diet`, `Training`, and `Medical Journey`.
