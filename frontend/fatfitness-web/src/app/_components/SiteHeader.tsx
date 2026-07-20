@@ -188,6 +188,9 @@ export function SiteHeader() {
                       </span>
                     ) : null}
                   </Link>
+                  <Link href="/myplan" className="site-nav-link">
+                    {copy.nav.myplan}
+                  </Link>
                   <Link
                     href="/dashboard"
                     className="site-nav-link inline-flex items-center gap-1.5"
@@ -351,6 +354,13 @@ export function SiteHeader() {
                         {unreadMessages > 9 ? "9+" : unreadMessages}
                       </span>
                     ) : null}
+                  </Link>
+                  <Link
+                    href="/myplan"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg px-4 py-2.5 text-sm text-(--color-muted) transition hover:bg-(--color-surface-raised) hover:text-foreground"
+                  >
+                    {copy.nav.myplan}
                   </Link>
                   <Link
                     href="/dashboard"

@@ -25,6 +25,10 @@ type MyPlanCopy = {
     entriesLoadError: string;
     goalsLoadError: string;
     tooltipLabel: string;
+    progressStartLabel: string;
+    progressLatestLabel: string;
+    progressChangeLabel: string;
+    progressNoEntries: string;
   };
   diet: {
     title: string;
@@ -197,6 +201,10 @@ export const myPlanCopy = {
       entriesLoadError: "Could not load weight entries.",
       goalsLoadError: "Could not load weight goals.",
       tooltipLabel: "Weight",
+      progressStartLabel: "Starting point",
+      progressLatestLabel: "Latest logged point",
+      progressChangeLabel: "Logged change",
+      progressNoEntries: "No entries yet",
     },
     diet: {
       title: "Diet",
@@ -380,6 +388,10 @@ export const myPlanCopy = {
       entriesLoadError: "Gewichtseinträge konnten nicht geladen werden.",
       goalsLoadError: "Gewichtsziele konnten nicht geladen werden.",
       tooltipLabel: "Gewicht",
+      progressStartLabel: "Startpunkt",
+      progressLatestLabel: "Letzter eingetragener Stand",
+      progressChangeLabel: "Eingetragene Veränderung",
+      progressNoEntries: "Noch keine Einträge",
     },
     diet: {
       title: "Ernährung",

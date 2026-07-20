@@ -31,7 +31,7 @@ export function LearnOverviewView() {
           {copy.medical.summary.map((item) => (
             <div
               key={item.label}
-              className="site-divider border-b py-4 sm:border-b-0 sm:border-r sm:last:border-r-0 sm:px-4 sm:first:pl-0"
+              className="site-divider border-b py-4 text-center sm:border-b-0 sm:border-r sm:last:border-r-0 sm:px-4 sm:first:pl-0"
             >
               <p className="site-subtle text-xs">{item.label}</p>
               <p className="mt-1 text-2xl font-semibold">{item.value}</p>

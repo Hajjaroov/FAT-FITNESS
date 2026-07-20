@@ -16,7 +16,6 @@ export function isLocale(value: string | null | undefined): value is Locale {
 export const siteNavigation = [
   { href: "/", key: "home" },
   { href: "/journal", key: "journal" },
-  { href: "/myplan", key: "myplan", requiresAuth: true },
   { href: "/community", key: "community" },
 ] as const;
 

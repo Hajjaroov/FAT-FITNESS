@@ -29,6 +29,20 @@ type EntryFormState =
   | { kind: "saved" }
   | { kind: "error"; message: string };
 
+function round1(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+function formatWeightKg(weightKg: number): string {
+  return `${round1(weightKg)} kg`;
+}
+
+function formatChangeKg(deltaKg: number): string {
+  const rounded = round1(deltaKg);
+  const sign = rounded > 0 ? "+" : "";
+  return `${sign}${rounded} kg`;
+}
+
 function todayISODate() {
   const now = new Date();
   const year = now.getFullYear();
@@ -162,6 +176,46 @@ export function MyPlanView() {
 
         {goalLoadError ? (
           <p className="mt-4 text-sm text-red-800 dark:text-red-300">{goalLoadError}</p>
+        ) : null}
+
+        {/* Weight progress stats */}
+        {hasGoals ? (
+          <div className="site-divider mt-6 grid gap-0 border-t sm:grid-cols-3">
+            {[
+              {
+                label: copy.weight.progressStartLabel,
+                value: formatWeightKg(goal.startWeight!),
+                detail: null,
+              },
+              {
+                label: copy.weight.progressLatestLabel,
+                value:
+                  entries.length > 0
+                    ? formatWeightKg(entries[entries.length - 1].weightKg)
+                    : copy.weight.progressNoEntries,
+                detail: entries.length > 0 ? entries[entries.length - 1].entryDate : null,
+              },
+              {
+                label: copy.weight.progressChangeLabel,
+                value:
+                  entries.length > 0
+                    ? formatChangeKg(entries[entries.length - 1].weightKg - goal.startWeight!)
+                    : copy.weight.progressNoEntries,
+                detail: null,
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="site-divider border-b py-4 text-center sm:border-b-0 sm:border-r sm:last:border-r-0 sm:px-4 sm:first:pl-0"
+              >
+                <p className="site-subtle text-xs">{item.label}</p>
+                <p className="mt-1 text-2xl font-semibold">{item.value}</p>
+                {item.detail ? (
+                  <p className="site-subtle mt-0.5 text-xs">{item.detail}</p>
+                ) : null}
+              </div>
+            ))}
+          </div>
         ) : null}
 
         {/* Chart */}

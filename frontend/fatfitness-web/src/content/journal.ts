@@ -1,4 +1,5 @@
 import type { Locale } from "@/content/site";
+import { getWeightLogTable, getWeightSummary } from "@/lib/weightLog";
 
 type Exercise = {
   name: string;
@@ -21,41 +22,9 @@ type TrainingDay = {
   notes: string[];
 };
 
-const loggedEntries = [
-  ["2.5", "2025-11-16", "203.0 kg", "0 kg"],
-  ["2.5", "2025-11-23", "197.0 kg", "-6.0 kg"],
-  ["5.0", "2025-11-29", "191.5 kg", "-5.5 kg"],
-  ["5.0", "2025-12-06", "189.3 kg", "-2.2 kg"],
-  ["5.0", "2025-12-13", "187.2 kg", "-2.2 kg"],
-  ["5.0", "2025-12-20", "185.3 kg", "-1.9 kg"],
-  ["5.0", "2025-12-27", "183.0 kg", "-2.3 kg"],
-  ["5.0", "2026-01-04", "181.6 kg", "-1.4 kg"],
-  ["5.0", "2026-01-11", "180.2 kg", "-1.4 kg"],
-  ["5.0", "2026-01-18", "179.6 kg", "-0.6 kg"],
-  ["5.0", "2026-01-25", "177.6 kg", "-2.0 kg"],
-  ["5.0", "2026-02-01", "176.6 kg", "-1.0 kg"],
-  ["5.0", "2026-02-08", "174.9 kg", "-1.7 kg"],
-  ["6.25", "2026-02-15", "174.4 kg", "-0.5 kg"],
-  ["6.25", "2026-02-22", "173.0 kg", "-1.4 kg"],
-  ["7.5", "2026-03-01", "171.6 kg", "-1.4 kg"],
-  ["7.5", "2026-03-08", "170.1 kg", "-1.5 kg"],
-  ["7.5", "2026-03-16", "168.8 kg", "-1.3 kg"],
-  ["7.5", "2026-03-23", "166.5 kg", "-2.3 kg"],
-  ["7.5", "2026-03-30", "165.3 kg", "-1.2 kg"],
-  ["7.5", "2026-04-06", "164.7 kg", "-0.6 kg"],
-  ["7.5", "2026-04-13", "163.3 kg", "-1.4 kg"],
-  ["7.5", "2026-04-21", "162.8 kg", "-0.5 kg"],
-  ["7.5", "2026-04-29", "162.5 kg", "-0.3 kg"],
-  ["7.5", "2026-05-07", "162.5 kg", "0 kg"],
-  ["7.5", "2026-05-15", "162.0 kg", "-0.5 kg"],
-  ["7.5", "2026-05-22", "161.5 kg", "-0.5 kg"],
-  ["10", "2026-05-31", "160.5 kg", "-1.0 kg"],
-  ["10", "2026-06-07", "158.5 kg", "-2.0 kg"],
-  ["10", "2026-06-14", "158.0 kg", "-0.5 kg"],
-  ["10", "2026-06-21", "157.2 kg", "-0.8 kg"],
-  ["10", "2026-06-28", "156.0 kg", "-1.2 kg"],
-  ["10", "2026-07-05", "154.5 kg", "-1.5 kg"],
-] as const;
+const loggedEntries = getWeightLogTable();
+const enWeightSummary = getWeightSummary("en");
+const deWeightSummary = getWeightSummary("de");
 
 const warmupItems: WarmupItem[] = [
   { name: "March in place", sets: "2 minutes", photoKey: "warmup-march-in-place", photoSrc: "" },
@@ -297,7 +266,7 @@ export const learnCopy = {
           summary:
             "Personal medical context, including GLP-1 history and other medical decisions, documented carefully.",
           startsWith: [
-            "GLP-1 timeline from 203 kg on 16 November 2025 to 154.5 kg on 5 July 2026.",
+            `GLP-1 timeline from ${enWeightSummary.startWeight} on ${enWeightSummary.startDateFormatted} to ${enWeightSummary.latestWeight} on ${enWeightSummary.latestDateFormatted}.`,
             "Shot and weight logs as personal records, not dosing instructions.",
             "Doctor-discussion topics and personal reflections, not medical advice.",
           ],
@@ -513,9 +482,9 @@ export const learnCopy = {
       intro:
         "A personal Mounjaro log, shared for transparency. Not medication advice, a dosing guide, or a method for anyone else to follow — medical decisions belong with a qualified professional.",
       summary: [
-        { label: "Starting point", value: "203.0 kg", detail: "2025-11-16" },
-        { label: "Latest logged point", value: "154.5 kg", detail: "2026-07-05" },
-        { label: "Logged change", value: "-48.5 kg", detail: "Personal log" },
+        { label: "Starting point", value: enWeightSummary.startWeight, detail: enWeightSummary.startDateIso },
+        { label: "Latest logged point", value: enWeightSummary.latestWeight, detail: enWeightSummary.latestDateIso },
+        { label: "Logged change", value: enWeightSummary.change, detail: "Personal log" },
       ],
       entriesTitle: "Logged Entries",
       tableHeaders: ["Dose (mg)", "Date", "Weight", "Change"],
@@ -559,7 +528,7 @@ export const learnCopy = {
           summary:
             "Persönlicher medizinischer Kontext, inklusive GLP-1 Historie und andere Entscheidungen, vorsichtig dokumentiert.",
           startsWith: [
-            "GLP-1 Timeline von 203 kg am 16. November 2025 bis 154.5 kg am 5. Juli 2026.",
+            `GLP-1 Timeline von ${deWeightSummary.startWeight} am ${deWeightSummary.startDateFormatted} bis ${deWeightSummary.latestWeight} am ${deWeightSummary.latestDateFormatted}.`,
             "Shot- und Gewichtslogs als persönliche Aufzeichnungen, nicht als Dosierungsanleitung.",
             "Themen für Ärztegespräche und persönliche Reflexionen, keine medizinische Beratung.",
           ],
@@ -776,9 +745,9 @@ export const learnCopy = {
       intro:
         "Ein persönlicher Mounjaro Log, für Transparenz geteilt. Keine Medikamentenberatung, keine Dosierungsanleitung und keine Methode für andere — medizinische Entscheidungen gehören zu qualifizierten Fachpersonen.",
       summary: [
-        { label: "Startpunkt", value: "203.0 kg", detail: "2025-11-16" },
-        { label: "Letzter eingetragener Stand", value: "154.5 kg", detail: "2026-07-05" },
-        { label: "Eingetragene Veränderung", value: "-48.5 kg", detail: "Persönlicher Log" },
+        { label: "Startpunkt", value: deWeightSummary.startWeight, detail: deWeightSummary.startDateIso },
+        { label: "Letzter eingetragener Stand", value: deWeightSummary.latestWeight, detail: deWeightSummary.latestDateIso },
+        { label: "Eingetragene Veränderung", value: deWeightSummary.change, detail: "Persönlicher Log" },
       ],
       entriesTitle: "Eingetragene Werte",
       tableHeaders: ["Dosis (mg)", "Datum", "Gewicht", "Veränderung"],

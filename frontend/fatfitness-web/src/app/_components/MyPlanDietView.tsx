@@ -232,7 +232,7 @@ export function MyPlanDietView() {
           ].map((total) => (
             <div
               key={total.label}
-              className="site-divider flex items-baseline justify-between gap-4 border-b py-4 sm:block sm:border-b-0 sm:border-r sm:py-5 sm:last:border-r-0"
+              className="site-divider flex items-baseline justify-between gap-4 border-b py-4 sm:block sm:border-b-0 sm:border-r sm:py-5 sm:text-center sm:last:border-r-0"
             >
               <p className="site-subtle text-sm">{total.label}</p>
               <p className="text-2xl font-semibold sm:mt-1">{total.value}</p>
